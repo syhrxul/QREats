@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../src/lib/supabase';
 
 export default function DynamicFavicon() {
-  const [faviconUrl, setFaviconUrl] = useState('/favicon.ico');
+  const [faviconUrl, setFaviconUrl] = useState('');
 
   useEffect(() => {
     const { data } = supabase.storage
@@ -12,16 +12,16 @@ export default function DynamicFavicon() {
       .getPublicUrl('system/favicon.ico');
 
     if (data?.publicUrl) {
-      const img = new Image();
-      img.onload = () => {
-        setFaviconUrl(`${data.publicUrl}?t=${Date.now()}`);
-      };
-      img.onerror = () => {
-        setFaviconUrl('/favicon.ico');
-      };
-      img.src = data.publicUrl;
+      setFaviconUrl(`${data.publicUrl}?t=${Date.now()}`);
     }
   }, []);
 
-  return <link rel="icon" href={faviconUrl} sizes="any" />;
+  if (!faviconUrl) return null;
+
+  return (
+    <>
+      <link rel="icon" href={faviconUrl} type="image/svg+xml" />
+      <link rel="shortcut icon" href={faviconUrl} type="image/svg+xml" />
+    </>
+  );
 }
