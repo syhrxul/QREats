@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../src/lib/supabase';
+import { logWebsiteEvent } from '../../../src/lib/logs';
 
 interface ShopDB {
   id: string;
@@ -275,8 +276,12 @@ export default function SettingsPage() {
       setEmpPassword('');
       setEmpRole('kasir');
       setAddSuccess(true);
-      
       await loadShopData(shop.id);
+      void logWebsiteEvent(
+        'Staf Ditambahkan',
+        `Staf baru dengan email ${empEmail.trim()} ditambahkan ke toko ${shop.name} sebagai ${empRole}.`,
+        'success'
+      );
     } catch (err: any) {
       console.error(err);
       setAddError(err.message || 'Gagal menambahkan staf baru.');

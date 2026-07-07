@@ -3,6 +3,7 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../src/lib/supabase';
+import { logWebsiteEvent } from '../../src/lib/logs';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function LoginPage() {
       });
 
       if (authError || !authData.user) {
+        void logWebsiteEvent('Login Gagal', `Gagal login ${email}: ${authError?.message ?? 'Unknown error'}`, 'alert');
         setError(authError?.message ?? 'Login gagal. Periksa email dan password Anda.');
         return;
       }
@@ -46,6 +48,7 @@ export default function LoginPage() {
       localStorage.setItem('qreats_session_expiry', expiry.toISOString());
 
       const role: string = profile.role;
+      void logWebsiteEvent('Login Berhasil', `Email ${email} berhasil login sebagai ${role}.`, 'success');
       if (role === 'superadmin') {
         router.push('/dashboard/superadmin');
       } else if (role === 'owner' || role === 'admin') {

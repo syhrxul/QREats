@@ -3,9 +3,9 @@
 import Script from 'next/script';
 
 /**
- * Komponen Client untuk menginisialisasi OneSignal Web SDK secara global
- * menggunakan CDN script bawaan dan konfigurasi custom.
- * Dilengkapi dengan pengaman asal aman (HTTPS / localhost) agar tidak crash.
+ * Komponen inisialisasi OneSignal Web SDK v16.
+ * Mendukung notifikasi latar belakang (background push) via Service Worker.
+ * Kasir cukup sekali klik "Izinkan" dan notifikasi akan masuk meski tab ditutup.
  */
 export default function OneSignalInit() {
   return (
@@ -16,30 +16,45 @@ export default function OneSignalInit() {
         onLoad={() => {
           (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
           (window as any).OneSignalDeferred.push(async function(OneSignal: any) {
-            // Cek apakah origin aman (HTTPS atau localhost) sebelum inisialisasi
-            const isSecure = 
-              typeof window !== 'undefined' && 
-              (window.location.protocol === 'https:' || 
-               window.location.hostname === 'localhost' || 
+            const isSecure =
+              typeof window !== 'undefined' &&
+              (window.location.protocol === 'https:' ||
+               window.location.hostname === 'localhost' ||
                window.location.hostname === '127.0.0.1');
 
             if (!isSecure) {
-              console.warn('OneSignal Web SDK dinonaktifkan karena origin tidak aman (HTTP bukan localhost).');
+              console.warn('OneSignal dinonaktifkan: origin tidak aman (gunakan HTTPS atau localhost).');
               return;
             }
 
             try {
               await OneSignal.init({
-                appId: "a819b278-917e-4f10-b122-e148ba98f6ce",
-                safari_web_id: "web.onesignal.auto.3cfe9839-ceab-4809-9212-172318dbfb2e",
-                notifyButton: {
-                  enable: true,
-                },
+                appId: 'a819b278-917e-4f10-b122-e148ba98f6ce',
+                safari_web_id: 'web.onesignal.auto.3cfe9839-ceab-4809-9212-172318dbfb2e',
                 allowLocalhostAsSecureOrigin: true,
+
+                // Pastikan Service Worker terdaftar di root scope "/"
+                // agar notifikasi background bisa masuk dari seluruh halaman
+                serviceWorkerParam: { scope: '/' },
+
+                // Sembunyikan tombol bell bawaan OneSignal (kita pakai tombol custom di kasir)
+                notifyButton: { enable: false },
               });
-              console.log('OneSignal SDK berhasil diinisialisasi via script.');
+
+              // Setelah init, jika browser SUDAH mengizinkan notifikasi sebelumnya,
+              // langsung pastikan device ini ter-subscribe ke push server OneSignal.
+              // Ini kunci agar notifikasi background bisa diterima meski tab ditutup.
+              if (OneSignal.Notifications && OneSignal.Notifications.permission) {
+                const isSubscribed = await OneSignal.User?.PushSubscription?.optedIn;
+                if (!isSubscribed) {
+                  // Subscribe ulang jika entah kenapa subscripsi terputus
+                  await OneSignal.Notifications.requestPermission();
+                }
+              }
+
+              console.log('OneSignal SDK berhasil diinisialisasi (background push aktif).');
             } catch (err) {
-              console.warn('Gagal memproses inisialisasi OneSignal:', err);
+              console.warn('Gagal menginisialisasi OneSignal:', err);
             }
           });
         }}

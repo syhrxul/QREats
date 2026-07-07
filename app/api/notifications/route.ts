@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { logWebsiteEventServer } from '../../../src/lib/server-logs';
 
 /**
  * Endpoint API internal untuk mengirim push notification via OneSignal
@@ -45,12 +46,22 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       console.error('Error dari OneSignal API:', data);
+      await logWebsiteEventServer(
+        'Notifikasi Gagal Dikirim',
+        `OneSignal gagal mengirim notifikasi ke shopId=${shopId}: ${JSON.stringify(data)}`,
+        'alert'
+      );
       return NextResponse.json(
         { error: data.errors?.[0] || 'Gagal mengirim notifikasi via OneSignal' },
         { status: response.status }
       );
     }
 
+    await logWebsiteEventServer(
+      'Notifikasi Dikirim',
+      `Notifikasi berhasil dikirim ke shopId=${shopId} dengan judul '${title}'.`,
+      'success'
+    );
     return NextResponse.json({ success: true, data });
   } catch (err: any) {
     console.error('API route error:', err);

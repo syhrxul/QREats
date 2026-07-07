@@ -5,15 +5,12 @@ import { supabase } from '../../../src/lib/supabase';
 import { Order, OrderItem } from './types';
 import { playNotificationSound, initAndUnlockAudio } from './soundHelper';
 import { formatRupiah } from './formatHelpers';
+import { logWebsiteEvent } from '../../../src/lib/logs';
 import { confirmOrderPaid, rejectOrder, toggleOrderReady } from './dbOperations';
 import OrderCard from './OrderCard';
 import OrderDetailDrawer from './OrderDetailDrawer';
 import ReceiptModal from './ReceiptModal';
 
-/**
- * Halaman Dashboard Utama Kasir untuk memantau pesanan real-time.
- * File ini kurang dari 200 baris dengan memisahkan sub-komponen dan helper.
- */
 export default function KasirDashboardPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +31,6 @@ export default function KasirDashboardPage() {
   const soundEnabledRef = useRef(soundEnabled);
   useEffect(() => { soundEnabledRef.current = soundEnabled; }, [soundEnabled]);
 
-  // Periksa status izin notifikasi saat dimuat dan dengarkan perubahannya secara real-time
   useEffect(() => {
     if (typeof window === 'undefined' || !('Notification' in window)) return;
 
@@ -44,10 +40,8 @@ export default function KasirDashboardPage() {
       setIsNotificationBlocked(state === 'denied');
     };
 
-    // Jalankan pengecekan awal
     updatePermissionStates();
 
-    // Dengarkan perubahan izin jika didukung oleh browser
     if (typeof navigator !== 'undefined' && navigator.permissions && navigator.permissions.query) {
       navigator.permissions.query({ name: 'notifications' as any }).then((permissionStatus) => {
         permissionStatus.onchange = () => {
@@ -59,26 +53,30 @@ export default function KasirDashboardPage() {
     }
   }, []);
 
-  // Sinkronisasi tag shop_id kasir ke OneSignal
-  useEffect(() => {
-    if (!shopId || typeof window === 'undefined') return;
-
-    try {
-      const OS = (window as any).OneSignal;
-      if (OS && OS.User) {
-        OS.User.addTag("shop_id", shopId);
-      } else {
-        (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
-        (window as any).OneSignalDeferred.push(async function(OneSignalInstance: any) {
-          OneSignalInstance.User.addTag("shop_id", shopId);
-        });
+  const syncOneSignalTag = (id: string) => {
+    if (typeof window === 'undefined') return;
+    const doTag = (OS: any) => {
+      try {
+        OS.User.addTag('shop_id', id);
+        console.log('OneSignal tag shop_id berhasil disinkronisasi:', id);
+      } catch (e) {
+        console.warn('Gagal set tag shop_id:', e);
       }
-    } catch (err) {
-      console.warn("Gagal sinkronisasi tag shop_id ke OneSignal:", err);
+    };
+    const OS = (window as any).OneSignal;
+    if (OS && OS.User) {
+      doTag(OS);
+    } else {
+      (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
+      (window as any).OneSignalDeferred.push((OneSignalInstance: any) => doTag(OneSignalInstance));
     }
+  };
+
+  useEffect(() => {
+    if (!shopId) return;
+    syncOneSignalTag(shopId);
   }, [shopId]);
 
-  // Unlock AudioContext pada interaksi pertama (click/touchstart)
   useEffect(() => {
     const handleGesture = () => {
       initAndUnlockAudio();
@@ -93,35 +91,38 @@ export default function KasirDashboardPage() {
     };
   }, []);
 
-  // Meminta izin notifikasi browser secara manual via OneSignal SDK global (atau fallback native jika HTTP bukan localhost)
   async function handleEnableNotifications() {
-    if (typeof window !== 'undefined') {
-      const isSecure = 
-        window.location.protocol === 'https:' || 
-        window.location.hostname === 'localhost' || 
-        window.location.hostname === '127.0.0.1';
+    if (typeof window === 'undefined') return;
 
-      try {
-        const OS = (window as any).OneSignal;
-        if (isSecure && OS && OS.Notifications) {
-          await OS.Notifications.requestPermission();
-        } else {
-          // Fallback native jika HTTP atau SDK belum siap
-          if ('Notification' in window) {
-            await Notification.requestPermission();
-          }
+    const isSecure =
+      window.location.protocol === 'https:' ||
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1';
+
+    try {
+      const OS = (window as any).OneSignal;
+      if (isSecure && OS && OS.Notifications) {
+        // Minta izin via OneSignal SDK agar device terdaftar di push server OneSignal
+        await OS.Notifications.requestPermission();
+      } else {
+        // Fallback native jika HTTP atau SDK belum siap
+        if ('Notification' in window) {
+          await Notification.requestPermission();
         }
-        if (Notification.permission === 'granted') {
-          setShowNotificationBanner(false);
-          setIsNotificationBlocked(false);
-          playNotificationSound();
-        } else if (Notification.permission === 'denied') {
-          setShowNotificationBanner(false);
-          setIsNotificationBlocked(true);
-        }
-      } catch (err) {
-        console.warn("Gagal memproses perizinan OneSignal:", err);
       }
+
+      if (Notification.permission === 'granted') {
+        setShowNotificationBanner(false);
+        setIsNotificationBlocked(false);
+        // Segera sinkronisasi tag shop_id agar server tahu device ini milik toko mana
+        if (shopId) syncOneSignalTag(shopId);
+        playNotificationSound();
+      } else if (Notification.permission === 'denied') {
+        setShowNotificationBanner(false);
+        setIsNotificationBlocked(true);
+      }
+    } catch (err) {
+      console.warn('Gagal memproses perizinan OneSignal:', err);
     }
   }
 
@@ -226,6 +227,7 @@ export default function KasirDashboardPage() {
     setConfirmingId(orderId);
     const success = await confirmOrderPaid(orderId);
     if (success) {
+      void logWebsiteEvent('Order Lunas', `Pesanan ${orderId} ditandai lunas oleh kasir.`, 'success');
       setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: 'paid' } : o)));
       setSelectedOrder((prev) => (prev && prev.id === orderId ? { ...prev, status: 'paid' } : prev));
     }
@@ -240,6 +242,7 @@ export default function KasirDashboardPage() {
     setConfirmingId(orderId);
     const success = await rejectOrder(orderId, cleanReason);
     if (success) {
+      void logWebsiteEvent('Order Ditolak', `Pesanan ${orderId} ditolak. Alasan: ${cleanReason}`, 'alert');
       setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: 'rejected', receipt_path: cleanReason } : o)));
       setSelectedOrder((prev) => (prev && prev.id === orderId ? { ...prev, status: 'rejected', receipt_path: cleanReason } : prev));
       alert('Pesanan berhasil ditolak.');
@@ -252,6 +255,7 @@ export default function KasirDashboardPage() {
     setUpdatingReadyId(orderId);
     const success = await toggleOrderReady(orderId, currentReady);
     if (success) {
+      void logWebsiteEvent('Order Siap', `Status kesiapan pesanan ${orderId} diubah menjadi ${!currentReady ? 'siap' : 'belum siap'}.`, 'info');
       setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, is_ready: !currentReady } : o)));
       setSelectedOrder((prev) => (prev && prev.id === orderId ? { ...prev, is_ready: !currentReady } : prev));
     }

@@ -3,6 +3,7 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../src/lib/supabase';
+import { logWebsiteEvent } from '../../src/lib/logs';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -144,6 +145,7 @@ export default function RegisterPage() {
       expiry.setHours(0, 0, 0, 0);
       localStorage.setItem('qreats_session_expiry', expiry.toISOString());
 
+      void logWebsiteEvent('Registrasi Baru', `Akun ${email} berhasil didaftarkan sebagai ${registerMode === 'owner' ? 'pemilik toko' : 'kasir'}.`, 'success');
       setSuccess(true);
       // Auto redirect ke dashboard secara instan setelah 1.5 detik
       setTimeout(() => {

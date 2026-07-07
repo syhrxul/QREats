@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../../../src/lib/supabase';
+import { logWebsiteEvent } from '../../../src/lib/logs';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -310,19 +311,33 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
 
       if (itemsError) throw new Error(itemsError.message);
 
-      // Kirim push notification ke kasir via OneSignal secara aman (tanpa await agar tidak menghalangi user)
+      void logWebsiteEvent('Order Baru Dibuat', `Pesanan baru dibuat pada meja ${tableNumber} untuk toko ${shopId}. Total ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalPrice)}.`, 'info');
+
+      // Kirim push notification ke kasir via OneSignal.
+      // keepalive: true memastikan request tetap selesai meski pelanggan tutup tab setelah pesan.
       try {
         fetch('/api/notifications', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          keepalive: true,
           body: JSON.stringify({
             title: 'Pesanan Baru Masuk',
             message: `Pesanan dari ${tableNumber} (${customerName.trim()}) senilai ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalPrice)}`,
             shopId: shopId,
           }),
-        }).catch(err => console.warn('Gagal dispatch push notification:', err));
-      } catch (pushErr) {
+        }).then(async (res) => {
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            throw new Error(body.error ?? 'Gagal mengirim notifikasi');
+          }
+          void logWebsiteEvent('Notifikasi Dikirim', `Push notification berhasil dikirim untuk order ${newOrderId} di toko ${shopId}.`, 'success');
+        }).catch(err => {
+          console.warn('Gagal dispatch push notification:', err);
+          void logWebsiteEvent('Notifikasi Gagal', `Push notification gagal untuk order ${newOrderId}: ${err.message || err}`, 'alert');
+        });
+      } catch (pushErr: any) {
         console.warn('Gagal memicu push notification:', pushErr);
+        void logWebsiteEvent('Notifikasi Error', `Terjadi error saat memicu notifikasi order ${newOrderId}: ${pushErr.message || pushErr}`, 'alert');
       }
 
       setOrderId(newOrderId);

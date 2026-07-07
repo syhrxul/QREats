@@ -1,16 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../../../src/lib/supabase';
+import Link from 'next/link';
 
-interface LiveTransaction {
+interface WebsiteLog {
   id: string;
-  shopName: string;
-  tableNumber: string;
-  totalPrice: number;
-  status: string;
-  time: string;
-  type: 'insert' | 'paid' | 'ready';
+  created_at?: string;
+  title: string;
+  description: string;
+  time?: string;
+  type: 'system' | 'info' | 'success' | 'alert';
+  visitor_ip?: string;
 }
 
 export default function SuperadminPage() {
@@ -26,7 +27,44 @@ export default function SuperadminPage() {
   });
 
   const [loading, setLoading] = useState(true);
-  const [liveLogs, setLiveLogs] = useState<LiveTransaction[]>([]);
+  const [liveLogs, setLiveLogs] = useState<WebsiteLog[]>([]);
+  const [logsNotSetup, setLogsNotSetup] = useState(false);
+  const [copiedSql, setCopiedSql] = useState(false);
+
+  // Ambil log aktivitas langsung via Supabase client (pakai session auth user, bukan anon)
+  const fetchLogs = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('website_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (error) {
+        // Tabel belum dibuat — tampilkan panel setup SQL
+        setLogsNotSetup(true);
+        return;
+      }
+      setLogsNotSetup(false);
+      setLiveLogs(data ?? []);
+    } catch {
+      setLogsNotSetup(true);
+    }
+  }, []);
+
+  // Hapus log lama > 7 hari via API (server-side delete)
+  const cleanupOldLogs = useCallback(() => {
+    fetch('/api/logs', { method: 'GET' }).catch(() => null);
+  }, []);
+
+  async function addWebLog(title: string, description: string, type: WebsiteLog['type'] = 'info') {
+    try {
+      await supabase.from('website_logs').insert([{ title, description, type }]);
+    } catch (error) {
+      console.warn('Gagal mencatat log web secara manual:', error);
+    }
+  }
+
 
   // Favicon states
   const [currentFavicon, setCurrentFavicon] = useState<string | null>(null);
@@ -100,8 +138,27 @@ export default function SuperadminPage() {
   useEffect(() => {
     if (!authChecking && !accessDenied) {
       fetchStats();
+      fetchLogs();
+      cleanupOldLogs();
+      // Catat sesi masuk langsung ke Supabase
+      supabase.from('website_logs').insert([{
+        title: 'Sesi Terhubung',
+        description: 'Konsol pemantauan superadmin berhasil dimuat.',
+        type: 'system',
+      }]).then(({ error }) => {
+        if (error) console.warn('Gagal catat sesi (tabel belum dibuat?):', error.message);
+      });
     }
-  }, [authChecking, accessDenied]);
+  }, [authChecking, accessDenied, cleanupOldLogs, fetchLogs]);
+
+  useEffect(() => {
+    if (authChecking || accessDenied) return;
+    const interval = window.setInterval(() => {
+      fetchLogs();
+    }, 10000);
+
+    return () => window.clearInterval(interval);
+  }, [authChecking, accessDenied, fetchLogs]);
 
   // Load current favicon public URL to see if it exists
   useEffect(() => {
@@ -150,6 +207,14 @@ export default function SuperadminPage() {
         setCurrentFavicon(`${data.publicUrl}?t=${Date.now()}`);
       }
       setUploadSuccess(true);
+      const { error: faviconLogError } = await supabase.from('website_logs').insert([{
+        title: 'Favicon Diperbarui',
+        description: 'Logo favicon website baru berhasil diunggah dan diperbarui.',
+        type: 'success',
+      }]);
+      if (faviconLogError) {
+        console.warn('Gagal mencatat log favicon:', faviconLogError.message);
+      }
     } catch (err: any) {
       console.error('Error uploading favicon:', err);
       setUploadError('Gagal mengunggah favicon: ' + (err.message || err));
@@ -158,55 +223,30 @@ export default function SuperadminPage() {
     }
   }
 
-  // ─── Supabase Realtime Transaction Feed (Global) ─────────────────────────────
+  // ─── Supabase Realtime Website Logs Feed ───────────────────────────────────
 
   useEffect(() => {
     if (authChecking || accessDenied) return;
 
+    // Menghubungkan realtime Supabase untuk mendengarkan logs baru yang masuk di tabel website_logs secara live
     const channel = supabase
-      .channel('superadmin-live-feed')
+      .channel('superadmin-logs-feed')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'orders' },
-        async (payload: any) => {
-          const shopId = payload.new?.shop_id || payload.old?.shop_id;
-          let shopName = 'Toko Umum';
-          if (shopId) {
-            const { data } = await supabase.from('shops').select('name').eq('id', shopId).single();
-            if (data) shopName = data.name;
-          }
-
-          const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-          if (payload.eventType === 'INSERT') {
-            const newTx: LiveTransaction = {
-              id: payload.new.id,
-              shopName,
-              tableNumber: payload.new.table_number,
-              totalPrice: payload.new.total_price,
-              status: payload.new.status,
-              time,
-              type: 'insert',
-            };
-            setLiveLogs((prev) => [newTx, ...prev.slice(0, 19)]);
+        { event: 'INSERT', schema: 'public', table: 'website_logs' },
+        (payload: any) => {
+          // Format waktu dari created_at DB PostgreSQL
+          const time = new Date(payload.new.created_at).toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          });
+          const newLog = { ...payload.new, time };
+          setLiveLogs((prev) => [newLog, ...prev.slice(0, 19)]);
+          
+          // Jika itu adalah pesanan baru, update transaksi hari ini secara otomatis
+          if (payload.new.title === 'Order Baru Dibuat') {
             setStats((prev) => ({ ...prev, activeTransactions: prev.activeTransactions + 1 }));
-          } else if (payload.eventType === 'UPDATE') {
-            const updated = payload.new;
-            let type: 'paid' | 'ready' = 'paid';
-            if (updated.is_ready && !payload.old?.is_ready) {
-              type = 'ready';
-            }
-
-            const updateTx: LiveTransaction = {
-              id: updated.id,
-              shopName,
-              tableNumber: updated.table_number,
-              totalPrice: updated.total_price,
-              status: updated.status,
-              time,
-              type,
-            };
-            setLiveLogs((prev) => [updateTx, ...prev.slice(0, 19)]);
           }
         }
       )
@@ -256,10 +296,13 @@ export default function SuperadminPage() {
           <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Statistik keseluruhan platform & log aktivitas transaksi real-time</p>
         </div>
         <button
-          onClick={fetchStats}
-          className="px-4 py-2 border border-[#1A1A1A]/20 hover:bg-[#1A1A1A]/5 text-xs font-bold rounded-xl transition-all"
+          onClick={() => {
+            fetchStats();
+            addWebLog('Penyegaran Data', 'Statistik keseluruhan platform berhasil diperbarui.', 'system');
+          }}
+          className="px-4 py-2 border border-[#1A1A1A]/20 hover:bg-[#1A1A1A]/5 text-xs font-bold rounded-xl transition-all cursor-pointer"
         >
-          🔄 Refresh
+          Refresh
         </button>
       </div>
 
@@ -329,41 +372,54 @@ export default function SuperadminPage() {
           )}
         </div>
 
-        {/* Real-time Monitoring */}
+
+        {/* Log Website */}
         <div className="bg-[#1A1A1A] text-white rounded-3xl p-6 space-y-4 shadow-sm flex flex-col justify-between min-h-[380px]">
           <div>
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-base">Monitoring Transaksi Real-Time</h3>
+              <h3 className="font-bold text-base">Log Website</h3>
               <span className="flex items-center gap-1.5 text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-bold">
                 <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping" />
                 Live Feed
               </span>
             </div>
-            <p className="text-xs text-white/50 mt-0.5">Arus transaksi terbaru (order baru, lunas, siap saji) di platform secara langsung</p>
+            <p className="text-xs text-white/50 mt-0.5">Arus log aktivitas dan transaksi platform secara langsung</p>
           </div>
 
           <div className="flex-1 space-y-2 max-h-[300px] overflow-y-auto pr-1 mt-4">
             {liveLogs.length === 0 ? (
               <div className="text-center py-20 text-white/20 text-xs">
-                <span className="text-3xl block mb-2">📡</span>
-                Menunggu pesanan baru masuk...
+                Menunggu log aktivitas baru...
               </div>
             ) : (
-              liveLogs.map((log, idx) => (
-                <div key={idx} className="bg-white/5 border border-white/5 rounded-xl p-3 flex items-center justify-between text-xs transition-all hover:bg-white/10 animate-fade-in">
-                  <div>
-                    <p className="font-bold text-white">
-                      {log.type === 'insert' && `🛎️ Order Baru di ${log.shopName}`}
-                      {log.type === 'paid' && `✓ Pembayaran Lunas di ${log.shopName}`}
-                      {log.type === 'ready' && `🍳 Pesanan Siap Saji di ${log.shopName}`}
-                    </p>
-                    <p className="text-[10px] text-white/50 mt-1">
-                      {log.tableNumber} · Tagihan: <span className="font-semibold text-white/80">{formatRupiah(log.totalPrice)}</span>
-                    </p>
+              liveLogs.map((log, idx) => {
+                let dotColor = 'bg-blue-500';
+                if (log.type === 'success') dotColor = 'bg-emerald-500';
+                if (log.type === 'info') dotColor = 'bg-indigo-500';
+                if (log.type === 'alert') dotColor = 'bg-amber-500';
+
+                return (
+                  <div key={idx} className="bg-white/5 border border-white/5 rounded-xl p-3 flex items-center justify-between text-xs transition-all hover:bg-white/10 animate-fade-in">
+                    <div className="flex items-start gap-2.5 min-w-0">
+                      <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${dotColor}`} />
+                      <div className="min-w-0">
+                        <p className="font-bold text-white leading-tight">{log.title}</p>
+                        <p className="text-[10px] text-white/50 mt-1 flex flex-wrap items-center gap-1.5 font-sans">
+                          <span className="truncate" title={log.description}>{log.description}</span>
+                          {log.visitor_ip && (
+                            <span className="bg-white/10 text-white/70 px-1.5 py-0.5 rounded font-mono text-[8px] flex-shrink-0">
+                              IP: {log.visitor_ip}
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-mono text-white/40 ml-4 flex-shrink-0">
+                      {log.time || new Date((log as any).created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    </span>
                   </div>
-                  <span className="text-[9px] font-mono text-white/40">{log.time}</span>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>

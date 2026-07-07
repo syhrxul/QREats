@@ -19,6 +19,19 @@ export default function LandingPage() {
     });
   }, []);
 
+  // Catat kunjungan pengguna ke landing page (lengkap dengan IP yang dideteksi server)
+  useEffect(() => {
+    fetch('/api/logs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: 'Kunjungan Website',
+        description: 'Seorang pengunjung membuka halaman utama.',
+        type: 'info'
+      })
+    }).catch((err) => console.warn('Gagal mencatat log kunjungan:', err));
+  }, []);
+
   // Animated counter effect
   useEffect(() => {
     const targets = { orders: 12480, merchants: 345, tables: 2190 };

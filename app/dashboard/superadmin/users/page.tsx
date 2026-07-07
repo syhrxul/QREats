@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../../src/lib/supabase';
 import { createClient } from '@supabase/supabase-js';
+import { logWebsiteEvent } from '../../../../src/lib/logs';
 
 interface ProfileDB {
   id: string;
@@ -158,6 +159,11 @@ export default function SuperadminUsersPage() {
       setNewShopId('');
       setRegisterSuccess(true);
       await fetchUsersAndShops();
+      void logWebsiteEvent(
+        'User Baru Dibuat',
+        `Superadmin membuat akun baru: ${newEmail.trim()} dengan role ${newRole}.`,
+        'success'
+      );
 
     } catch (err: any) {
       console.error(err);
@@ -204,6 +210,11 @@ export default function SuperadminUsersPage() {
       }
 
       await fetchUsersAndShops();
+      void logWebsiteEvent(
+        'User Diperbarui',
+        `Superadmin memperbarui pengguna ${editingUser.email} menjadi email ${editEmail.trim()} dengan role ${editRole}.`,
+        'info'
+      );
       setTimeout(() => {
         setEditingUser(null);
       }, 1000);
@@ -217,22 +228,40 @@ export default function SuperadminUsersPage() {
 
   async function handleDeleteUser() {
     if (!editingUser) return;
-    if (!confirm(`Apakah Anda yakin ingin menghapus profil pengguna ${editingUser.email}?`)) return;
+    if (!confirm(`Hapus pengguna "${editingUser.email}" secara permanen? Aksi ini tidak dapat dibatalkan.`)) return;
 
     setUpdating(true);
     setUpdateError('');
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', editingUser.id);
+      const deletedUser = editingUser;
+      // Dapatkan session token untuk verifikasi superadmin di server
+      const { data: { session } } = await supabase.auth.getSession();
 
-      if (error) throw error;
+      const res = await fetch('/api/admin/delete-user', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token ?? ''}`,
+        },
+        body: JSON.stringify({ userId: editingUser.id }),
+      });
 
-      alert('Profil pengguna berhasil dihapus dari database.');
-      await fetchUsersAndShops();
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.error || 'Gagal menghapus pengguna.');
+      }
+
+      if (deletedUser) {
+        void logWebsiteEvent(
+          'User Dihapus',
+          `Superadmin menghapus pengguna ${deletedUser.email} (${deletedUser.id}).`,
+          'alert'
+        );
+      }
       setEditingUser(null);
+      await fetchUsersAndShops();
     } catch (err: any) {
       console.error(err);
       setUpdateError(err.message || 'Gagal menghapus pengguna.');
@@ -517,9 +546,9 @@ export default function SuperadminUsersPage() {
                   type="button"
                   onClick={handleDeleteUser}
                   disabled={updating}
-                  className="flex-1 py-3 bg-red-50 border border-red-200 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-all active:scale-[0.98] cursor-pointer font-sans"
+                  className="flex-1 py-3 bg-red-50 border border-red-200 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-all active:scale-[0.98] cursor-pointer font-sans disabled:opacity-50"
                 >
-                  Hapus User
+                  {updating ? 'Menghapus...' : 'Hapus User Permanen'}
                 </button>
                 <button
                   type="submit"
