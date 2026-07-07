@@ -56,8 +56,13 @@ export default function LandingPage() {
           <span className="text-2xl font-black tracking-tight text-[#1A1A1A]">QREats</span>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={() => setShowDemoModal(true)} className="px-4 py-2 text-xs font-bold text-orange-600 border border-orange-200 rounded-xl hover:bg-orange-50 transition-all">
-            🎯 Lihat Demo
+          <button onClick={() => setShowDemoModal(true)} className="px-4 py-2 text-xs font-bold text-orange-600 border border-orange-200 rounded-xl hover:bg-orange-50 transition-all flex items-center gap-1.5 cursor-pointer">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <circle cx="12" cy="12" r="10" />
+              <circle cx="12" cy="12" r="6" />
+              <circle cx="12" cy="12" r="2" />
+            </svg>
+            Lihat Demo
           </button>
           {loading ? null : hasSession ? (
             <Link href="/dashboard/menus" className="px-5 py-2.5 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl hover:bg-[#333] transition-all">Masuk Dashboard</Link>
@@ -169,13 +174,52 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: '📱', title: 'QR Self-Order', desc: 'Pelanggan scan QR di meja → pilih menu → langsung pesan. Tanpa install aplikasi.', bg: 'bg-orange-100' },
-              { icon: '⚡', title: 'Notifikasi Real-Time', desc: 'Kasir langsung dapat notifikasi saat ada pesanan baru masuk. Tidak perlu refresh halaman.', bg: 'bg-emerald-100' },
-              { icon: '🛎️', title: 'Verifikasi Pembayaran', desc: 'Kasir bisa verifikasi bukti transfer langsung dari dashboard — lunas atau tolak dalam satu klik.', bg: 'bg-blue-100' },
-              { icon: '📊', title: 'Dashboard Analisis', desc: 'Pantau menu terlaris, pesanan per hari, & status meja — semua diupdate secara real-time.', bg: 'bg-violet-100' },
+              {
+                icon: (
+                  <svg className="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2" />
+                    <line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="3" />
+                  </svg>
+                ),
+                title: 'QR Self-Order',
+                desc: 'Pelanggan scan QR di meja -> pilih menu -> langsung pesan. Tanpa install aplikasi.',
+                bg: 'bg-orange-100'
+              },
+              {
+                icon: (
+                  <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                  </svg>
+                ),
+                title: 'Notifikasi Real-Time',
+                desc: 'Kasir langsung dapat notifikasi saat ada pesanan baru masuk. Tidak perlu refresh halaman.',
+                bg: 'bg-emerald-100'
+              },
+              {
+                icon: (
+                  <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
+                ),
+                title: 'Verifikasi Pembayaran',
+                desc: 'Kasir bisa verifikasi bukti transfer langsung dari dashboard — lunas atau tolak dalam satu klik.',
+                bg: 'bg-blue-100'
+              },
+              {
+                icon: (
+                  <svg className="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="20" x2="18" y2="10" />
+                    <line x1="12" y1="20" x2="12" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="14" />
+                  </svg>
+                ),
+                title: 'Dashboard Analisis',
+                desc: 'Pantau menu terlaris, pesanan per hari, & status meja — semua diupdate secara real-time.',
+                bg: 'bg-violet-100'
+              },
             ].map((f, i) => (
               <div key={i} className="bg-[#F5F2EB]/50 border border-[#1A1A1A]/5 rounded-2xl p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                <div className={`w-12 h-12 ${f.bg} rounded-xl flex items-center justify-center text-2xl mb-4`}>{f.icon}</div>
+                <div className={`w-12 h-12 ${f.bg} rounded-xl flex items-center justify-center mb-4`}>{f.icon}</div>
                 <h3 className="text-sm font-bold text-[#1A1A1A] mb-1.5">{f.title}</h3>
                 <p className="text-xs text-[#1A1A1A]/50 leading-relaxed">{f.desc}</p>
               </div>
@@ -225,11 +269,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-[#1A1A1A]/5 py-6 text-center text-xs text-[#1A1A1A]/40 bg-[#F5F2EB]">
-        <p>QREats © {new Date().getFullYear()} — Sistem Pemesanan &amp; Kasir Mandiri Berbasis QR</p>
-      </footer>
-
       {/* Demo Modal */}
       {showDemoModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -237,13 +276,23 @@ export default function LandingPage() {
           <div className="relative bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
             <button onClick={() => setShowDemoModal(false)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#1A1A1A]/10 flex items-center justify-center text-[#1A1A1A] hover:bg-[#1A1A1A]/20 transition-colors text-sm">✕</button>
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">🎯</div>
+              <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <circle cx="12" cy="12" r="6" />
+                  <circle cx="12" cy="12" r="2" />
+                </svg>
+              </div>
               <h3 className="text-xl font-black text-[#1A1A1A]">Pilih Mode Demo</h3>
               <p className="text-sm text-[#1A1A1A]/50 mt-1">Coba langsung tanpa perlu login — semua data adalah simulasi.</p>
             </div>
             <div className="space-y-3">
               <Link href="/demo/kasir" onClick={() => setShowDemoModal(false)} className="flex items-center gap-4 p-5 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-2xl hover:shadow-md hover:border-orange-300 transition-all group">
-                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center text-white text-xl flex-shrink-0 group-hover:scale-110 transition-transform">🛎️</div>
+                <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
+                </div>
                 <div>
                   <h4 className="font-bold text-[#1A1A1A] text-sm">Dashboard Kasir</h4>
                   <p className="text-xs text-[#1A1A1A]/50 mt-0.5">Lihat antrean pesanan, verifikasi pembayaran, tandai pesanan siap.</p>
@@ -251,7 +300,13 @@ export default function LandingPage() {
                 <svg className="w-5 h-5 text-[#1A1A1A]/30 flex-shrink-0 group-hover:text-orange-500 group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
               </Link>
               <Link href="/demo/admin" onClick={() => setShowDemoModal(false)} className="flex items-center gap-4 p-5 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-2xl hover:shadow-md hover:border-orange-300 transition-all group">
-                <div className="w-12 h-12 bg-[#1A1A1A] rounded-xl flex items-center justify-center text-white text-xl flex-shrink-0 group-hover:scale-110 transition-transform">📊</div>
+                <div className="w-12 h-12 bg-[#1A1A1A] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="20" x2="18" y2="10" />
+                    <line x1="12" y1="20" x2="12" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="14" />
+                  </svg>
+                </div>
                 <div>
                   <h4 className="font-bold text-[#1A1A1A] text-sm">Dashboard Admin</h4>
                   <p className="text-xs text-[#1A1A1A]/50 mt-0.5">Kelola menu, lihat analisis pesanan, atur QR meja &amp; karyawan.</p>
