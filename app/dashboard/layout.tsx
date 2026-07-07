@@ -29,6 +29,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [pendingOrders, setPendingOrders] = useState(0);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [delayedOrders, setDelayedOrders] = useState<any[]>([]);
 
   // Impersonate state
   const [impersonateShopId, setImpersonateShopId] = useState<string | null>(null);
@@ -45,6 +46,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (!session) {
       router.push('/login');
       return;
+    }
+
+    // Cek custom token/session expiry (1 minggu, batas jam 12 malam)
+    const expiryStr = localStorage.getItem('qreats_session_expiry');
+    if (expiryStr) {
+      const expiryDate = new Date(expiryStr);
+      if (new Date() >= expiryDate) {
+        localStorage.removeItem('qreats_session_expiry');
+        await supabase.auth.signOut();
+        router.push('/login');
+        return;
+      }
+    } else {
+      // Set default jika tidak ada cache (migrasi sesi lama)
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + 7);
+      expiry.setHours(0, 0, 0, 0);
+      localStorage.setItem('qreats_session_expiry', expiry.toISOString());
     }
 
     // 1. Load Profile
@@ -117,8 +136,37 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     setLoading(false);
   }, [router]);
 
+  const checkDelayedOrders = useCallback(async () => {
+    const activeShopId = profile?.shop_id;
+    if (!activeShopId) return;
+
+    const { data, error } = await supabase
+      .from('orders')
+      .select('id, table_number, created_at, customer_name, total_price')
+      .eq('shop_id', activeShopId)
+      .eq('status', 'pending');
+
+    if (!error && data) {
+      const now = new Date().getTime();
+      const delayed = data.filter((o) => {
+        const orderTime = new Date(o.created_at).getTime();
+        const diffMinutes = (now - orderTime) / (1000 * 60);
+        return diffMinutes >= 5; // 5 menit atau lebih
+      });
+      setDelayedOrders(delayed);
+    }
+  }, [profile?.shop_id]);
+
   useEffect(() => {
     loadDashboardData();
+  }, [loadDashboardData]);
+
+  // Realtime subscription & initial check
+  useEffect(() => {
+    const activeShopId = profile?.shop_id;
+    if (!activeShopId) return;
+
+    checkDelayedOrders();
 
     // Subscribe realtime order status agar badge pending di sidebar sinkron
     const channel = supabase
@@ -127,15 +175,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         'postgres_changes',
         { event: '*', schema: 'public', table: 'orders' },
         () => {
-          const activeShopId = profile?.shop_id;
-          if (activeShopId) {
-            supabase
-              .from('orders')
-              .select('*', { count: 'exact', head: true })
-              .eq('shop_id', activeShopId)
-              .eq('status', 'pending')
-              .then(({ count }) => setPendingOrders(count ?? 0));
-          }
+          supabase
+            .from('orders')
+            .select('*', { count: 'exact', head: true })
+            .eq('shop_id', activeShopId)
+            .eq('status', 'pending')
+            .then(({ count }) => setPendingOrders(count ?? 0));
+          
+          checkDelayedOrders();
         }
       )
       .subscribe();
@@ -143,7 +190,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [loadDashboardData, profile?.shop_id]);
+  }, [profile?.shop_id, checkDelayedOrders]);
+
+  // Periodic checker timer (setiap 30 detik)
+  useEffect(() => {
+    const activeShopId = profile?.shop_id;
+    if (!activeShopId) return;
+
+    const interval = setInterval(() => {
+      checkDelayedOrders();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [profile?.shop_id, checkDelayedOrders]);
 
   // Dynamic Tab Title
   useEffect(() => {
@@ -608,6 +667,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   {activating ? '...' : 'Aktivasi'}
                 </button>
               </div>
+            </div>
+          )}
+          
+          {/* Banner Pesanan Terlambat Belum Diproses (Admin/Owner Escalation) */}
+          {(profile?.role === 'owner' || profile?.role === 'admin') && delayedOrders.length > 0 && (
+            <div className="bg-rose-50 border-b border-rose-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm font-sans animate-fade-in">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl animate-bounce">🚨</span>
+                <div>
+                  <p className="font-bold text-sm text-rose-800">
+                    Ada {delayedOrders.length} Pesanan Pending Belum Diproses Kasir (&gt; 5 Menit)!
+                  </p>
+                  <p className="text-xs text-rose-600 mt-1">
+                    Meja terpengaruh: <span className="font-bold">{delayedOrders.map(o => o.table_number).join(', ')}</span>. Silakan tindak lanjuti untuk menjaga kenyamanan pelanggan.
+                  </p>
+                </div>
+              </div>
+              
+              <Link
+                href="/dashboard/kasir"
+                className="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow flex-shrink-0 text-center"
+              >
+                Buka Antrean Kasir ➜
+              </Link>
             </div>
           )}
 

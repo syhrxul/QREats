@@ -138,11 +138,21 @@ export default function RegisterPage() {
         }
       }
 
+      // Simpan session expiry (1 minggu, batas jam 12 malam)
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + 7);
+      expiry.setHours(0, 0, 0, 0);
+      localStorage.setItem('qreats_session_expiry', expiry.toISOString());
+
       setSuccess(true);
-      // Auto redirect ke login setelah 3 detik
+      // Auto redirect ke dashboard secara instan setelah 1.5 detik
       setTimeout(() => {
-        router.push('/login');
-      }, 3000);
+        if (registerMode === 'owner') {
+          router.push('/dashboard/menus');
+        } else {
+          router.push('/dashboard/kasir');
+        }
+      }, 1500);
 
     } catch (err: any) {
       setError(err.message || 'Terjadi kesalahan saat mendaftar.');

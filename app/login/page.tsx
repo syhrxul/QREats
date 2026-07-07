@@ -39,6 +39,12 @@ export default function LoginPage() {
         return;
       }
 
+      // Simpan session expiry (1 minggu, batas jam 12 malam)
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + 7);
+      expiry.setHours(0, 0, 0, 0);
+      localStorage.setItem('qreats_session_expiry', expiry.toISOString());
+
       const role: string = profile.role;
       if (role === 'superadmin') {
         router.push('/dashboard/superadmin');

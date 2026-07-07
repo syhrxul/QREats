@@ -310,6 +310,21 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
 
       if (itemsError) throw new Error(itemsError.message);
 
+      // Kirim push notification ke kasir via OneSignal secara aman (tanpa await agar tidak menghalangi user)
+      try {
+        fetch('/api/notifications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: 'Pesanan Baru Masuk',
+            message: `Pesanan dari ${tableNumber} (${customerName.trim()}) senilai ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalPrice)}`,
+            shopId: shopId,
+          }),
+        }).catch(err => console.warn('Gagal dispatch push notification:', err));
+      } catch (pushErr) {
+        console.warn('Gagal memicu push notification:', pushErr);
+      }
+
       setOrderId(newOrderId);
       setIsCartOpen(false);
       setOrderStep('success');
