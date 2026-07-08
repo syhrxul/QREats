@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../src/lib/supabase';
+import { LockIcon } from '../../components/Icons';
 
 interface LicenseDB {
   token: string;

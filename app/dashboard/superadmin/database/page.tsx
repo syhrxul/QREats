@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../../src/lib/supabase';
 import Link from 'next/link';
+import { LockIcon } from '../../../components/Icons';
 
 interface TableSizeInfo {
   table_name: string;

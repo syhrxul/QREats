@@ -66,7 +66,7 @@ export default function OrderList({ shopId, userRole, onSelect, playSound }: Pro
       }
     ).subscribe();
 
-    return () => supabase.removeChannel(channel);
+    return () => { supabase.removeChannel(channel); };
   }, [shopId, userRole]);
 
   if (loading) {

@@ -18,5 +18,6 @@ export interface Order {
   customer_phone?: string | null;
   customer_email?: string | null;
   is_ready?: boolean;
+  shop_id?: string;
   order_items?: OrderItem[];
 }
