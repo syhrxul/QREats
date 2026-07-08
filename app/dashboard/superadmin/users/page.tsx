@@ -335,7 +335,7 @@ export default function SuperadminUsersPage() {
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="Nama Lengkap"
-                  className="w-full px-3 py-2 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-lg focus:outline-none"
+                  className="w-full px-3 py-2 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-lg focus:outline-none text-[#1A1A1A]"
                 />
               </div>
 
@@ -347,7 +347,7 @@ export default function SuperadminUsersPage() {
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder="email@domain.com"
-                  className="w-full px-3 py-2 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-lg focus:outline-none"
+                  className="w-full px-3 py-2 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-lg focus:outline-none text-[#1A1A1A]"
                 />
               </div>
 
@@ -359,7 +359,7 @@ export default function SuperadminUsersPage() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Min. 6 karakter"
-                  className="w-full px-3 py-2 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-lg focus:outline-none"
+                  className="w-full px-3 py-2 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-lg focus:outline-none text-[#1A1A1A]"
                 />
               </div>
 
@@ -369,7 +369,7 @@ export default function SuperadminUsersPage() {
                   <select
                     value={newRole}
                     onChange={(e) => setNewRole(e.target.value as any)}
-                    className="w-full px-2 py-2 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-lg focus:outline-none font-bold"
+                    className="w-full px-2 py-2 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-lg focus:outline-none font-bold text-[#1A1A1A]"
                   >
                     <option value="owner">Owner</option>
                     <option value="admin">Admin</option>
@@ -382,7 +382,7 @@ export default function SuperadminUsersPage() {
                   <select
                     value={newShopId}
                     onChange={(e) => setNewShopId(e.target.value)}
-                    className="w-full px-2 py-2 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-lg focus:outline-none font-bold"
+                    className="w-full px-2 py-2 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-lg focus:outline-none font-bold text-[#1A1A1A]"
                   >
                     <option value="">-- Tanpa Toko --</option>
                     {shops.map((s) => (
@@ -504,7 +504,7 @@ export default function SuperadminUsersPage() {
                   value={editPassword}
                   onChange={(e) => setEditPassword(e.target.value)}
                   placeholder="Kosongkan jika tidak diubah"
-                  className="w-full px-3 py-2.5 bg-white border border-[#1A1A1A]/10 rounded-lg focus:outline-none text-xs font-sans"
+                  className="w-full px-3 py-2.5 bg-white border border-[#1A1A1A]/10 rounded-lg focus:outline-none text-[#1A1A1A] text-xs font-sans"
                 />
                 <p className="text-[9px] text-[#1A1A1A]/35 mt-1 font-sans">Catatan: Mengubah password akun user lain membutuhkan Admin API (Service Role Key).</p>
               </div>

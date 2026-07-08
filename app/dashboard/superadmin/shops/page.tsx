@@ -14,8 +14,11 @@ interface ShopDB {
   subscription_tier?: string;
   addon_tables?: number;
   addon_cashiers?: number;
+  upgrade_request?: boolean;
+  upgrade_reason?: string;
 }
 
+import { Crown } from 'lucide-react';
 import { LockIcon, EyeIcon, ShieldIcon, RefreshIcon, AlertIcon } from '../../../components/Icons';
 
 export default function SuperadminShopsPage() {
@@ -75,6 +78,30 @@ export default function SuperadminShopsPage() {
       setSelectedShop({ ...selectedShop, trial_ends_at: newExpiry, is_active: true });
       fetchShops();
       setAlertMsg({ title: 'Berhasil', message: `Lisensi diperpanjang ${addDaysInput} hari.`, type: 'success' });
+    } catch (e: any) {
+      setAlertMsg({ title: 'Gagal', message: 'Error: ' + e.message, type: 'error' });
+    } finally {
+      setIsProcessingAction(false);
+    }
+  }
+
+  async function handleApprovePro() {
+    if (!selectedShop) return;
+    setIsProcessingAction(true);
+    try {
+      const { error } = await supabase.from('shops').update({ 
+        subscription_tier: 'pro',
+        upgrade_request: false,
+        upgrade_reason: null,
+        base_table_limit: 9999,
+        base_cashier_limit: 9999
+      }).eq('id', selectedShop.id);
+      
+      if (error) throw error;
+      
+      setAlertMsg({ title: 'Berhasil', message: 'Toko berhasil di-upgrade ke Paket Pro!', type: 'success' });
+      setSelectedShop({ ...selectedShop, subscription_tier: 'pro', upgrade_request: false, upgrade_reason: undefined });
+      fetchShops();
     } catch (e: any) {
       setAlertMsg({ title: 'Gagal', message: 'Error: ' + e.message, type: 'error' });
     } finally {
@@ -229,7 +256,7 @@ export default function SuperadminShopsPage() {
   if (authChecking) {
     return (
       <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center font-sans">
-        <p className="text-sm text-[#1A1A1A]/40">Memeriksa hak akses superadmin...</p>
+        <p className="text-sm text-[#1A1A1A]/60">Memeriksa hak akses superadmin...</p>
       </div>
     );
   }
@@ -240,7 +267,7 @@ export default function SuperadminShopsPage() {
         <div className="text-center max-w-sm">
           <span className="block mb-4"><LockIcon className="w-12 h-12 text-[#1A1A1A] mx-auto" /></span>
           <h1 className="text-2xl font-black text-[#1A1A1A] mb-2">Akses Dibatasi</h1>
-          <p className="text-sm text-[#1A1A1A]/50">Halaman ini khusus untuk Superadmin.</p>
+          <p className="text-sm text-[#1A1A1A]/70">Halaman ini khusus untuk Superadmin.</p>
         </div>
       </div>
     );
@@ -273,11 +300,11 @@ export default function SuperadminShopsPage() {
       <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between bg-white">
         <div>
           <h2 className="text-lg font-black text-[#1A1A1A]">Kelola Merchant Toko</h2>
-          <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Daftar toko merchant, masa aktif lisensi, staf karyawan terdaftar</p>
+          <p className="text-xs text-[#1A1A1A]/60 mt-0.5">Daftar toko merchant, masa aktif lisensi, staf karyawan terdaftar</p>
         </div>
         <button
           onClick={fetchShops}
-          className="px-4 py-2 border border-[#1A1A1A]/20 hover:bg-[#1A1A1A]/5 text-xs font-bold rounded-xl transition-all flex items-center gap-1"
+          className="px-4 py-2 border border-[#1A1A1A]/20 bg-white text-[#1A1A1A] hover:bg-[#F5F2EB] text-xs font-bold rounded-xl transition-all flex items-center gap-1"
         >
           <RefreshIcon className="w-4 h-4" /> Refresh
         </button>
@@ -290,7 +317,7 @@ export default function SuperadminShopsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-bold text-[#1A1A1A] text-base">Toko Terdaftar</h3>
-              <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Pantau status & intip dashboard menu kasir toko</p>
+              <p className="text-xs text-[#1A1A1A]/60 mt-0.5">Pantau status & intip dashboard menu kasir toko</p>
             </div>
             <span className="bg-[#1A1A1A] text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
               {shops.length} Toko
@@ -305,7 +332,7 @@ export default function SuperadminShopsPage() {
                 ))}
               </div>
             ) : shops.length === 0 ? (
-              <p className="text-xs text-center py-12 text-[#1A1A1A]/30">Belum ada toko yang terdaftar.</p>
+              <p className="text-xs text-center py-12 text-[#1A1A1A]/60">Belum ada toko yang terdaftar.</p>
             ) : (
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
@@ -320,25 +347,49 @@ export default function SuperadminShopsPage() {
                 <tbody>
                   {shops.map((s) => {
                     const isTrialActive = new Date(s.trial_ends_at) > new Date();
+                    const daysLeft = Math.ceil((new Date(s.trial_ends_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                    const isExpiringSoon = isTrialActive && daysLeft <= 2 && daysLeft >= 0;
+                    
                     return (
                       <tr 
                         key={s.id} 
                         className="border-b border-[#1A1A1A]/5 last:border-b-0 hover:bg-[#F5F2EB]/10 transition-colors cursor-pointer"
                         onClick={() => handleOpenShopDetail(s)}
                       >
-                        <td className="p-3 font-bold text-[#1A1A1A]">
+                        <td className="p-3 font-bold text-[#1A1A1A] flex items-center gap-2">
                           {s.name}
+                          {s.upgrade_request && (
+                            <span className="bg-amber-100 text-amber-700 text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 font-black" title={s.upgrade_reason || ''}>
+                              <Crown className="w-3 h-3" /> PRO REQ
+                            </span>
+                          )}
                         </td>
-                        <td className="p-3 font-mono text-[#1A1A1A]/40 text-[10px]">
+                        <td className="p-3 font-mono text-[#1A1A1A]/60 text-[10px]">
                           {s.id}
                         </td>
                         <td className="p-3 text-center font-semibold text-[#1A1A1A]">
                           {s.employeeCount} Staf
                         </td>
                         <td className="p-3 font-semibold">
-                          <span className={isTrialActive ? 'text-emerald-600' : 'text-red-500'}>
-                            {new Date(s.trial_ends_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className={
+                              !isTrialActive ? 'text-red-500' 
+                              : isExpiringSoon ? 'text-amber-500' 
+                              : 'text-emerald-600'
+                            }>
+                              {new Date(s.trial_ends_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </span>
+                            {isExpiringSoon && (
+                              <span className="bg-amber-100 text-amber-700 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                {daysLeft === 0 ? 'Hari Ini' : `H-${daysLeft}`}
+                              </span>
+                            )}
+                            {!isTrialActive && (
+                              <span className="bg-red-100 text-red-700 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                HABIS
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="p-3 text-center">
                           <button
@@ -369,9 +420,9 @@ export default function SuperadminShopsPage() {
             <div className="flex items-center justify-between border-b border-[#1A1A1A]/10 pb-4">
               <div>
                 <h3 className="font-bold text-[#1A1A1A] text-lg font-sans">Detail Merchant Toko</h3>
-                <p className="text-xs text-[#1A1A1A]/40 font-mono mt-0.5">ID: {selectedShop.id}</p>
+                <p className="text-xs text-[#1A1A1A]/60 font-mono mt-0.5">ID: {selectedShop.id}</p>
               </div>
-              <button onClick={() => setSelectedShop(null)} className="text-xl text-[#1A1A1A]/40 hover:text-[#1A1A1A] cursor-pointer">
+              <button onClick={() => setSelectedShop(null)} className="text-xl text-[#1A1A1A]/60 hover:text-[#1A1A1A] cursor-pointer">
                 ✕
               </button>
             </div>
@@ -379,11 +430,11 @@ export default function SuperadminShopsPage() {
             <div className="space-y-4 text-sm">
               <div className="grid grid-cols-2 gap-4 bg-white p-4 rounded-2xl border border-[#1A1A1A]/5">
                 <div>
-                  <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Nama Toko</span>
+                  <span className="text-[10px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide">Nama Toko</span>
                   <p className="font-bold text-[#1A1A1A] text-sm mt-0.5">{selectedShop.name}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Status Lisensi</span>
+                  <span className="text-[10px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide">Status Lisensi</span>
                   <p className="mt-0.5">
                     <span className={`inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                       new Date(selectedShop.trial_ends_at) > new Date()
@@ -405,34 +456,54 @@ export default function SuperadminShopsPage() {
 
               {/* Stats Grid */}
               <div className="space-y-2">
-                <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Statistik Operasional</span>
+                <span className="text-[10px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide">Statistik Operasional</span>
                 {shopStats.loading ? (
-                  <p className="text-xs text-[#1A1A1A]/40 animate-pulse py-2">Memuat statistik toko...</p>
+                  <p className="text-xs text-[#1A1A1A]/60 animate-pulse py-2">Memuat statistik toko...</p>
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
                     <div className="bg-white p-3.5 rounded-xl border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide font-sans">Jumlah Menu</span>
+                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide font-sans">Jumlah Menu</span>
                       <p className="text-xl font-black text-[#1A1A1A] mt-1">{shopStats.menuCount} Item</p>
                     </div>
                     <div className="bg-white p-3.5 rounded-xl border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide font-sans">Jumlah Karyawan</span>
+                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide font-sans">Jumlah Karyawan</span>
                       <p className="text-xl font-black text-[#1A1A1A] mt-1">{shopStats.employeeCount} Staf</p>
                     </div>
                     <div className="bg-white p-3.5 rounded-xl border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide font-sans">Jumlah Meja</span>
+                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide font-sans">Jumlah Meja</span>
                       <p className="text-xl font-black text-[#1A1A1A] mt-1">{shopStats.tableCount} Meja</p>
                     </div>
                     <div className="bg-white p-3.5 rounded-xl border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide font-sans">Total Orderan</span>
+                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide font-sans">Total Orderan</span>
                       <p className="text-xl font-black text-[#1A1A1A] mt-1">{shopStats.orderCount} Order</p>
                     </div>
                   </div>
                 )}
               </div>
 
+              {/* Upgrade Request Panel */}
+              {selectedShop.upgrade_request && (
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Crown className="w-5 h-5 text-amber-500" />
+                    <span className="text-xs font-black text-amber-800 uppercase tracking-wide">Pengajuan Upgrade Pro</span>
+                  </div>
+                  <div className="bg-white/60 p-3 rounded-xl border border-amber-100 text-sm text-amber-900 italic">
+                    "{selectedShop.upgrade_reason}"
+                  </div>
+                  <button
+                    onClick={handleApprovePro}
+                    disabled={isProcessingAction}
+                    className="w-full py-2 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-all disabled:opacity-50"
+                  >
+                    Setujui & Jadikan Paket Pro
+                  </button>
+                </div>
+              )}
+
               {/* Superadmin Actions */}
               <div className="bg-[#F5F2EB]/60 rounded-2xl p-4 border border-[#1A1A1A]/5 space-y-3">
-                <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Tindakan Superadmin</span>
+                <span className="text-[10px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide">Tindakan Superadmin</span>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <input 
@@ -462,7 +533,7 @@ export default function SuperadminShopsPage() {
               {/* Edit Limits & Add-ons */}
               <div className="bg-[#F5F2EB]/60 rounded-2xl p-4 border border-[#1A1A1A]/5 space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Pengaturan Paket & Kuota</span>
+                  <span className="text-[10px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide">Pengaturan Paket & Kuota</span>
                   <button 
                     onClick={() => setIsEditingLimits(!isEditingLimits)}
                     className="text-[10px] font-bold text-[#1A1A1A] hover:underline"
@@ -519,15 +590,15 @@ export default function SuperadminShopsPage() {
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
                     <div className="bg-white p-2 rounded-lg border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/40 block capitalize">{selectedShop.subscription_tier || 'basic'}</span>
+                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 block capitalize">{selectedShop.subscription_tier || 'basic'}</span>
                       <span className="text-xs font-black">Paket</span>
                     </div>
                     <div className="bg-white p-2 rounded-lg border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/40 block">+ {selectedShop.addon_tables || 0}</span>
+                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 block">+ {selectedShop.addon_tables || 0}</span>
                       <span className="text-xs font-black">Addon Meja</span>
                     </div>
                     <div className="bg-white p-2 rounded-lg border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/40 block">+ {selectedShop.addon_cashiers || 0}</span>
+                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 block">+ {selectedShop.addon_cashiers || 0}</span>
                       <span className="text-xs font-black">Addon Kasir</span>
                     </div>
                   </div>

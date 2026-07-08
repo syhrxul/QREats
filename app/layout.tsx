@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import DynamicFavicon from "./components/DynamicFavicon";
 import OneSignalInit from "./components/OneSignalInit";
+import GlobalLogger from "./components/GlobalLogger";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,6 +58,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col">
+        <GlobalLogger />
         <OneSignalInit />
         {children}
       </body>

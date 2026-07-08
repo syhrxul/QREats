@@ -86,6 +86,26 @@ export default function MobileSidebar({
       roles: ['superadmin'],
     },
     {
+      name: 'Log Aktivitas',
+      href: '/dashboard/superadmin/logs',
+      icon: (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      ),
+      roles: ['superadmin'],
+    },
+    {
+      name: 'Kotak Saran Eskalasi',
+      href: '/dashboard/superadmin/feedbacks',
+      icon: (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+      ),
+      roles: ['superadmin'],
+    },
+    {
       name: 'Kelola Lisensi Platform',
       href: '/dashboard/licenses',
       icon: (
@@ -112,6 +132,16 @@ export default function MobileSidebar({
       icon: (
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      roles: ['owner', 'admin', 'kasir', 'superadmin'],
+    },
+    {
+      name: 'Kritik & Saran',
+      href: '/dashboard/feedbacks',
+      icon: (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
         </svg>
       ),
       roles: ['owner', 'admin', 'kasir', 'superadmin'],
@@ -157,11 +187,21 @@ export default function MobileSidebar({
       ),
       roles: ['owner', 'superadmin'],
     },
+    {
+      name: 'Profil',
+      href: '/dashboard/profile',
+      icon: (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      ),
+      roles: ['owner', 'superadmin', 'admin', 'kasir'],
+    },
   ];
 
   const allowedNavItems = navItems.filter((item) => {
     if (!profile) return false;
-    const isOwnerMenu = ['/dashboard/kasir', '/dashboard/kasir/riwayat', '/dashboard/kasir/analisis', '/dashboard/menus', '/dashboard/qr-generator', '/dashboard/settings'].includes(item.href);
+    const isOwnerMenu = ['/dashboard/kasir', '/dashboard/kasir/riwayat', '/dashboard/kasir/analisis', '/dashboard/menus', '/dashboard/qr-generator', '/dashboard/settings', '/dashboard/feedbacks'].includes(item.href);
     if (profile.role === 'superadmin' && isOwnerMenu && !impersonateShopId) {
       return false;
     }

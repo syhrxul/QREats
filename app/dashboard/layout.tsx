@@ -7,6 +7,7 @@ import { supabase } from '../../src/lib/supabase';
 import Sidebar from '../components/Sidebar';
 import MobileSidebar from '../components/MobileSidebar';
 import { AlertIcon } from '../components/Icons';
+import { AlertTriangle, Clock } from 'lucide-react';
 
 interface UserProfile {
   email: string;
@@ -411,7 +412,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {(profile?.role === 'owner' || profile?.role === 'admin') && delayedOrders.length > 0 && (
             <div className="bg-rose-50 border-b border-rose-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm font-sans animate-fade-in">
               <div className="flex items-center gap-3">
-                <span className="text-2xl animate-bounce">🚨</span>
+                <AlertTriangle className="w-6 h-6 text-rose-600 animate-bounce flex-shrink-0" />
                 <div>
                   <p className="font-bold text-sm text-rose-800">
                     Ada {delayedOrders.length} Pesanan Pending Belum Diproses Kasir (&gt; 5 Menit)!
@@ -435,7 +436,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {isShopExpired && !isSuperadmin && pathname !== '/dashboard/settings' ? (
             <div className="flex-1 flex items-center justify-center p-6 text-center">
               <div className="bg-white border border-red-200 rounded-3xl p-8 max-w-sm shadow-md space-y-4">
-                <span className="text-5xl block">⏳</span>
+                <Clock className="w-12 h-12 text-red-500 mx-auto" />
                 <h3 className="text-xl font-black text-red-600">Masa Aktif Habis</h3>
                 <p className="text-sm text-[#1A1A1A]/50">
                   Masa aktif/trial toko **{shop?.name}** telah berakhir. Silakan hubungi Superadmin untuk membeli token aktivasi baru.
@@ -448,7 +449,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       placeholder="QRE-XXXX-XXXX-XXXX"
                       value={activationToken}
                       onChange={(e) => setActivationToken(e.target.value)}
-                      className="bg-[#F5F2EB] border border-[#1A1A1A]/15 text-xs px-3 py-2.5 rounded-xl focus:outline-none w-full font-mono uppercase"
+                      className="bg-[#F5F2EB] border border-[#1A1A1A]/15 text-[#1A1A1A] placeholder-[#1A1A1A]/40 text-xs px-3 py-2.5 rounded-xl focus:outline-none w-full font-mono uppercase"
                     />
                     <button
                       onClick={handleActivateToken}

@@ -26,18 +26,10 @@ export default function LandingPage() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Catat kunjungan pengguna ke landing page (lengkap dengan IP yang dideteksi server)
-  useEffect(() => {
-    fetch('/api/logs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title: 'Kunjungan Website',
-        description: 'Seorang pengunjung membuka halaman utama.',
-        type: 'info'
-      })
-    }).catch((err) => console.warn('Gagal mencatat log kunjungan:', err));
-  }, []);
+  // Catat kunjungan pengguna ke landing page (Dihapus karena api/logs tidak digunakan/dibuat di Supabase)
+  // useEffect(() => {
+  //   fetch('/api/logs', { method: 'POST' }).catch(() => {});
+  // }, []);
 
   // Animated counter effect
   useEffect(() => {
@@ -113,8 +105,9 @@ export default function LandingPage() {
               <Link href="/dashboard/menus" className="px-8 py-4 bg-[#1A1A1A] text-white font-bold text-sm rounded-2xl hover:bg-[#333] active:scale-[0.98] transition-all shadow-md flex items-center gap-2">Ke Dashboard Utama ➜</Link>
             ) : (
               <>
-                <Link href="/register" className="px-8 py-4 bg-[#1A1A1A] text-white font-bold text-sm rounded-2xl hover:bg-[#333] active:scale-[0.98] transition-all shadow-md">Daftar Toko Gratis</Link>
-                <button onClick={() => setShowDemoModal(true)} className="px-8 py-4 border-2 border-orange-300 text-orange-600 font-bold text-sm rounded-2xl hover:bg-orange-50 active:scale-[0.98] transition-all flex items-center gap-2">
+                <Link href="/register" className="px-8 py-4 bg-[#1A1A1A] text-white font-bold text-sm rounded-2xl hover:bg-[#333] active:scale-[0.98] transition-all shadow-md text-center">Daftar Toko Gratis</Link>
+                <Link href="/login" className="px-8 py-4 border-2 border-[#1A1A1A] text-[#1A1A1A] font-bold text-sm rounded-2xl hover:bg-[#1A1A1A]/5 active:scale-[0.98] transition-all shadow-sm text-center">Masuk Staf</Link>
+                <button onClick={() => setShowDemoModal(true)} className="px-8 py-4 border-2 border-orange-300 text-orange-600 font-bold text-sm rounded-2xl hover:bg-orange-50 active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -160,7 +153,9 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 flex items-center gap-2">
-              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              <svg className="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
               <p className="text-[11px] text-emerald-700 font-semibold">Meja 5 — 2x Es Kopi, 1x Nasi Goreng</p>
             </div>
           </div>
@@ -283,20 +278,6 @@ export default function LandingPage() {
                 <h3 className="text-2xl font-black text-[#1A1A1A] mt-4">Paket Basic</h3>
                 <p className="text-sm text-[#1A1A1A]/50 mt-2">Cocok untuk kedai, warung, atau kafe kecil yang baru mulai berkembang.</p>
               </div>
-              <div className="space-y-3 mb-8">
-                <div className="flex justify-between items-center border-b border-[#1A1A1A]/5 pb-2">
-                  <span className="text-sm font-semibold text-[#1A1A1A]/70">30 Hari</span>
-                  <span className="font-black text-[#1A1A1A]">Rp 59.000</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-[#1A1A1A]/5 pb-2">
-                  <span className="text-sm font-semibold text-[#1A1A1A]/70">90 Hari</span>
-                  <span className="font-black text-[#1A1A1A]">Rp 149.000</span>
-                </div>
-                <div className="flex justify-between items-center pb-2">
-                  <span className="text-sm font-semibold text-[#1A1A1A]/70">365 Hari <span className="text-[10px] text-emerald-600 font-bold ml-1">(Hemat 30%)</span></span>
-                  <span className="font-black text-[#1A1A1A]">Rp 499.000</span>
-                </div>
-              </div>
               <div className="flex-1">
                 <p className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wider mb-4">Fitur Termasuk:</p>
                 <ul className="space-y-3 text-sm text-[#1A1A1A]/70">
@@ -318,20 +299,6 @@ export default function LandingPage() {
                 <h3 className="text-2xl font-black text-white mt-4">Paket Pro</h3>
                 <p className="text-sm text-white/50 mt-2">Solusi tanpa batas untuk restoran ramai dengan banyak meja dan staf kasir.</p>
               </div>
-              <div className="space-y-3 mb-8">
-                <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                  <span className="text-sm font-semibold text-white/70">30 Hari</span>
-                  <span className="font-black text-white">Rp 149.000</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                  <span className="text-sm font-semibold text-white/70">90 Hari</span>
-                  <span className="font-black text-white">Rp 399.000</span>
-                </div>
-                <div className="flex justify-between items-center pb-2">
-                  <span className="text-sm font-semibold text-white/70">365 Hari <span className="text-[10px] text-emerald-400 font-bold ml-1">(Hemat 25%)</span></span>
-                  <span className="font-black text-white">Rp 1.299.000</span>
-                </div>
-              </div>
               <div className="flex-1">
                 <p className="text-xs font-bold text-white uppercase tracking-wider mb-4">Fitur Termasuk:</p>
                 <ul className="space-y-3 text-sm text-white/70">
@@ -344,22 +311,6 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="mt-12 bg-[#F5F2EB]/50 border border-orange-200 rounded-3xl p-8 max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6 justify-between">
-            <div>
-              <h4 className="text-lg font-black text-[#1A1A1A]">Ekstra Custom Add-On 🧩</h4>
-              <p className="text-sm text-[#1A1A1A]/60 mt-1 max-w-md">Masih di Paket Basic tapi butuh nambah meja sedikit? Pemilik toko bisa beli add-on terpisah tanpa harus upgrade ke Pro secara penuh.</p>
-            </div>
-            <div className="flex gap-4 shrink-0">
-              <div className="bg-white px-4 py-3 rounded-xl border border-[#1A1A1A]/10 text-center shadow-sm">
-                <p className="text-[10px] font-bold text-[#1A1A1A]/50 uppercase">+10 Meja</p>
-                <p className="font-black text-[#1A1A1A] mt-0.5">Rp 25.000</p>
-              </div>
-              <div className="bg-white px-4 py-3 rounded-xl border border-[#1A1A1A]/10 text-center shadow-sm">
-                <p className="text-[10px] font-bold text-[#1A1A1A]/50 uppercase">+1 Kasir</p>
-                <p className="font-black text-[#1A1A1A] mt-0.5">Rp 15.000</p>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 

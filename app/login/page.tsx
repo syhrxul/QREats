@@ -50,11 +50,11 @@ export default function LoginPage() {
       const role: string = profile.role;
       void logWebsiteEvent('Login Berhasil', `Email ${email} berhasil login sebagai ${role}.`, 'success');
       if (role === 'superadmin') {
-        router.push('/dashboard/superadmin');
+        window.location.href = '/dashboard/superadmin';
       } else if (role === 'owner' || role === 'admin') {
-        router.push('/dashboard/menus');
+        window.location.href = '/dashboard/menus';
       } else if (role === 'kasir') {
-        router.push('/dashboard/kasir');
+        window.location.href = '/dashboard/kasir';
       } else {
         setError(`Role tidak dikenali: "${role}". Hubungi administrator.`);
       }

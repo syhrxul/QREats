@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../src/lib/supabase';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function UpdatePasswordPage() {
   const [password, setPassword] = useState('');
@@ -167,13 +168,15 @@ export default function UpdatePasswordPage() {
             
             {/* Inline Error/Success Messages */}
             {errorMsg && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium mb-4">
-                ❌ {errorMsg}
+              <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium mb-4 flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                <span>{errorMsg}</span>
               </div>
             )}
             {successMsg && (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm font-medium mb-4">
-                ✅ {successMsg}
+              <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm font-medium mb-4 flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+                <span>{successMsg}</span>
               </div>
             )}
             

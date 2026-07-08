@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { AlertIcon } from '../../components/Icons';
+import { Bell, Coffee, Check, X, Clock, ArrowLeft, Camera } from 'lucide-react';
 
 // Synthesize pleasant chime sound
 function playNotificationSound() {
@@ -298,7 +299,11 @@ export default function DemoKasirPage() {
                     <p className="text-lg font-black text-[#1A1A1A]">{formatRupiah(order.total_price)}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {order.receipt_path && (<span className="text-[11px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg">📸 Ada Bukti Transfer</span>)}
+                    {order.receipt_path && (
+                      <span className="text-[11px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg flex items-center gap-1">
+                        <Camera className="w-3 h-3" /> Ada Bukti Transfer
+                      </span>
+                    )}
                     <span className="text-xs text-[#1A1A1A]/40 font-semibold flex items-center gap-1">
                       Lihat Rincian
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
@@ -332,10 +337,10 @@ export default function DemoKasirPage() {
                       <p className="text-xl font-black text-[#1A1A1A]">{selectedOrder.table_number}</p>
                       {selectedOrder.customer_name && (<p className="text-sm text-[#1A1A1A]/60 font-medium">{selectedOrder.customer_name}</p>)}
                     </div>
-                    <span className={`text-xs font-bold px-3 py-1.5 rounded-xl ${
+                    <span className={`text-xs font-bold px-3 py-1.5 rounded-xl flex items-center gap-1 ${
                       selectedOrder.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : selectedOrder.status === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'
                     }`}>
-                      {selectedOrder.status === 'paid' ? '✓ Lunas' : selectedOrder.status === 'rejected' ? '✕ Ditolak' : '⏳ Pending'}
+                      {selectedOrder.status === 'paid' ? <><Check className="w-3.5 h-3.5"/> Lunas</> : selectedOrder.status === 'rejected' ? <><X className="w-3.5 h-3.5"/> Ditolak</> : <><Clock className="w-3.5 h-3.5"/> Pending</>}
                     </span>
                   </div>
                   <p className="text-xs text-[#1A1A1A]/40">Waktu: {formatTime(selectedOrder.created_at)}</p>

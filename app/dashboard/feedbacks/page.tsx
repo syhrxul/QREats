@@ -1,0 +1,317 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { supabase } from '../../../src/lib/supabase';
+import { MessageSquare, ArrowUpRight, Check, AlertCircle, Clock, X, Send } from 'lucide-react';
+import useToast from '../../hooks/useToast';
+import ToastContainer from '../../components/Toast';
+
+interface Feedback {
+  id: string;
+  shop_id: string;
+  content: string;
+  escalation_level: 'shop' | 'owner' | 'superadmin';
+  is_read: boolean;
+  created_at: string;
+}
+
+export default function FeedbacksPage() {
+  const [authChecking, setAuthChecking] = useState(true);
+  const [role, setRole] = useState<'owner' | 'admin' | 'kasir' | 'superadmin' | null>(null);
+  const [shopId, setShopId] = useState<string | null>(null);
+  
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'shop' | 'owner'>('shop');
+  
+  const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const [composeContent, setComposeContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { toasts, addToast, removeToast } = useToast();
+
+  useEffect(() => {
+    async function checkUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setAuthChecking(false);
+        return;
+      }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role, shop_id')
+        .eq('id', user.id)
+        .single();
+      
+      if (profile) {
+        setRole(profile.role as any);
+        setShopId(profile.shop_id);
+      }
+      setAuthChecking(false);
+    }
+    checkUser();
+  }, []);
+
+  const fetchFeedbacks = async () => {
+    if (!shopId) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('feedbacks')
+        .select('*')
+        .eq('shop_id', shopId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setFeedbacks(data as Feedback[] || []);
+    } catch (e: any) {
+      addToast('Gagal mengambil data kritik & saran: ' + e.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!authChecking && shopId) {
+      fetchFeedbacks();
+    }
+  }, [authChecking, shopId]);
+
+  const handleEscalate = async (id: string, currentLevel: string) => {
+    if (!confirm('Teruskan pesan ini ke atasan?')) return;
+    
+    let newLevel = 'owner';
+    if (currentLevel === 'owner' || (currentLevel === 'shop' && role === 'owner')) {
+      newLevel = 'superadmin';
+    }
+
+    try {
+      const { error } = await supabase
+        .from('feedbacks')
+        .update({ escalation_level: newLevel })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      addToast('Kritik & saran berhasil diteruskan ke ' + (newLevel === 'superadmin' ? 'Pusat' : 'Owner'), 'success');
+      fetchFeedbacks();
+    } catch (e: any) {
+      addToast('Gagal meneruskan: ' + e.message, 'error');
+    }
+  };
+
+  const handleMarkAsRead = async (id: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('feedbacks')
+        .update({ is_read: !currentStatus })
+        .eq('id', id);
+
+      if (error) throw error;
+      fetchFeedbacks();
+    } catch (e: any) {
+      addToast('Gagal menandai: ' + e.message, 'error');
+    }
+  };
+
+  const isOwner = role === 'owner';
+
+  const handleSubmitFeedback = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!composeContent.trim() || !shopId) return;
+
+    setIsSubmitting(true);
+    try {
+      const targetLevel = isOwner ? 'superadmin' : 'owner';
+      const { error } = await supabase.from('feedbacks').insert([{
+        shop_id: shopId,
+        content: composeContent.trim(),
+        escalation_level: targetLevel
+      }]);
+
+      if (error) throw error;
+
+      addToast('Kritik & saran berhasil dikirim ke ' + (isOwner ? 'Pusat' : 'Owner'), 'success');
+      setComposeContent('');
+      setIsComposeOpen(false);
+      fetchFeedbacks();
+    } catch (err: any) {
+      addToast('Gagal mengirim: ' + err.message, 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (authChecking) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#F5F2EB]">
+        <div className="w-8 h-8 border-2 border-[#1A1A1A]/20 border-t-[#1A1A1A] rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!role || role === 'superadmin') {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#F5F2EB]">
+        <p className="text-sm font-bold text-[#1A1A1A]/50">Akses ditolak.</p>
+      </div>
+    );
+  }
+  
+  // Filter based on role and tab
+  const displayFeedbacks = feedbacks.filter((f) => {
+    if (!isOwner) return f.escalation_level === 'shop';
+    return f.escalation_level === activeTab;
+  });
+
+  return (
+    <div className="bg-[#F5F2EB] min-h-screen font-sans pb-10">
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      
+      <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between bg-white">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+            <MessageSquare className="w-5 h-5" />
+          </div>
+          <div>
+            <h1 className="text-lg font-black text-[#1A1A1A]">Kritik & Saran</h1>
+            <p className="text-xs text-[#1A1A1A]/50 mt-0.5">Kelola keluhan dan masukan dari pelanggan</p>
+          </div>
+        </div>
+        <button
+          onClick={() => setIsComposeOpen(true)}
+          className="px-4 py-2 bg-[#1A1A1A] text-white font-bold text-xs rounded-xl hover:bg-[#333] transition-all cursor-pointer flex items-center gap-2 shadow-sm"
+        >
+          <Send className="w-3.5 h-3.5" />
+          Tulis Saran
+        </button>
+      </div>
+
+      <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
+        
+        {isOwner && (
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => setActiveTab('shop')}
+              className={`px-4 py-2 text-sm font-bold rounded-xl transition-all ${
+                activeTab === 'shop' 
+                  ? 'bg-[#1A1A1A] text-white shadow-md' 
+                  : 'bg-white text-[#1A1A1A]/70 border border-[#1A1A1A]/10 hover:bg-gray-50'
+              }`}
+            >
+              Semua Masukan
+            </button>
+            <button
+              onClick={() => setActiveTab('owner')}
+              className={`px-4 py-2 text-sm font-bold rounded-xl transition-all ${
+                activeTab === 'owner' 
+                  ? 'bg-[#1A1A1A] text-white shadow-md' 
+                  : 'bg-white text-[#1A1A1A]/70 border border-[#1A1A1A]/10 hover:bg-gray-50'
+              }`}
+            >
+              Diteruskan Kasir
+            </button>
+          </div>
+        )}
+
+        <div className="space-y-4">
+          {loading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => <div key={i} className="h-24 bg-white/50 border border-[#1A1A1A]/5 rounded-2xl animate-pulse" />)}
+            </div>
+          ) : displayFeedbacks.length === 0 ? (
+            <div className="bg-white border border-[#1A1A1A]/5 rounded-3xl p-10 text-center shadow-sm">
+              <div className="w-16 h-16 bg-[#F5F2EB] rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-emerald-500" />
+              </div>
+              <h3 className="text-base font-bold text-[#1A1A1A]">Belum ada masukan.</h3>
+              <p className="text-sm text-[#1A1A1A]/50 mt-1">Pelayanan Anda sangat baik sejauh ini!</p>
+            </div>
+          ) : (
+            displayFeedbacks.map((f) => (
+              <div key={f.id} className={`bg-white border ${f.is_read ? 'border-[#1A1A1A]/5 opacity-70' : 'border-[#1A1A1A]/15 shadow-sm'} rounded-3xl p-5 transition-all`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      {!f.is_read && (
+                         <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                      )}
+                      <span className="text-[10px] font-bold text-[#1A1A1A]/40 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {new Date(f.created_at).toLocaleString('id-ID')}
+                      </span>
+                    </div>
+                    <p className="text-sm text-[#1A1A1A] leading-relaxed font-medium">"{f.content}"</p>
+                  </div>
+                  
+                  <div className="flex flex-col gap-2 min-w-[140px]">
+                    <button
+                      onClick={() => handleMarkAsRead(f.id, f.is_read)}
+                      className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all border ${
+                        f.is_read 
+                          ? 'bg-[#F5F2EB] text-[#1A1A1A]/50 border-transparent hover:bg-[#1A1A1A]/5' 
+                          : 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100'
+                      }`}
+                    >
+                      {f.is_read ? 'Tandai Belum Dibaca' : 'Tandai Dibaca'}
+                    </button>
+                    
+                    <button
+                      onClick={() => handleEscalate(f.id, f.escalation_level)}
+                      className="px-3 py-1.5 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 hover:bg-[#333] transition-all active:scale-95 shadow-sm"
+                    >
+                      Teruskan ke {(!isOwner) ? 'Owner' : 'Pusat'}
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </main>
+
+      {/* Compose Modal */}
+      {isComposeOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsComposeOpen(false)} />
+          <div className="relative bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl border border-[#1A1A1A]/10 animate-fade-in-up">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#1A1A1A]/10 bg-[#F5F2EB]/50">
+              <div className="flex items-center gap-2">
+                <Send className="w-5 h-5 text-[#1A1A1A]" />
+                <h3 className="font-black text-[#1A1A1A]">Tulis Saran Baru</h3>
+              </div>
+              <button onClick={() => setIsComposeOpen(false)} className="text-[#1A1A1A]/40 hover:text-[#1A1A1A] p-1 transition-colors cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <p className="text-xs text-[#1A1A1A]/60 mb-4 leading-relaxed">
+                {isOwner 
+                  ? 'Kirimkan masukan atau laporan permasalahan langsung ke Superadmin pusat.' 
+                  : 'Kirimkan masukan atau laporan kepada Owner toko Anda.'}
+              </p>
+              <form onSubmit={handleSubmitFeedback} className="space-y-4">
+                <textarea
+                  value={composeContent}
+                  onChange={(e) => setComposeContent(e.target.value)}
+                  placeholder="Ketik pesan Anda di sini..."
+                  className="w-full px-4 py-3 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#1A1A1A]/20 text-sm text-[#1A1A1A] min-h-[120px] resize-none placeholder:text-[#1A1A1A]/30"
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !composeContent.trim()}
+                  className="w-full py-3.5 bg-[#1A1A1A] text-white font-bold rounded-xl hover:bg-[#333] transition-all disabled:opacity-50 active:scale-[0.98] shadow-md cursor-pointer flex justify-center items-center gap-2"
+                >
+                  {isSubmitting ? 'Mengirim...' : 'Kirim Pesan'}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}

@@ -163,9 +163,9 @@ export default function RegisterPage() {
       // Auto redirect ke dashboard secara instan setelah 1.5 detik
       setTimeout(() => {
         if (registerMode === 'owner') {
-          router.push('/dashboard/menus');
+          window.location.href = '/dashboard/menus';
         } else {
-          router.push('/dashboard/kasir');
+          window.location.href = '/dashboard/kasir';
         }
       }, 1500);
 
