@@ -4,6 +4,7 @@ import "./globals.css";
 import DynamicFavicon from "./components/DynamicFavicon";
 import OneSignalInit from "./components/OneSignalInit";
 import GlobalLogger from "./components/GlobalLogger";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,6 +62,7 @@ export default function RootLayout({
         <GlobalLogger />
         <OneSignalInit />
         {children}
+        <Analytics />
       </body>
     </html>
   );
