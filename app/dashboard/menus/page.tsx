@@ -12,12 +12,14 @@ interface MenuItem {
   image_url: string | null;
   is_available: boolean;
   description?: string | null;
+  category?: string | null;
 }
 
 interface MenuFormData {
   name: string;
   price: string;
   description: string;
+  category: string;
   is_available: boolean;
 }
 
@@ -37,6 +39,7 @@ const EMPTY_FORM: MenuFormData = {
   name: '',
   price: '',
   description: '',
+  category: 'Makanan',
   is_available: true,
 };
 
@@ -57,6 +60,9 @@ export default function MenusDashboardPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [formError, setFormError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [categories, setCategories] = useState<string[]>(['Makanan', 'Minuman', 'Snack', 'Dessert', 'Lainnya']);
+  const [isNewCategory, setIsNewCategory] = useState(false);
 
   const [shopId, setShopId] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
@@ -100,12 +106,30 @@ export default function MenusDashboardPage() {
     checkAccess();
   }, []);
 
-  // ─── Fetch Menus ────────────────────────────────────────────────────────────
+  // ─── Fetch Menus & Categories ────────────────────────────────────────────────────────────
 
   useEffect(() => {
     if (authChecking || accessDenied || !shopId) return;
     fetchMenus();
-  }, [authChecking, accessDenied, shopId]);
+    fetchCategories();
+  }, [shopId, authChecking, accessDenied]);
+
+  async function fetchCategories() {
+    if (!shopId) return;
+    const { data, error } = await supabase
+      .from('menu_categories')
+      .select('name')
+      .eq('shop_id', shopId)
+      .order('name', { ascending: true });
+    
+    if (!error && data) {
+      const customCats = data.map((c) => c.name);
+      // Gabungkan default dengan custom (unique)
+      const merged = Array.from(new Set(['Makanan', 'Minuman', 'Snack', 'Dessert', 'Lainnya', ...customCats]));
+      setCategories(merged);
+    }
+  }
+
 
   async function fetchMenus() {
     if (!shopId) return;
@@ -135,6 +159,7 @@ export default function MenusDashboardPage() {
       name: menu.name,
       price: String(menu.price),
       description: menu.description ?? '',
+      category: menu.category ?? 'Makanan',
       is_available: menu.is_available,
     });
     setImageFile(null);
@@ -179,10 +204,22 @@ export default function MenusDashboardPage() {
         imageUrl = publicData.publicUrl;
       }
 
+      const finalCategory = form.category.trim() || 'Makanan';
+
+      // Jika ini kategori baru, simpan ke tabel menu_categories
+      if (isNewCategory && shopId) {
+        // Abaikan error duplicate key
+        await supabase.from('menu_categories').insert({
+          shop_id: shopId,
+          name: finalCategory
+        });
+      }
+
       const payload: Partial<MenuItem> = {
         name: form.name.trim(),
         price: Number(form.price),
         description: form.description.trim() || null,
+        category: finalCategory,
         is_available: form.is_available,
         ...(imageUrl !== null ? { image_url: imageUrl } : {}),
       };
@@ -219,6 +256,7 @@ export default function MenusDashboardPage() {
       }
 
       await fetchMenus();
+      await fetchCategories();
       closeModal();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -349,7 +387,14 @@ export default function MenusDashboardPage() {
 
                 {/* Info */}
                 <div className="p-4">
-                  <h3 className="font-semibold text-[#1A1A1A] truncate">{menu.name}</h3>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-[#1A1A1A] truncate max-w-[70%]">{menu.name}</h3>
+                    {menu.category && (
+                      <span className="bg-[#1A1A1A]/5 text-[#1A1A1A]/60 text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">
+                        {menu.category}
+                      </span>
+                    )}
+                  </div>
                   {menu.description && (
                     <p className="text-xs text-[#1A1A1A]/40 mt-0.5 line-clamp-1">{menu.description}</p>
                   )}
@@ -425,6 +470,42 @@ export default function MenusDashboardPage() {
                   placeholder="25000"
                   className="w-full px-4 py-3 bg-white border border-[#1A1A1A]/15 rounded-xl text-sm text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 transition-all"
                 />
+              </div>
+
+              {/* Kategori */}
+              <div>
+                <label className="block text-xs font-medium text-[#1A1A1A]/60 mb-1.5">Kategori *</label>
+                <select
+                  id="input-menu-category"
+                  value={isNewCategory ? '__new__' : form.category}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '__new__') {
+                      setIsNewCategory(true);
+                      setForm({ ...form, category: '' });
+                    } else {
+                      setIsNewCategory(false);
+                      setForm({ ...form, category: val });
+                    }
+                  }}
+                  className="w-full px-4 py-3 bg-white border border-[#1A1A1A]/15 rounded-xl text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 transition-all mb-2"
+                >
+                  {categories.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                  <option value="__new__">+ Tambah Baru...</option>
+                </select>
+                
+                {isNewCategory && (
+                  <input
+                    type="text"
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    placeholder="Ketik kategori baru..."
+                    className="w-full px-4 py-3 bg-[#F5F2EB] border border-[#1A1A1A]/15 rounded-xl text-sm text-[#1A1A1A] placeholder-[#1A1A1A]/30 focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 transition-all"
+                    autoFocus
+                  />
+                )}
               </div>
 
               {/* Deskripsi */}
