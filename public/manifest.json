@@ -1,0 +1,17 @@
+{
+  "name": "QREats Kasir",
+  "short_name": "QREats",
+  "description": "Self-Order & Cashier System",
+  "start_url": "/dashboard/kasir",
+  "display": "standalone",
+  "background_color": "#F5F2EB",
+  "theme_color": "#1A1A1A",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
