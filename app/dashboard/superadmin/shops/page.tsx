@@ -11,9 +11,12 @@ interface ShopDB {
   created_at: string;
   owner_id: string;
   employeeCount?: number;
+  subscription_tier?: string;
+  addon_tables?: number;
+  addon_cashiers?: number;
 }
 
-import { LockIcon } from '../../../components/Icons';
+import { LockIcon, EyeIcon, ShieldIcon, RefreshIcon, AlertIcon } from '../../../components/Icons';
 
 export default function SuperadminShopsPage() {
   const [authChecking, setAuthChecking] = useState(true);
@@ -31,8 +34,61 @@ export default function SuperadminShopsPage() {
     loading: false,
   });
 
+  // Limits Editing States
+  const [isEditingLimits, setIsEditingLimits] = useState(false);
+  const [editTier, setEditTier] = useState('basic');
+  const [editAddonTables, setEditAddonTables] = useState(0);
+  const [editAddonCashiers, setEditAddonCashiers] = useState(0);
+  const [savingLimits, setSavingLimits] = useState(false);
+
+  const [isProcessingAction, setIsProcessingAction] = useState(false);
+  const [addDaysInput, setAddDaysInput] = useState(30);
+  const [alertMsg, setAlertMsg] = useState<{title: string, message: string, type: 'success'|'error'} | null>(null);
+
+  async function handleToggleFreeze() {
+    if (!selectedShop) return;
+    setIsProcessingAction(true);
+    try {
+      const newStatus = !selectedShop.is_active;
+      const { error } = await supabase.from('shops').update({ is_active: newStatus }).eq('id', selectedShop.id);
+      if (error) throw error;
+      setSelectedShop({ ...selectedShop, is_active: newStatus });
+      fetchShops();
+      setAlertMsg({ title: 'Berhasil', message: newStatus ? 'Toko berhasil diaktifkan.' : 'Toko berhasil dibekukan.', type: 'success' });
+    } catch (e: any) {
+      setAlertMsg({ title: 'Gagal', message: 'Error: ' + e.message, type: 'error' });
+    } finally {
+      setIsProcessingAction(false);
+    }
+  }
+
+  async function handleAddLicenseDays() {
+    if (!selectedShop) return;
+    setIsProcessingAction(true);
+    try {
+      const currentExpiry = new Date(selectedShop.trial_ends_at);
+      const baseDate = currentExpiry > new Date() ? currentExpiry : new Date();
+      const newExpiry = new Date(baseDate.getTime() + addDaysInput * 24 * 60 * 60 * 1000).toISOString();
+
+      const { error } = await supabase.from('shops').update({ trial_ends_at: newExpiry, is_active: true }).eq('id', selectedShop.id);
+      if (error) throw error;
+      setSelectedShop({ ...selectedShop, trial_ends_at: newExpiry, is_active: true });
+      fetchShops();
+      setAlertMsg({ title: 'Berhasil', message: `Lisensi diperpanjang ${addDaysInput} hari.`, type: 'success' });
+    } catch (e: any) {
+      setAlertMsg({ title: 'Gagal', message: 'Error: ' + e.message, type: 'error' });
+    } finally {
+      setIsProcessingAction(false);
+    }
+  }
+
   async function handleOpenShopDetail(shop: ShopDB) {
     setSelectedShop(shop);
+    setIsEditingLimits(false);
+    setEditTier(shop.subscription_tier || 'basic');
+    setEditAddonTables(shop.addon_tables || 0);
+    setEditAddonCashiers(shop.addon_cashiers || 0);
+    
     setShopStats((prev) => ({ ...prev, loading: true }));
     try {
       const { count: menuCount } = await supabase
@@ -67,6 +123,36 @@ export default function SuperadminShopsPage() {
     } catch (e) {
       console.error(e);
       setShopStats((prev) => ({ ...prev, loading: false }));
+    }
+  }
+
+  async function handleSaveLimits() {
+    if (!selectedShop) return;
+    setSavingLimits(true);
+    try {
+      const updateData = {
+        subscription_tier: editTier,
+        base_table_limit: editTier === 'pro' ? 9999 : 20,
+        base_cashier_limit: editTier === 'pro' ? 9999 : 1,
+        addon_tables: editAddonTables,
+        addon_cashiers: editAddonCashiers,
+      };
+
+      const { error } = await supabase
+        .from('shops')
+        .update(updateData)
+        .eq('id', selectedShop.id);
+
+      if (error) throw error;
+      
+      setAlertMsg({ title: 'Berhasil', message: 'Limit & Tier berhasil diperbarui!', type: 'success' });
+      setIsEditingLimits(false);
+      setSelectedShop({ ...selectedShop, ...updateData });
+      fetchShops(); // Refresh the list
+    } catch (e: any) {
+      setAlertMsg({ title: 'Gagal', message: 'Gagal menyimpan limit: ' + e.message, type: 'error' });
+    } finally {
+      setSavingLimits(false);
     }
   }
 
@@ -138,14 +224,6 @@ export default function SuperadminShopsPage() {
     }
   }, [authChecking, accessDenied]);
 
-  // ─── Impersonate ───────────────────────────────────────────────────────────
-
-  function handleImpersonateShop(shopId: string, shopName: string) {
-    localStorage.setItem('impersonated_shop_id', shopId);
-    localStorage.setItem('impersonated_shop_name', shopName);
-    window.location.href = '/dashboard/menus';
-  }
-
   // ─── Guard Render ───────────────────────────────────────────────────────────
 
   if (authChecking) {
@@ -170,6 +248,27 @@ export default function SuperadminShopsPage() {
 
   return (
     <div className="bg-[#F5F2EB] min-h-screen font-sans">
+      
+      {/* Custom Alert Modal */}
+      {alertMsg && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAlertMsg(null)} />
+          <div className="relative bg-[#F9F6EE] rounded-3xl overflow-hidden max-w-sm w-full shadow-2xl p-6 text-center border border-[#1A1A1A]/10 animate-fade-in-up">
+            <div className={`w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 ${alertMsg.type === 'error' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}>
+               <AlertIcon className="w-8 h-8" />
+            </div>
+            <h3 className="font-black text-lg text-[#1A1A1A] mb-2">{alertMsg.title}</h3>
+            <p className="text-sm text-[#1A1A1A]/60 leading-relaxed mb-6">{alertMsg.message}</p>
+            <button
+              onClick={() => setAlertMsg(null)}
+              className="w-full py-3 bg-[#1A1A1A] text-white font-bold rounded-xl hover:bg-[#333] transition-all"
+            >
+              Mengerti
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between bg-white">
         <div>
@@ -178,9 +277,9 @@ export default function SuperadminShopsPage() {
         </div>
         <button
           onClick={fetchShops}
-          className="px-4 py-2 border border-[#1A1A1A]/20 hover:bg-[#1A1A1A]/5 text-xs font-bold rounded-xl transition-all"
+          className="px-4 py-2 border border-[#1A1A1A]/20 hover:bg-[#1A1A1A]/5 text-xs font-bold rounded-xl transition-all flex items-center gap-1"
         >
-          🔄 Refresh
+          <RefreshIcon className="w-4 h-4" /> Refresh
         </button>
       </div>
 
@@ -245,11 +344,11 @@ export default function SuperadminShopsPage() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleImpersonateShop(s.id, s.name);
+                              handleOpenShopDetail(s);
                             }}
-                            className="px-3.5 py-2 bg-[#1A1A1A] hover:bg-[#333] active:scale-95 text-white font-bold text-[10px] rounded-lg transition-all"
+                            className="px-3.5 py-2 bg-[#1A1A1A] hover:bg-[#333] active:scale-95 text-white font-bold text-[10px] rounded-lg transition-all flex items-center justify-center gap-1 mx-auto"
                           >
-                            👁️ Intip Toko
+                            <EyeIcon className="w-4 h-4" /> Intip
                           </button>
                         </td>
                       </tr>
@@ -293,6 +392,13 @@ export default function SuperadminShopsPage() {
                     }`}>
                       {new Date(selectedShop.trial_ends_at) > new Date() ? 'AKTIF' : 'EXPIRED'}
                     </span>
+                    <span className={`inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full ml-1 ${
+                      selectedShop.is_active
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'bg-gray-100 text-gray-500 border border-gray-300'
+                    }`}>
+                      {selectedShop.is_active ? 'NORMAL' : 'DIBEKUKAN'}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -324,8 +430,113 @@ export default function SuperadminShopsPage() {
                 )}
               </div>
 
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-amber-800 text-[10px] leading-relaxed font-sans">
-                🛡️ **Kebijakan Privasi Tenant:** Untuk menjaga privasi merchant, detail personal karyawan, data pelanggan, dan histori transaksi lengkap disembunyikan. Superadmin hanya dapat memantau akumulasi volume operasional agregat.
+              {/* Superadmin Actions */}
+              <div className="bg-[#F5F2EB]/60 rounded-2xl p-4 border border-[#1A1A1A]/5 space-y-3">
+                <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Tindakan Superadmin</span>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="number"
+                      value={addDaysInput}
+                      onChange={(e) => setAddDaysInput(Number(e.target.value))}
+                      className="w-20 px-3 py-2 rounded-lg border border-[#1A1A1A]/10 text-xs font-bold text-center text-[#1A1A1A] bg-white"
+                    />
+                    <button
+                      onClick={handleAddLicenseDays}
+                      disabled={isProcessingAction}
+                      className="flex-1 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 transition-all disabled:opacity-50"
+                    >
+                      Perpanjang Lisensi (Hari)
+                    </button>
+                  </div>
+                  <button
+                    onClick={handleToggleFreeze}
+                    disabled={isProcessingAction}
+                    className={`w-full py-2 text-white text-xs font-bold rounded-lg transition-all disabled:opacity-50 ${selectedShop.is_active ? 'bg-red-600 hover:bg-red-700' : 'bg-[#1A1A1A] hover:bg-[#333]'}`}
+                  >
+                    {selectedShop.is_active ? 'Bekukan Toko' : 'Aktifkan Toko'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Edit Limits & Add-ons */}
+              <div className="bg-[#F5F2EB]/60 rounded-2xl p-4 border border-[#1A1A1A]/5 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Pengaturan Paket & Kuota</span>
+                  <button 
+                    onClick={() => setIsEditingLimits(!isEditingLimits)}
+                    className="text-[10px] font-bold text-[#1A1A1A] hover:underline"
+                  >
+                    {isEditingLimits ? 'Batal Edit' : 'Edit Kuota'}
+                  </button>
+                </div>
+                
+                {isEditingLimits ? (
+                  <div className="space-y-3 pt-2">
+                    <div>
+                      <label className="text-[10px] font-bold block mb-1">Paket Berlangganan</label>
+                      <select 
+                        value={editTier}
+                        onChange={(e) => setEditTier(e.target.value)}
+                        className="w-full px-3 py-2 rounded-lg border border-[#1A1A1A]/10 text-xs text-[#1A1A1A] bg-white"
+                      >
+                        <option value="basic">Basic (Max 10 Meja, 1 Kasir)</option>
+                        <option value="pro">Pro (Unlimited)</option>
+                      </select>
+                    </div>
+                    {editTier === 'basic' && (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-[10px] font-bold block mb-1">Ekstra Add-on Meja</label>
+                          <input 
+                            type="number" 
+                            min="0"
+                            value={editAddonTables}
+                            onChange={(e) => setEditAddonTables(Number(e.target.value))}
+                            className="w-full px-3 py-2 rounded-lg border border-[#1A1A1A]/10 text-xs text-[#1A1A1A] bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold block mb-1">Ekstra Add-on Kasir</label>
+                          <input 
+                            type="number" 
+                            min="0"
+                            value={editAddonCashiers}
+                            onChange={(e) => setEditAddonCashiers(Number(e.target.value))}
+                            className="w-full px-3 py-2 rounded-lg border border-[#1A1A1A]/10 text-xs text-[#1A1A1A] bg-white"
+                          />
+                        </div>
+                      </div>
+                    )}
+                    <button
+                      onClick={handleSaveLimits}
+                      disabled={savingLimits}
+                      className="w-full py-2 bg-[#1A1A1A] text-white text-xs font-bold rounded-lg hover:bg-[#333] transition-all"
+                    >
+                      {savingLimits ? 'Menyimpan...' : 'Simpan Perubahan Kuota'}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="bg-white p-2 rounded-lg border border-[#1A1A1A]/5 text-center">
+                      <span className="text-[9px] font-bold text-[#1A1A1A]/40 block capitalize">{selectedShop.subscription_tier || 'basic'}</span>
+                      <span className="text-xs font-black">Paket</span>
+                    </div>
+                    <div className="bg-white p-2 rounded-lg border border-[#1A1A1A]/5 text-center">
+                      <span className="text-[9px] font-bold text-[#1A1A1A]/40 block">+ {selectedShop.addon_tables || 0}</span>
+                      <span className="text-xs font-black">Addon Meja</span>
+                    </div>
+                    <div className="bg-white p-2 rounded-lg border border-[#1A1A1A]/5 text-center">
+                      <span className="text-[9px] font-bold text-[#1A1A1A]/40 block">+ {selectedShop.addon_cashiers || 0}</span>
+                      <span className="text-xs font-black">Addon Kasir</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-amber-800 text-[10px] leading-relaxed font-sans flex items-start gap-2">
+                <ShieldIcon className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <span><strong>Kebijakan Privasi Tenant:</strong> Untuk menjaga privasi merchant, detail personal karyawan, data pelanggan, dan histori transaksi lengkap disembunyikan. Superadmin hanya dapat memantau akumulasi volume operasional agregat.</span>
               </div>
             </div>
             

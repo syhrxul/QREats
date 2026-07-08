@@ -136,15 +136,19 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
         setTableNumber(data.name); // e.g. "Meja-01"
         setShopId(data.shop_id);
         
-        // Ambil nama toko
+        // Ambil nama toko dan status lisensi
         if (data.shop_id) {
           const { data: s } = await supabase
             .from('shops')
-            .select('name')
+            .select('name, is_active, trial_ends_at')
             .eq('id', data.shop_id)
             .single();
           if (s) {
             setShopName(s.name);
+            const isTrialActive = new Date(s.trial_ends_at) > new Date();
+            if (!s.is_active || !isTrialActive) {
+              setTokenError(true);
+            }
           }
         }
       }
@@ -443,11 +447,11 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
     );
   }
 
-  // ─── Token Invalid ────────────────────────────────────────────────────────────
+  // ─── Token Invalid atau Toko Expired ────────────────────────────────────────
 
   if (tokenError) {
     return (
-      <div className="min-h-screen bg-[#1A1A1A] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#1A1A1A] flex items-center justify-center p-6 font-sans">
         <div className="text-center max-w-xs">
           <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mx-auto mb-6">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -457,8 +461,8 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">QR Code Tidak Valid</h1>
           <p className="text-white/40 text-sm leading-relaxed">
-            QR Code ini tidak dikenali atau sudah tidak aktif.
-            <br />Minta staf untuk mendapatkan QR Code yang benar.
+            QR Code ini tidak dikenali, meja tidak aktif, atau toko sedang tutup (offline).
+            <br />Silakan hubungi staf untuk informasi lebih lanjut.
           </p>
         </div>
       </div>

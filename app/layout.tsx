@@ -31,6 +31,16 @@ export default function RootLayout({
     >
       <head>
         <DynamicFavicon />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Tangkap jika Supabase melempar error langsung ke halaman utama
+              if (window.location.hash.includes('error_description') || window.location.hash.includes('type=recovery')) {
+                window.location.replace('/update-password' + window.location.search + window.location.hash);
+              }
+            `,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <OneSignalInit />

@@ -100,15 +100,27 @@ export default function RegisterPage() {
           return;
         }
 
-        // 1. Cari Toko berdasarkan Join Code
+        // 1. Cari Toko berdasarkan Join Code dan Limit Kasir
         const { data: shop, error: shopSearchError } = await supabase
           .from('shops')
-          .select('id, name')
+          .select('id, name, base_cashier_limit, addon_cashiers')
           .eq('join_code', joinCode.trim().toUpperCase())
           .single();
 
         if (shopSearchError || !shop) {
           throw new Error('Join Code tidak valid atau toko tidak ditemukan.');
+        }
+        
+        // 1b. Hitung jumlah kasir yang ada
+        const { count: currentCashiers, error: countError } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true })
+          .eq('shop_id', shop.id)
+          .eq('role', 'kasir');
+          
+        const maxCashiers = (shop.base_cashier_limit || 1) + (shop.addon_cashiers || 0);
+        if (currentCashiers !== null && currentCashiers >= maxCashiers) {
+          throw new Error(`Toko ini telah mencapai batas maksimal akun kasir (${maxCashiers} Kasir). Minta pemilik toko membeli Add-on Kasir.`);
         }
 
         // 2. Sign Up User ke Supabase Auth

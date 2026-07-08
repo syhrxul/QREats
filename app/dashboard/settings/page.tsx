@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../src/lib/supabase';
 import { logWebsiteEvent } from '../../../src/lib/logs';
-import { AlertIcon } from '../../components/Icons';
+import { AlertIcon, BlockIcon, PhoneIcon, CrownIcon, UserGroupIcon, MoneyIcon, InboxIcon, PlusIcon, EditIcon, TrashIcon } from '../../components/Icons';
 
 interface ShopDB {
   id: string;
@@ -11,6 +11,11 @@ interface ShopDB {
   join_code: string;
   trial_ends_at: string;
   is_active: boolean;
+  subscription_tier?: string;
+  base_table_limit?: number;
+  base_cashier_limit?: number;
+  addon_tables?: number;
+  addon_cashiers?: number;
 }
 
 interface EmployeeDB {
@@ -34,9 +39,14 @@ export default function SettingsPage() {
   const [employees, setEmployees] = useState<EmployeeDB[]>([]);
   const [revenues, setRevenues] = useState<DailyRevenue[]>([]);
   
+  // Usage states
+  const [tablesCount, setTablesCount] = useState(0);
+  const [cashiersCount, setCashiersCount] = useState(0);
+  
   // Activation state
   const [tokenInput, setTokenInput] = useState('');
   const [activating, setActivating] = useState(false);
+  const [buyingAddon, setBuyingAddon] = useState(false);
 
   const [userRole, setUserRole] = useState<string | null>(null);
 
@@ -44,15 +54,8 @@ export default function SettingsPage() {
   const [qrisPreview, setQrisPreview] = useState<string | null>(null);
   const [uploadingQris, setUploadingQris] = useState(false);
 
-  // Form add employee states
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [empEmail, setEmpEmail] = useState('');
-  const [empPassword, setEmpPassword] = useState('');
-  const [empRole, setEmpRole] = useState<'admin' | 'kasir'>('kasir');
-  const [addingEmployee, setAddingEmployee] = useState(false);
-  const [addError, setAddError] = useState('');
-  const [addSuccess, setAddSuccess] = useState(false);
-
+  // Custom alert
+  const [alertMsg, setAlertMsg] = useState<{title: string, message: string, type: 'success' | 'error'} | null>(null);
   // ─── Auth Guard & Access Check ──────────────────────────────────────────────
 
   useEffect(() => {
@@ -117,7 +120,9 @@ export default function SettingsPage() {
         .neq('role', 'owner');
       
       const loadedEmployees: EmployeeDB[] = [];
+      let totalCashiers = 0;
       for (const emp of empData ?? []) {
+        if (emp.role === 'kasir') totalCashiers++;
         loadedEmployees.push({
           id: emp.id,
           email: emp.email || `Staf-${emp.id.slice(0, 5)}@kafe.com`,
@@ -125,6 +130,13 @@ export default function SettingsPage() {
         });
       }
       setEmployees(loadedEmployees);
+      setCashiersCount(totalCashiers);
+      
+      const { count: tCount } = await supabase
+        .from('tables')
+        .select('*', { count: 'exact', head: true })
+        .eq('shop_id', shopId);
+      setTablesCount(tCount || 0);
 
       // 3. Fetch Omzet Pendapatan Harian (Orders Lunas milik toko)
       const { data: orders } = await supabase
@@ -188,7 +200,7 @@ export default function SettingsPage() {
         .single();
 
       if (tokError || !tokenData) {
-        alert('Token aktivasi tidak valid atau sudah digunakan.');
+        setAlertMsg({ title: 'Gagal Aktivasi', message: 'Token aktivasi tidak valid atau sudah digunakan.', type: 'error' });
         setActivating(false);
         return;
       }
@@ -214,82 +226,50 @@ export default function SettingsPage() {
 
       if (tokenUpdateError) throw tokenUpdateError;
 
-      alert(`Sukses! Toko diperpanjang +${tokenData.days} hari.`);
+      setAlertMsg({ title: 'Aktivasi Berhasil', message: `Sukses! Toko diperpanjang +${tokenData.days} hari.`, type: 'success' });
       setTokenInput('');
       
       // Reload
       await loadShopData(shop.id);
 
     } catch (e: any) {
-      alert('Error aktivasi token: ' + e.message);
+      setAlertMsg({ title: 'Error', message: 'Error aktivasi token: ' + e.message, type: 'error' });
     } finally {
       setActivating(false);
     }
   }
 
-  async function handleAddEmployee(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleBuyAddon(type: 'table' | 'cashier') {
     if (!shop) return;
-    setAddError('');
-    setAddSuccess(false);
-    setAddingEmployee(true);
-
-    if (!empEmail.trim() || !empPassword.trim()) {
-      setAddError('Email dan password wajib diisi.');
-      setAddingEmployee(false);
-      return;
-    }
-
+    setBuyingAddon(true);
+    
     try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-      
-      const { createClient } = await import('@supabase/supabase-js');
-      const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false,
-          detectSessionInUrl: false,
-        },
-      });
-
-      const { data: authData, error: authError } = await tempClient.auth.signUp({
-        email: empEmail.trim(),
-        password: empPassword,
-      });
-
-      if (authError || !authData.user) {
-        throw new Error(authError?.message ?? 'Gagal membuat akun auth.');
+      const updateData: any = {};
+      let alertMsg = '';
+      if (type === 'table') {
+        updateData.addon_tables = (shop.addon_tables || 0) + 10;
+        alertMsg = 'Berhasil mensimulasikan pembelian Add-on 10 Meja!';
+      } else {
+        updateData.addon_cashiers = (shop.addon_cashiers || 0) + 1;
+        alertMsg = 'Berhasil mensimulasikan pembelian Add-on 1 Kasir!';
       }
-
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({
-          id: authData.user.id,
-          email: empEmail.trim(),
-          role: empRole,
-          shop_id: shop.id,
-        });
-
-      if (profileError) throw profileError;
-
-      setEmpEmail('');
-      setEmpPassword('');
-      setEmpRole('kasir');
-      setAddSuccess(true);
+      
+      const { error } = await supabase
+        .from('shops')
+        .update(updateData)
+        .eq('id', shop.id);
+        
+      if (error) throw error;
+      setAlertMsg({ title: 'Berhasil', message: alertMsg, type: 'success' });
       await loadShopData(shop.id);
-      void logWebsiteEvent(
-        'Staf Ditambahkan',
-        `Staf baru dengan email ${empEmail.trim()} ditambahkan ke toko ${shop.name} sebagai ${empRole}.`,
-        'success'
-      );
-    } catch (err: any) {
-      console.error(err);
-      setAddError(err.message || 'Gagal menambahkan staf baru.');
+    } catch (e: any) {
+      setAlertMsg({ title: 'Gagal', message: 'Error membeli addon: ' + e.message, type: 'error' });
     } finally {
-      setAddingEmployee(false);
+      setBuyingAddon(false);
     }
   }
+
+
 
   // Load current QRIS preview
   useEffect(() => {
@@ -311,7 +291,7 @@ export default function SettingsPage() {
     if (!file || !shop) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      alert('Ukuran file QRIS maksimal adalah 2MB.');
+      setAlertMsg({ title: 'Gagal', message: 'Ukuran file QRIS maksimal adalah 2MB.', type: 'error' });
       return;
     }
 
@@ -334,10 +314,10 @@ export default function SettingsPage() {
       if (data?.publicUrl) {
         setQrisPreview(`${data.publicUrl}?t=${Date.now()}`);
       }
-      alert('QRIS merchant berhasil diunggah!');
+      setAlertMsg({ title: 'Berhasil', message: 'QRIS merchant berhasil diunggah!', type: 'success' });
     } catch (err: any) {
       console.error(err);
-      alert('Gagal mengunggah QRIS: ' + (err.message || err));
+      setAlertMsg({ title: 'Gagal', message: 'Gagal mengunggah QRIS: ' + (err.message || err), type: 'error' });
     } finally {
       setUploadingQris(false);
     }
@@ -362,7 +342,9 @@ export default function SettingsPage() {
     return (
       <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center p-6 font-sans">
         <div className="text-center max-w-sm">
-          <span className="text-5xl block mb-4">🚫</span>
+          <div className="w-16 h-16 bg-red-100 text-red-600 rounded-2xl mx-auto flex items-center justify-center mb-4">
+            <BlockIcon className="w-8 h-8" />
+          </div>
           <h1 className="text-2xl font-black text-[#1A1A1A] mb-2">Akses Ditolak</h1>
           <p className="text-sm text-[#1A1A1A]/50">
             Halaman pengaturan toko & karyawan ini hanya dapat diakses oleh Owner toko.
@@ -385,6 +367,26 @@ export default function SettingsPage() {
   return (
     <div className="bg-[#F5F2EB] min-h-screen font-sans">
       
+      {/* Custom Alert Modal */}
+      {alertMsg && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAlertMsg(null)} />
+          <div className="relative bg-[#F9F6EE] rounded-3xl overflow-hidden max-w-sm w-full shadow-2xl p-6 text-center border border-[#1A1A1A]/10 animate-fade-in-up">
+            <div className={`w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 ${alertMsg.type === 'error' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}>
+               <AlertIcon className="w-8 h-8" />
+            </div>
+            <h3 className="font-black text-lg text-[#1A1A1A] mb-2">{alertMsg.title}</h3>
+            <p className="text-sm text-[#1A1A1A]/60 leading-relaxed mb-6">{alertMsg.message}</p>
+            <button
+              onClick={() => setAlertMsg(null)}
+              className="w-full py-3 bg-[#1A1A1A] text-white font-bold rounded-xl hover:bg-[#333] transition-all"
+            >
+              Mengerti
+            </button>
+          </div>
+        </div>
+      )}
+      
       {/* Header Info */}
       <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between">
         <div>
@@ -393,13 +395,10 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
+      <main className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-min">
         
-        {/* Row 1: Toko Details & License */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          {/* Info Toko */}
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4">
+        {/* Info Toko (Row Span 2) */}
+        <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 lg:col-span-4 lg:row-span-2 flex flex-col h-full">
             <div>
               <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Nama Usaha / Toko</span>
               <h3 className="text-xl font-black text-[#1A1A1A] mt-1">{shop?.name}</h3>
@@ -429,7 +428,7 @@ export default function SettingsPage() {
                       onError={() => setQrisPreview(null)}
                     />
                   ) : (
-                    <span className="text-xl">📱</span>
+                    <PhoneIcon className="w-6 h-6 text-[#1A1A1A]/40" />
                   )}
                 </div>
                 
@@ -448,14 +447,14 @@ export default function SettingsPage() {
           </div>
 
           {/* Lisensi Toko */}
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 col-span-2">
+          <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 lg:col-span-4">
             <div>
               <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Status Lisensi SaaS</span>
               <h3 className="text-lg font-black text-[#1A1A1A] mt-1">
                 {isTrialActive ? (
-                  <span className="text-emerald-600">✓ Lisensi Aktif ({daysLeft} Hari Tersisa)</span>
+                  <span className="text-emerald-600 flex items-center gap-1"><AlertIcon className="w-5 h-5" /> Lisensi Aktif ({daysLeft} Hari Tersisa)</span>
                 ) : (
-                  <span className="text-red-500">⏳ Masa Aktif Habis (Kedaluwarsa)</span>
+                  <span className="text-red-500 flex items-center gap-1"><AlertIcon className="w-5 h-5" /> Masa Aktif Habis (Kedaluwarsa)</span>
                 )}
               </h3>
               <p className="text-xs text-[#1A1A1A]/40 mt-1">
@@ -470,13 +469,13 @@ export default function SettingsPage() {
                   <AlertIcon className="w-4 h-4 text-amber-600 flex-shrink-0" />
                   <p className="text-xs font-bold text-[#1A1A1A]/60">Aktivasi Token Lisensi Baru</p>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex flex-col gap-2">
                   <input
                     type="text"
                     placeholder="Masukkan Token (contoh: QRE-XXXX-XXXX-XXXX)"
                     value={tokenInput}
                     onChange={(e) => setTokenInput(e.target.value)}
-                    className="flex-1 px-4 py-2.5 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-xl text-sm font-mono uppercase focus:outline-none"
+                    className="flex-1 px-4 py-2.5 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-xl text-sm font-mono uppercase focus:outline-none text-[#1A1A1A] placeholder-[#1A1A1A]/40"
                   />
                   <button
                     onClick={handleActivateToken}
@@ -495,89 +494,51 @@ export default function SettingsPage() {
                 </div>
               </div>
             )}
-              <p className="text-[10px] text-[#1A1A1A]/40">
+              <p className="text-[10px] text-[#1A1A1A]/40 mt-4">
                 Hubungi Superadmin platform untuk memesan dan membeli token aktivasi berlangganan kafe Anda.
               </p>
             </div>
+
+          {/* Langganan & Add-on (New Col) */}
+          <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 lg:col-span-4">
+            <div>
+              <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Langganan & Add-on</span>
+              <h3 className="text-xl font-black text-[#1A1A1A] mt-1 capitalize">Paket {shop?.subscription_tier || 'Basic'}</h3>
+            </div>
+            
+            <div className="space-y-3">
+              {/* Meja */}
+              <div className="bg-[#F5F2EB]/60 rounded-2xl p-4 border border-[#1A1A1A]/5 flex justify-between items-center">
+                <div>
+                  <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase block">Kuota Meja (QR)</span>
+                  <span className="text-sm font-black text-[#1A1A1A]">{tablesCount} / {(shop?.base_table_limit || 20) + (shop?.addon_tables || 0)}</span>
+                </div>
+              </div>
+              
+              {/* Kasir */}
+              <div className="bg-[#F5F2EB]/60 rounded-2xl p-4 border border-[#1A1A1A]/5 flex justify-between items-center">
+                <div>
+                  <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase block">Kuota Kasir</span>
+                  <span className="text-sm font-black text-[#1A1A1A]">{cashiersCount} / {(shop?.base_cashier_limit || 1) + (shop?.addon_cashiers || 0)}</span>
+                </div>
+              </div>
+            </div>
+            <p className="text-[9px] text-[#1A1A1A]/40 leading-relaxed pt-2">
+              Batas kuota tidak dapat ditambah sendiri. Silakan hubungi Superadmin platform untuk melakukan upgrade paket atau pembelian Add-on Kuota.
+            </p>
           </div>
 
-        {/* Row 2: Staf & Pendapatan */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          {/* Kelola Staf Karyawan */}
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4">
+        {/* Kelola Staf Karyawan */}
+        <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 lg:col-span-8">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-[#1A1A1A] text-base">Daftar Karyawan</h3>
                 <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Daftar staf kasir yang tergabung ke toko Anda</p>
               </div>
-              {userRole !== 'superadmin' && (
-                <button
-                  onClick={() => {
-                    setShowAddForm(!showAddForm);
-                    setAddSuccess(false);
-                    setAddError('');
-                  }}
-                  className="px-2.5 py-1.5 bg-[#1A1A1A] hover:bg-[#333] active:scale-95 text-white font-bold text-[10px] rounded-lg transition-all cursor-pointer"
-                >
-                  {showAddForm ? 'Batal' : '➕ Tambah'}
-                </button>
-              )}
+
             </div>
 
-            {showAddForm && (
-              <form onSubmit={handleAddEmployee} className="p-3 bg-[#F5F2EB]/60 rounded-2xl border border-[#1A1A1A]/5 space-y-2.5 text-xs font-sans">
-                <span className="font-bold text-[#1A1A1A]/60 block uppercase tracking-wider text-[9px]">Registrasi Staf Baru</span>
-                
-                {addSuccess && (
-                  <p className="text-[10px] text-emerald-600 font-bold text-center">Staf baru berhasil didaftarkan!</p>
-                )}
 
-                <div>
-                  <input
-                    type="email"
-                    required
-                    placeholder="Email staf"
-                    value={empEmail}
-                    onChange={(e) => setEmpEmail(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-[#1A1A1A]/10 rounded-lg focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="password"
-                    required
-                    placeholder="Password"
-                    value={empPassword}
-                    onChange={(e) => setEmpPassword(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-[#1A1A1A]/10 rounded-lg focus:outline-none"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <select
-                      value={empRole}
-                      onChange={(e) => setEmpRole(e.target.value as any)}
-                      className="w-full px-2.5 py-1.5 bg-white border border-[#1A1A1A]/10 rounded-lg focus:outline-none font-bold"
-                    >
-                      <option value="kasir">Kasir</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={addingEmployee}
-                    className="px-4 py-1.5 bg-[#1A1A1A] hover:bg-[#333] active:scale-95 text-white font-bold rounded-lg transition-all cursor-pointer disabled:opacity-50"
-                  >
-                    {addingEmployee ? '...' : 'Simpan'}
-                  </button>
-                </div>
-
-                {addError && (
-                  <p className="text-[9px] text-red-500 font-bold">{addError}</p>
-                )}
-              </form>
-            )}
 
             <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
               {employees.length === 0 ? (
@@ -601,7 +562,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Pendapatan Harian */}
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 col-span-2">
+          <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 lg:col-span-12">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="font-bold text-[#1A1A1A] text-base">Statistik Pendapatan</h3>
@@ -644,8 +605,6 @@ export default function SettingsPage() {
               )}
             </div>
           </div>
-
-        </div>
 
       </main>
 

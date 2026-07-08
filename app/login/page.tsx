@@ -123,6 +123,11 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 className="w-full px-4 py-3 bg-[#F5F2EB] border border-[#1A1A1A]/15 rounded-xl text-[#1A1A1A] placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-[#1A1A1A]/40 transition-all"
               />
+              <div className="flex justify-end mt-2">
+                <a href="/lupa-password" className="text-[11px] text-[#1A1A1A]/50 hover:text-[#1A1A1A] font-medium underline underline-offset-2">
+                  Lupa Password?
+                </a>
+              </div>
             </div>
 
             {error && (

@@ -189,7 +189,7 @@ export default function KasirDashboardPage() {
   useEffect(() => {
     const isSuperadmin = userRole === 'superadmin';
     if (!shopId && !isSuperadmin) return;
-    const channel = supabase.channel('orders-realtime').on('postgres_changes', { event: '*', schema: 'public', table: 'orders' },
+    const channel = supabase.channel(`orders-realtime-${Math.random()}`).on('postgres_changes', { event: '*', schema: 'public', table: 'orders' },
       async (payload: any) => {
         if (payload.eventType === 'INSERT') {
           const newOrder = payload.new;

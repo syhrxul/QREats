@@ -12,7 +12,7 @@ interface TableDB {
   is_active: boolean;
 }
 
-import { AlertIcon } from '../../components/Icons';
+import { AlertIcon, EditIcon, PlayIcon, PauseIcon, TrashIcon } from '../../components/Icons';
 
 export default function QRGeneratorPage() {
   const [tables, setTables] = useState<TableDB[]>([]);
@@ -23,6 +23,12 @@ export default function QRGeneratorPage() {
   const [shopId, setShopId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [shopName, setShopName] = useState<string>('');
+  const [maxTables, setMaxTables] = useState<number>(10);
+  const [alertMsg, setAlertMsg] = useState<{title: string, message: string, type: 'error' | 'success'} | null>(null);
+  
+  // Edit State
+  const [editingTable, setEditingTable] = useState<TableDB | null>(null);
+  const [editName, setEditName] = useState('');
 
   // Bulk Generator States
   const [addingMode, setAddingMode] = useState<'single' | 'bulk'>('single');
@@ -77,11 +83,12 @@ export default function QRGeneratorPage() {
         if (activeShopId) {
           const { data: s } = await supabase
             .from('shops')
-            .select('name')
+            .select('name, base_table_limit, addon_tables')
             .eq('id', activeShopId)
             .single();
           if (s) {
             setShopName(s.name);
+            setMaxTables((s.base_table_limit || 20) + (s.addon_tables || 0));
           }
         }
       }
@@ -132,6 +139,18 @@ export default function QRGeneratorPage() {
   async function handleAddTable() {
     const name = newTableName.trim();
     if (!name || !shopId) return;
+    
+    const activeTablesCount = tables.filter(t => t.is_active).length;
+    
+    if (activeTablesCount >= maxTables) {
+      setAlertMsg({
+        title: 'Batas Meja Tercapai',
+        message: `Batas maksimal meja aktif tercapai (${maxTables} meja). Nonaktifkan meja lain atau hubungi Superadmin untuk upgrade kuota.`,
+        type: 'error'
+      });
+      return;
+    }
+    
     setGenerating(true);
 
     const { error } = await supabase
@@ -145,7 +164,11 @@ export default function QRGeneratorPage() {
       setNewTableName('');
       await fetchTables();
     } else {
-      alert('Gagal menambah meja: ' + error.message);
+      setAlertMsg({
+        title: 'Gagal Menambah Meja',
+        message: error.message,
+        type: 'error'
+      });
     }
     setGenerating(false);
   }
@@ -155,13 +178,25 @@ export default function QRGeneratorPage() {
     const prefix = bulkPrefix.trim();
     const qty = Number(bulkQuantity);
     if (!prefix || !shopId || qty < 1) {
-      alert('Prefix nama meja dan jumlah wajib diisi dengan benar.');
+      setAlertMsg({ title: 'Input Tidak Valid', message: 'Prefix nama meja dan jumlah wajib diisi dengan benar.', type: 'error' });
       return;
     }
     if (qty > 100) {
-      alert('Jumlah meja maksimal sekali cetak adalah 100.');
+      setAlertMsg({ title: 'Jumlah Terlalu Banyak', message: 'Jumlah meja maksimal sekali cetak adalah 100.', type: 'error' });
       return;
     }
+    
+    const activeTablesCount = tables.filter(t => t.is_active).length;
+    
+    if (activeTablesCount + qty > maxTables) {
+      setAlertMsg({
+        title: 'Batas Meja Tercapai',
+        message: `Gagal! Menambah ${qty} meja aktif akan melebihi batas maksimal Anda (${maxTables} meja). Anda saat ini memiliki ${activeTablesCount} meja aktif.`,
+        type: 'error'
+      });
+      return;
+    }
+    
     setGenerating(true);
 
     const tablesToInsert = [];
@@ -185,9 +220,79 @@ export default function QRGeneratorPage() {
       setBulkQuantity(10);
       await fetchTables();
     } else {
-      alert('Gagal menambah meja massal: ' + error.message);
+      setAlertMsg({ title: 'Gagal Menambah Massal', message: error.message, type: 'error' });
     }
     setGenerating(false);
+  }
+
+  // ─── Edit, Delete, Toggle Handlers ─────────────────────────────────────────
+
+  async function handleToggleTableActive(table: TableDB) {
+    const isActivating = !table.is_active;
+    
+    // Check limit if turning ON
+    if (isActivating) {
+      const activeTablesCount = tables.filter(t => t.is_active).length;
+      if (activeTablesCount >= maxTables) {
+        setAlertMsg({
+          title: 'Gagal Mengaktifkan Meja',
+          message: `Batas maksimal meja aktif tercapai (${maxTables} meja). Anda tidak bisa mengaktifkan meja ini sebelum menonaktifkan meja lain.`,
+          type: 'error'
+        });
+        return;
+      }
+    }
+
+    const { error } = await supabase
+      .from('tables')
+      .update({ is_active: isActivating })
+      .eq('id', table.id);
+
+    if (error) {
+      setAlertMsg({ title: 'Gagal Memperbarui', message: error.message, type: 'error' });
+    } else {
+      setTables(prev => prev.map(t => t.id === table.id ? { ...t, is_active: isActivating } : t));
+    }
+  }
+
+  async function handleDeleteTable(table: TableDB) {
+    if (!confirm(`Yakin ingin menghapus meja "${table.name}"? Aksi ini mungkin gagal jika ada pesanan terkait meja ini.`)) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from('tables')
+      .delete()
+      .eq('id', table.id);
+
+    if (error) {
+      setAlertMsg({ 
+        title: 'Gagal Menghapus Meja', 
+        message: error.message.includes('foreign key constraint') 
+          ? 'Meja ini memiliki riwayat pesanan dan tidak dapat dihapus. Silakan "Matikan" (Nonaktifkan) meja ini sebagai gantinya.' 
+          : error.message, 
+        type: 'error' 
+      });
+    } else {
+      setTables(prev => prev.filter(t => t.id !== table.id));
+      setSelectedIds(prev => prev.filter(id => id !== table.id));
+    }
+  }
+
+  async function handleSaveEdit() {
+    if (!editingTable || !editName.trim()) return;
+
+    const { error } = await supabase
+      .from('tables')
+      .update({ name: editName.trim() })
+      .eq('id', editingTable.id);
+
+    if (error) {
+      setAlertMsg({ title: 'Gagal Menyimpan', message: error.message, type: 'error' });
+    } else {
+      setTables(prev => prev.map(t => t.id === editingTable.id ? { ...t, name: editName.trim() } : t));
+      setEditingTable(null);
+    }
   }
 
   async function downloadSinglePNG(table: TableDB) {
@@ -392,12 +497,34 @@ export default function QRGeneratorPage() {
 
   return (
     <div className="bg-[#F5F2EB]">
+      {/* Custom Alert Modal */}
+      {alertMsg && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAlertMsg(null)} />
+          <div className="relative bg-[#F9F6EE] rounded-3xl overflow-hidden max-w-sm w-full shadow-2xl p-6 text-center border border-[#1A1A1A]/10 animate-fade-in-up">
+            <div className={`w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 ${alertMsg.type === 'error' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}>
+               <AlertIcon className="w-8 h-8" />
+            </div>
+            <h3 className="font-black text-lg text-[#1A1A1A] mb-2">{alertMsg.title}</h3>
+            <p className="text-sm text-[#1A1A1A]/60 leading-relaxed mb-6">{alertMsg.message}</p>
+            <button
+              onClick={() => setAlertMsg(null)}
+              className="w-full py-3 bg-[#1A1A1A] text-white font-bold rounded-xl hover:bg-[#333] transition-all"
+            >
+              Mengerti
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header Info */}
       <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between print:hidden">
         <div>
           <h2 className="text-lg font-black text-[#1A1A1A]">QR Code Generator</h2>
-          <p className="text-xs text-[#1A1A1A]/40 mt-0.5">
-            {selectedIds.length} meja terpilih untuk dicetak dari {tables.length} total meja
+          <p className="text-xs text-[#1A1A1A]/40 mt-0.5 flex gap-2">
+            <span>{selectedIds.length} dicetak</span>
+            <span>&bull;</span>
+            <span>{tables.filter(t => t.is_active).length} meja aktif (Kuota: {maxTables})</span>
           </p>
         </div>
         {selectedIds.length > 0 && (
@@ -613,8 +740,10 @@ export default function QRGeneratorPage() {
                 const url = `${appDomain}/order/${encodeURIComponent(t.token)}`;
                 const { namePrefix, number } = parseTableName(t.name);
                 
+                let cardContent = null;
+                
                 if (selectedTemplate === 'vintage') {
-                  return (
+                  cardContent = (
                     <div
                       key={t.id}
                       id={`qr-card-${t.name}`}
@@ -651,10 +780,8 @@ export default function QRGeneratorPage() {
                       </div>
                     </div>
                   );
-                }
-
-                if (selectedTemplate === 'dark') {
-                  return (
+                } else if (selectedTemplate === 'dark') {
+                  cardContent = (
                     <div
                       key={t.id}
                       id={`qr-card-${t.name}`}
@@ -687,10 +814,8 @@ export default function QRGeneratorPage() {
                       </div>
                     </div>
                   );
-                }
-
-                if (selectedTemplate === 'tent') {
-                  return (
+                } else if (selectedTemplate === 'tent') {
+                  cardContent = (
                     <div
                       key={t.id}
                       id={`qr-card-${t.name}`}
@@ -729,11 +854,10 @@ export default function QRGeneratorPage() {
                       </div>
                     </div>
                   );
-                }
-
-                // Minimalist Template (Default)
-                return (
-                  <div
+                } else {
+                  // Minimalist Template (Default)
+                  cardContent = (
+                    <div
                     key={t.id}
                     id={`qr-card-${t.name}`}
                     className="bg-white border-2 border-black rounded-3xl p-6 flex flex-col items-center justify-between text-black w-full min-h-[360px] shadow-sm relative qr-card-print group hover:shadow-md transition-all duration-300"
@@ -764,6 +888,53 @@ export default function QRGeneratorPage() {
                       </a>
                     </div>
                   </div>
+                  );
+                }
+
+                return (
+                  <div key={t.id} className={`relative group transition-opacity duration-300 ${!t.is_active ? 'opacity-50 grayscale-[50%]' : ''}`}>
+                    
+                    {/* The actual QR Card Design */}
+                    {cardContent}
+                    
+                    {/* Action Toolbar Overlay (Hover) */}
+                    <div className="absolute top-2 right-2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity print:hidden z-10">
+                      <button
+                        onClick={() => handleToggleTableActive(t)}
+                        title={t.is_active ? 'Nonaktifkan Meja' : 'Aktifkan Meja'}
+                        className="w-9 h-9 rounded-xl flex items-center justify-center bg-white/90 text-[#1A1A1A] shadow-md backdrop-blur-md hover:bg-[#1A1A1A] hover:text-white transition-all border border-[#1A1A1A]/10"
+                      >
+                        {t.is_active ? <PauseIcon className="w-4 h-4" /> : <PlayIcon className="w-4 h-4" />}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingTable(t);
+                          setEditName(t.name);
+                        }}
+                        title="Edit Nama Meja"
+                        className="w-9 h-9 rounded-xl flex items-center justify-center bg-white/90 text-[#1A1A1A] shadow-md backdrop-blur-md hover:bg-[#1A1A1A] hover:text-white transition-all border border-[#1A1A1A]/10"
+                      >
+                        <EditIcon className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteTable(t)}
+                        title="Hapus Meja"
+                        className="w-9 h-9 rounded-xl flex items-center justify-center bg-white/90 text-red-500 shadow-md backdrop-blur-md hover:bg-red-500 hover:text-white transition-all border border-red-500/20"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Checkbox overlay for bulk printing */}
+                    <div className="absolute top-4 left-4 z-10 print:hidden opacity-0 group-hover:opacity-100 transition-opacity">
+                       <input
+                         type="checkbox"
+                         checked={selectedIds.includes(t.id)}
+                         onChange={() => toggleTable(t.id)}
+                         className="w-5 h-5 accent-[#1A1A1A] cursor-pointer shadow-sm rounded-md"
+                       />
+                    </div>
+                  </div>
                 );
               })}
             </div>
@@ -776,6 +947,51 @@ export default function QRGeneratorPage() {
           </div>
         )}
       </main>
+
+      {/* Modal Edit Nama Meja */}
+      {editingTable && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 print:hidden">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setEditingTable(null)} />
+          <div className="relative bg-[#F9F6EE] rounded-3xl overflow-hidden max-w-sm w-full shadow-2xl border border-[#1A1A1A]/10 p-6 space-y-6 animate-fade-in-up">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-white border border-[#1A1A1A]/10 rounded-2xl mx-auto flex items-center justify-center mb-3 shadow-sm">
+                <EditIcon className="w-6 h-6 text-[#1A1A1A]" />
+              </div>
+              <h3 className="font-bold text-[#1A1A1A] text-lg font-sans">Edit Nama Meja</h3>
+              <p className="text-xs text-[#1A1A1A]/50 mt-1.5 leading-relaxed font-sans">
+                Ubah nama atau nomor meja ini.
+              </p>
+            </div>
+            
+            <div>
+              <label className="block text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide mb-1 font-sans">Nama Meja</label>
+              <input
+                type="text"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
+                className="w-full px-4 py-3 bg-white border border-[#1A1A1A]/15 rounded-xl text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 transition-all font-mono"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <button
+                onClick={handleSaveEdit}
+                disabled={!editName.trim() || editName.trim() === editingTable.name}
+                className="w-full py-3.5 bg-[#1A1A1A] text-white text-sm font-bold rounded-xl hover:bg-[#333] transition-all active:scale-[0.98] disabled:opacity-50 font-sans"
+              >
+                Simpan Perubahan
+              </button>
+              <button
+                onClick={() => setEditingTable(null)}
+                className="w-full py-2.5 text-xs font-bold text-[#1A1A1A]/40 hover:text-[#1A1A1A]/60 transition-colors cursor-pointer font-sans"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal Cetak Pilihan */}
       {showPrintModal && (

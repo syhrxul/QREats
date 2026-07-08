@@ -14,10 +14,16 @@ export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Biarkan onAuthStateChange yang mengatur navigasi jika diperlukan di halaman utama
+    });
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) setHasSession(true);
       setLoading(false);
     });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Catat kunjungan pengguna ke landing page (lengkap dengan IP yang dideteksi server)
@@ -262,7 +268,102 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-white py-24">
+      <section className="py-24 bg-white border-t border-[#1A1A1A]/5">
+        <div className="max-w-7xl w-full mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-black text-[#1A1A1A]">Harga & Paket Fleksibel</h2>
+            <p className="text-sm text-[#1A1A1A]/50 mt-4 max-w-lg mx-auto">Dirancang untuk UMKM F&B. Mulai dari yang hemat, upgrade sesuai kebutuhan dengan custom add-on.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Paket Basic */}
+            <div className="bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-3xl p-8 hover:-translate-y-2 transition-transform duration-300 flex flex-col">
+              <div className="mb-6">
+                <span className="bg-[#1A1A1A] text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Mulai Usaha</span>
+                <h3 className="text-2xl font-black text-[#1A1A1A] mt-4">Paket Basic</h3>
+                <p className="text-sm text-[#1A1A1A]/50 mt-2">Cocok untuk kedai, warung, atau kafe kecil yang baru mulai berkembang.</p>
+              </div>
+              <div className="space-y-3 mb-8">
+                <div className="flex justify-between items-center border-b border-[#1A1A1A]/5 pb-2">
+                  <span className="text-sm font-semibold text-[#1A1A1A]/70">30 Hari</span>
+                  <span className="font-black text-[#1A1A1A]">Rp 59.000</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-[#1A1A1A]/5 pb-2">
+                  <span className="text-sm font-semibold text-[#1A1A1A]/70">90 Hari</span>
+                  <span className="font-black text-[#1A1A1A]">Rp 149.000</span>
+                </div>
+                <div className="flex justify-between items-center pb-2">
+                  <span className="text-sm font-semibold text-[#1A1A1A]/70">365 Hari <span className="text-[10px] text-emerald-600 font-bold ml-1">(Hemat 30%)</span></span>
+                  <span className="font-black text-[#1A1A1A]">Rp 499.000</span>
+                </div>
+              </div>
+              <div className="flex-1">
+                <p className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wider mb-4">Fitur Termasuk:</p>
+                <ul className="space-y-3 text-sm text-[#1A1A1A]/70">
+                  <li className="flex items-start gap-2"><span className="text-emerald-500">✓</span> Maksimal 20 Meja (QR Code)</li>
+                  <li className="flex items-start gap-2"><span className="text-emerald-500">✓</span> Maksimal 1 Akun Kasir</li>
+                  <li className="flex items-start gap-2"><span className="text-emerald-500">✓</span> Real-time Notifikasi Pesanan</li>
+                  <li className="flex items-start gap-2"><span className="text-emerald-500">✓</span> Menu Digital Unlimited</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Paket Pro */}
+            <div className="bg-[#1A1A1A] rounded-3xl p-8 text-white relative shadow-2xl hover:-translate-y-2 transition-transform duration-300 flex flex-col">
+              <div className="absolute -top-4 right-8 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                Paling Laris
+              </div>
+              <div className="mb-6">
+                <span className="bg-white/10 text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Skala Besar</span>
+                <h3 className="text-2xl font-black text-white mt-4">Paket Pro</h3>
+                <p className="text-sm text-white/50 mt-2">Solusi tanpa batas untuk restoran ramai dengan banyak meja dan staf kasir.</p>
+              </div>
+              <div className="space-y-3 mb-8">
+                <div className="flex justify-between items-center border-b border-white/10 pb-2">
+                  <span className="text-sm font-semibold text-white/70">30 Hari</span>
+                  <span className="font-black text-white">Rp 149.000</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-white/10 pb-2">
+                  <span className="text-sm font-semibold text-white/70">90 Hari</span>
+                  <span className="font-black text-white">Rp 399.000</span>
+                </div>
+                <div className="flex justify-between items-center pb-2">
+                  <span className="text-sm font-semibold text-white/70">365 Hari <span className="text-[10px] text-emerald-400 font-bold ml-1">(Hemat 25%)</span></span>
+                  <span className="font-black text-white">Rp 1.299.000</span>
+                </div>
+              </div>
+              <div className="flex-1">
+                <p className="text-xs font-bold text-white uppercase tracking-wider mb-4">Fitur Termasuk:</p>
+                <ul className="space-y-3 text-sm text-white/70">
+                  <li className="flex items-start gap-2"><span className="text-amber-500 font-bold">∞</span> Unlimited Meja (QR Code)</li>
+                  <li className="flex items-start gap-2"><span className="text-amber-500 font-bold">∞</span> Unlimited Akun Kasir</li>
+                  <li className="flex items-start gap-2"><span className="text-emerald-400">✓</span> Real-time Notifikasi Pesanan</li>
+                  <li className="flex items-start gap-2"><span className="text-emerald-400">✓</span> Laporan & Analisis Lengkap</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-12 bg-[#F5F2EB]/50 border border-orange-200 rounded-3xl p-8 max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6 justify-between">
+            <div>
+              <h4 className="text-lg font-black text-[#1A1A1A]">Ekstra Custom Add-On 🧩</h4>
+              <p className="text-sm text-[#1A1A1A]/60 mt-1 max-w-md">Masih di Paket Basic tapi butuh nambah meja sedikit? Pemilik toko bisa beli add-on terpisah tanpa harus upgrade ke Pro secara penuh.</p>
+            </div>
+            <div className="flex gap-4 shrink-0">
+              <div className="bg-white px-4 py-3 rounded-xl border border-[#1A1A1A]/10 text-center shadow-sm">
+                <p className="text-[10px] font-bold text-[#1A1A1A]/50 uppercase">+10 Meja</p>
+                <p className="font-black text-[#1A1A1A] mt-0.5">Rp 25.000</p>
+              </div>
+              <div className="bg-white px-4 py-3 rounded-xl border border-[#1A1A1A]/10 text-center shadow-sm">
+                <p className="text-[10px] font-bold text-[#1A1A1A]/50 uppercase">+1 Kasir</p>
+                <p className="font-black text-[#1A1A1A] mt-0.5">Rp 15.000</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-24 border-t border-[#1A1A1A]/5">
         <div className="max-w-7xl w-full mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
           <div className="md:col-span-4 sticky top-10">
             <h2 className="text-3xl sm:text-4xl font-black text-[#1A1A1A] leading-tight">

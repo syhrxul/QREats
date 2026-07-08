@@ -138,7 +138,7 @@ export default function MobileSidebar({
       roles: ['owner', 'admin', 'superadmin'],
     },
     {
-      name: 'QR Generator Meja',
+      name: 'QR Meja',
       href: '/dashboard/qr-generator',
       icon: (
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">

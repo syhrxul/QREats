@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const supabase = createClient('http://localhost:54321', 'fake-anon-key');
+console.log("hash before: " + window.location.hash);
+setTimeout(() => {
+  console.log("hash after: " + window.location.hash);
+}, 100);
+</script>
+</body>
+</html>

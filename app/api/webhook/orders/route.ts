@@ -1,23 +1,7 @@
 import { NextResponse } from 'next/server';
 
-/**
- * Webhook endpoint untuk menerima event INSERT dari tabel `orders` di Supabase.
- *
- * Setup sekali di Supabase Dashboard:
- *   Database → Webhooks → Create new webhook
- *   - Table:  orders
- *   - Events: INSERT
- *   - URL:    https://<domain-kamu>/api/webhook/orders
- *   - Secret: isi sesuai WEBHOOK_SECRET di .env.local (opsional tapi direkomendasikan)
- *
- * Cara kerjanya:
- *   Setiap ada pesanan baru dari pelanggan, Supabase langsung memanggil endpoint ini
- *   dari server-side sehingga push notification SELALU terkirim, bahkan jika halaman
- *   pelanggan atau kasir sedang tertutup.
- */
 export async function POST(request: Request) {
   try {
-    // Verifikasi secret opsional agar endpoint tidak bisa dipanggil sembarang pihak
     const webhookSecret = process.env.WEBHOOK_SECRET;
     if (webhookSecret) {
       const authHeader = request.headers.get('authorization') || '';
@@ -29,8 +13,6 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    // Supabase webhook mengirimkan payload dengan format:
-    // { type: 'INSERT', table: 'orders', record: { ... }, schema: 'public' }
     const record = body?.record;
     if (!record) {
       return NextResponse.json({ error: 'Payload tidak valid' }, { status: 400 });
@@ -55,18 +37,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Konfigurasi push notification belum lengkap' }, { status: 500 });
     }
 
-    // Susun payload push notification OneSignal
     const pushPayload: any = {
       app_id: appId,
       headings: { en: '🔔 Pesanan Baru Masuk' },
       contents: {
         en: `${tableNumber} (${customerName.trim()}) — ${formattedTotal}`,
       },
-      // Hanya kirim ke device kasir yang ter-tag dengan shop_id toko ini
       filters: [
         { field: 'tag', key: 'shop_id', relation: '=', value: shopId },
       ],
-      // Agar notifikasi terlihat meski device dalam silent mode (Android)
       android_channel_id: shopId,
       priority: 10,
     };
