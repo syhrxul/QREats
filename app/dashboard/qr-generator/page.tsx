@@ -546,8 +546,8 @@ export default function QRGeneratorPage() {
             <div>
               <h2 className="font-semibold text-base mb-1">QR Code Unik & Statis</h2>
               <p className="text-white/60 text-sm leading-relaxed">
-                Setiap meja memiliki **UUID token permanen (statis)** di database. QR Code yang dicetak 
-                menggunakan token ini sehingga tidak bisa ditebak atau dimanipulasi oleh meja sebelah.
+                Setiap meja memiliki UUID token permanen (statis) di database. QR Code yang dicetak 
+                menggunakan token ini sehingga tidak bisa ditebak atau dimanipulasi oleh meja lain.
               </p>
               {tables.length > 0 && (
                 <p className="text-white/50 text-xs mt-2">

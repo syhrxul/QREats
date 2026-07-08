@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../../../src/lib/supabase';
+import { Sparkles, Wand2, Loader2, Camera } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -429,9 +430,10 @@ export default function MenusDashboardPage() {
           <div className="flex gap-2">
             <button
               onClick={() => setIsAiModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-xs font-bold rounded-xl hover:from-purple-600 hover:to-indigo-600 active:scale-95 transition-all shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#1A1A1A]/10 text-[#1A1A1A] text-xs font-bold rounded-xl hover:bg-[#F5F2EB] hover:border-[#1A1A1A]/20 active:scale-95 transition-all shadow-sm group"
             >
-              <span>✨ Import AI</span>
+              <Sparkles className="w-4 h-4 text-amber-500 group-hover:rotate-12 transition-transform" />
+              <span>Import Menu</span>
             </button>
             <button
               id="btn-add-menu"
@@ -707,8 +709,13 @@ export default function MenusDashboardPage() {
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-              <div className="bg-purple-100 border border-purple-200 text-purple-800 p-4 rounded-xl text-sm leading-relaxed">
-                <p>Upload foto/PDF dari buku menu fisik Anda. AI kami akan otomatis membaca daftar makanan, harga, deskripsi, dan kategorinya dalam hitungan detik!</p>
+              <div className="bg-amber-50/50 border border-amber-200/50 p-4 rounded-2xl flex gap-3 items-start">
+                <div className="p-2 bg-amber-100/50 rounded-lg shrink-0">
+                  <Wand2 className="w-5 h-5 text-amber-600" />
+                </div>
+                <p className="text-sm text-amber-900/80 leading-relaxed font-medium">
+                  Unggah foto atau PDF dari buku menu fisik Anda. AI kami akan mengekstrak daftar makanan, harga, dan kategorinya secara otomatis.
+                </p>
               </div>
 
               {!aiPreviewMenus.length && (
@@ -721,11 +728,21 @@ export default function MenusDashboardPage() {
                       onChange={handleAiUpload}
                       disabled={aiLoading}
                     />
-                    <div className={`border-2 border-dashed border-[#1A1A1A]/20 rounded-xl p-8 text-center transition-colors ${aiLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/50'}`}>
+                    <div className={`relative overflow-hidden border-2 border-dashed border-[#1A1A1A]/15 rounded-2xl p-10 text-center transition-all ${aiLoading ? 'bg-[#1A1A1A]/5 border-[#1A1A1A]/30 cursor-wait' : 'hover:bg-white/60 hover:border-[#1A1A1A]/30 cursor-pointer'}`}>
                       {aiLoading ? (
-                        <p className="text-sm text-[#1A1A1A] font-bold animate-pulse">✨ AI sedang membaca menu Anda...</p>
+                        <div className="flex flex-col items-center gap-3">
+                          <Loader2 className="w-8 h-8 text-[#1A1A1A] animate-spin" />
+                          <p className="text-sm font-bold text-[#1A1A1A]">AI sedang bekerja...</p>
+                          <p className="text-xs text-[#1A1A1A]/50">Membaca menu Anda</p>
+                        </div>
                       ) : (
-                        <p className="text-sm text-[#1A1A1A]/60 font-medium">📸 Tap untuk pilih foto menu dari Galeri/Kamera</p>
+                        <div className="flex flex-col items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-white shadow-sm border border-[#1A1A1A]/5 flex items-center justify-center mb-1">
+                            <Camera className="w-5 h-5 text-[#1A1A1A]/60" />
+                          </div>
+                          <p className="text-sm font-bold text-[#1A1A1A]">Tap untuk pilih foto</p>
+                          <p className="text-xs text-[#1A1A1A]/50 font-medium">Mendukung format JPG, PNG, atau PDF</p>
+                        </div>
                       )}
                     </div>
                   </label>
