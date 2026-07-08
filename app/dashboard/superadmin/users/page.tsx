@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../../../src/lib/supabase';
 import { createClient } from '@supabase/supabase-js';
 import { logWebsiteEvent } from '../../../../src/lib/logs';
+import { LockIcon } from '../../../components/Icons';
 
 interface ProfileDB {
   id: string;
