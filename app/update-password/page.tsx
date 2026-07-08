@@ -158,22 +158,22 @@ export default function UpdatePasswordPage() {
         <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#1A1A1A]/5 p-8 backdrop-blur-sm">
           <div className="space-y-5">
             
+            {userEmail && (
+              <div className="bg-[#F5F2EB]/50 p-4 rounded-xl border border-[#1A1A1A]/5 mb-6 text-center">
+                <span className="text-[10px] font-bold text-[#1A1A1A]/40 block uppercase tracking-wide mb-1">Mengatur sandi untuk</span>
+                <span className="font-bold text-[#1A1A1A]">{userEmail}</span>
+              </div>
+            )}
+            
             {/* Inline Error/Success Messages */}
             {errorMsg && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium">
+              <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium mb-4">
                 ❌ {errorMsg}
               </div>
             )}
             {successMsg && (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm font-medium">
+              <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm font-medium mb-4">
                 ✅ {successMsg}
-              </div>
-            )}
-
-            {userEmail && !errorMsg && !successMsg && (
-              <div className="bg-[#F5F2EB]/50 p-4 rounded-xl border border-[#1A1A1A]/5 mb-6">
-                <span className="text-[10px] font-bold text-[#1A1A1A]/40 block uppercase tracking-wide">Mengatur sandi untuk:</span>
-                <span className="font-bold text-[#1A1A1A]">{userEmail}</span>
               </div>
             )}
             
@@ -207,12 +207,6 @@ export default function UpdatePasswordPage() {
               {sessionChecking ? 'Memproses Tautan...' : loading ? 'Menyimpan...' : 'Simpan Kata Sandi'}
             </button>
             
-            {/* Debug Console (Invisible unless tapped many times or if needed) */}
-            <div className="mt-8 p-3 bg-gray-900 text-green-400 text-xs rounded-xl font-mono overflow-auto h-24 opacity-50">
-              <p className="mb-1 text-gray-400 border-b border-gray-700 pb-1">System Log (Kirim tangkapan layar ini jika gagal):</p>
-              <pre>{debugLog}</pre>
-            </div>
-
           </div>
         </div>
       </div>
