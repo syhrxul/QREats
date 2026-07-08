@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { supabase } from '../../src/lib/supabase';
 import Sidebar from '../components/Sidebar';
 import MobileSidebar from '../components/MobileSidebar';
+import { AlertIcon } from '../components/Icons';
 
 interface UserProfile {
   email: string;
@@ -380,7 +381,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {isMasaKritis && (
             <div className="bg-amber-500 text-white px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md font-sans">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">⚠️</span>
+                <AlertIcon className="w-6 h-6 flex-shrink-0" />
                 <div>
                   <p className="font-bold text-sm">Masa Aktif Toko Hampir Habis!</p>
                   <p className="text-xs text-white/85">Toko Anda akan kedaluwarsa dalam {daysLeft} hari. Hubungi Superadmin untuk membeli token aktivasi.</p>

@@ -11,6 +11,7 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(true);
   const [showDemoModal, setShowDemoModal] = useState(false);
   const [statCounter, setStatCounter] = useState({ orders: 0, merchants: 0, tables: 0 });
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -160,7 +161,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Stats Counter */}
       <section className="bg-[#1A1A1A] py-10">
         <div className="max-w-7xl w-full mx-auto px-6 grid grid-cols-3 gap-8 text-center">
           <div>
@@ -178,7 +178,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Feature Highlights */}
       <section className="bg-white border-t border-[#1A1A1A]/5 py-16">
         <div className="max-w-7xl w-full mx-auto px-6">
           <div className="text-center mb-12">
@@ -241,7 +240,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works */}
       <section className="py-16 bg-[#F5F2EB]">
         <div className="max-w-7xl w-full mx-auto px-6">
           <div className="text-center mb-12">
@@ -264,8 +262,140 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-[#1A1A1A] py-16">
+      <section className="bg-white py-24">
+        <div className="max-w-7xl w-full mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+          <div className="md:col-span-4 sticky top-10">
+            <h2 className="text-3xl sm:text-4xl font-black text-[#1A1A1A] leading-tight">
+              Pertanyaan <br className="hidden md:block" />Sering Diajukan
+            </h2>
+            <p className="text-sm text-[#1A1A1A]/60 mt-4 leading-relaxed max-w-sm">
+              Temukan jawaban atas pertanyaan seputar fitur, teknis, dan keuntungan menggunakan QREats untuk bisnis Anda.
+            </p>
+            <div className="mt-8 hidden md:block">
+              <div className="w-16 h-1 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"></div>
+            </div>
+          </div>
+          <div className="md:col-span-8 space-y-4">
+            {[
+              {
+                q: "Apa itu QREats?",
+                a: "QREats adalah platform SaaS point-of-sale (POS) dan self-order berbasis QR code yang memudahkan restoran, kafe, atau kedai mengelola pesanan pelanggan secara real-time tanpa alat kasir mahal."
+              },
+              {
+                q: "Apakah pelanggan harus install aplikasi?",
+                a: "Tidak sama sekali. Pelanggan cukup memindai (scan) QR Code di meja mereka menggunakan kamera bawaan smartphone (iOS/Android). Mereka akan diarahkan langsung ke menu digital interaktif untuk memesan dan membayar lewat browser."
+              },
+              {
+                q: "Bagaimana cara menerima pembayaran dari pelanggan?",
+                a: "Pelanggan dapat melakukan transfer dan mengunggah bukti bayar secara langsung saat checkout. Kasir akan menerima notifikasi pop-up dan suara secara instan, lalu cukup mengeklik 'Konfirmasi Lunas' atau 'Tolak' pada dashboard."
+              },
+              {
+                q: "Apakah QREats cocok untuk kedai kecil atau gerobakan?",
+                a: "Sangat cocok! QREats dirancang fleksibel untuk berbagai skala bisnis f&b, dari tenant food court, kedai kopi kecil, food truck, hingga restoran besar. Sistem ini tidak mewajibkan hardware khusus—hanya butuh HP atau tablet."
+              },
+              {
+                q: "Apakah data dan pesanan tercatat aman?",
+                a: "Seluruh data transaksi dan laporan otomatis tersimpan di cloud dengan keamanan setara enterprise. Anda bisa memantau dan mengekspor log pesanan secara real-time kapan pun dan di mana pun."
+              },
+              {
+                q: "Berapa biaya langganannya?",
+                a: "Kami menawarkan periode uji coba (trial) gratis agar Anda bisa merasakan kemudahan QREats. Setelah itu, tersedia paket berlangganan dengan harga yang jauh lebih terjangkau dibandingkan sistem POS tradisional bulanan."
+              }
+            ].map((faq, i) => (
+              <div 
+                key={i} 
+                className={`border rounded-2xl overflow-hidden transition-all duration-300 ${openFaq === i ? 'border-orange-300 bg-orange-50/30 shadow-sm' : 'border-[#1A1A1A]/10 bg-white hover:border-[#1A1A1A]/20'}`}
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full flex items-center justify-between p-6 text-left cursor-pointer focus:outline-none"
+                >
+                  <h3 className={`font-bold pr-6 text-lg transition-colors duration-300 ${openFaq === i ? 'text-orange-700' : 'text-[#1A1A1A]'}`}>
+                    {faq.q}
+                  </h3>
+                  <div className={`w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center transition-all duration-300 ${openFaq === i ? 'bg-orange-600 text-white rotate-180' : 'bg-[#1A1A1A]/5 text-[#1A1A1A]'}`}>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </button>
+                <div 
+                  className={`grid transition-all duration-300 ease-in-out ${openFaq === i ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
+                >
+                  <div className="overflow-hidden">
+                    <p className="px-6 pb-6 text-[#1A1A1A]/70 text-sm leading-relaxed">
+                      {faq.a}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* JSON-LD untuk SEO FAQPage */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Apa itu QREats?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "QREats adalah platform SaaS point-of-sale (POS) dan self-order berbasis QR code yang memudahkan restoran, kafe, atau kedai mengelola pesanan pelanggan secara real-time tanpa alat kasir mahal."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Apakah pelanggan harus install aplikasi?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Tidak sama sekali. Pelanggan cukup memindai (scan) QR Code di meja mereka menggunakan kamera bawaan smartphone (iOS/Android). Mereka akan diarahkan langsung ke menu digital interaktif untuk memesan dan membayar lewat browser."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Bagaimana cara menerima pembayaran dari pelanggan?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Pelanggan dapat melakukan transfer dan mengunggah bukti bayar secara langsung saat checkout. Kasir akan menerima notifikasi pop-up dan suara secara instan, lalu cukup mengeklik 'Konfirmasi Lunas' atau 'Tolak' pada dashboard."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Apakah QREats cocok untuk kedai kecil atau gerobakan?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Sangat cocok! QREats dirancang fleksibel untuk berbagai skala bisnis f&b, dari tenant food court, kedai kopi kecil, food truck, hingga restoran besar. Sistem ini tidak mewajibkan hardware khusus—hanya butuh HP atau tablet."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Apakah data dan pesanan tercatat aman?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Seluruh data transaksi dan laporan otomatis tersimpan di cloud dengan keamanan setara enterprise. Anda bisa memantau dan mengekspor log pesanan secara real-time kapan pun dan di mana pun."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Berapa biaya langganannya?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Kami menawarkan periode uji coba (trial) gratis agar Anda bisa merasakan kemudahan QREats. Setelah itu, tersedia paket berlangganan dengan harga yang jauh lebih terjangkau dibandingkan sistem POS tradisional bulanan."
+                }
+              }
+            ]
+          })
+        }}
+      />
+
+      <section className="bg-[#1A1A1A] py-16 border-t border-white/5">
         <div className="max-w-7xl w-full mx-auto px-6 text-center">
           <h2 className="text-2xl sm:text-3xl font-black text-white mb-3">Mulai Kelola Restoran Anda Sekarang</h2>
           <p className="text-sm text-white/50 mb-8 max-w-md mx-auto">Gratis untuk dicoba. Tidak perlu kartu kredit. Setup dalam 5 menit.</p>
@@ -282,7 +412,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Demo Modal */}
       {showDemoModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDemoModal(false)} />

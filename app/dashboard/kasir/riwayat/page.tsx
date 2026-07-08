@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../../../src/lib/supabase';
+import { AlertIcon, BellIcon } from '../../../components/Icons';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -336,7 +337,7 @@ export default function KasirHistoryPage() {
             </span>
           ) : (
             <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-[#1A1A1A]/5 text-[#1A1A1A]/60 border border-[#1A1A1A]/10">
-              🍳 SEDANG DIBUAT
+              SEDANG DIBUAT
             </span>
           )}
 
@@ -488,7 +489,7 @@ export default function KasirHistoryPage() {
                     <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
                       selectedOrder.is_ready ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-500'
                     }`}>
-                      {selectedOrder.is_ready ? '✓ Sudah Jadi' : '🍳 Sedang Dibuat'}
+                      {selectedOrder.is_ready ? '✓ Sudah Jadi' : 'Sedang Dibuat'}
                     </span>
                   </div>
                 </div>
@@ -554,7 +555,10 @@ export default function KasirHistoryPage() {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-xs text-amber-600 font-medium">⚠️ Pembeli belum mengunggah bukti transfer.</p>
+                    <div className="flex items-center gap-1.5">
+                      <AlertIcon className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                      <p className="text-xs text-amber-600 font-medium">Pembeli belum mengunggah bukti transfer.</p>
+                    </div>
                   )}
                 </div>
               </div>
@@ -576,8 +580,8 @@ export default function KasirHistoryPage() {
                       {updatingReadyId === selectedOrder.id
                         ? 'Memproses...'
                         : selectedOrder.is_ready
-                        ? '🍳 Kembalikan Sedang Dibuat'
-                        : '🔔 Tandai Sudah Jadi'}
+                        ? 'Kembalikan Sedang Dibuat'
+                        : 'Tandai Sudah Jadi'}
                     </button>
 
                     {/* Tombol Konfirmasi Lunas */}
@@ -593,7 +597,7 @@ export default function KasirHistoryPage() {
                   </div>
                 ) : (
                   <p className="text-[10px] text-center font-bold text-red-500 bg-red-50 border border-red-200 py-2.5 rounded-xl uppercase tracking-wide">
-                    ⚠️ Mode Preview: Aksi dinonaktifkan
+                    Mode Preview: Aksi dinonaktifkan
                   </p>
                 )}
 

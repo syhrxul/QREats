@@ -4,6 +4,7 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../src/lib/supabase';
 import { logWebsiteEvent } from '../../src/lib/logs';
+import { CelebrationIcon } from '../../app/components/Icons';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -179,7 +180,7 @@ export default function RegisterPage() {
 
           {success ? (
             <div className="text-center py-6 space-y-3">
-              <span className="text-5xl block">🎉</span>
+              <span className="block"><CelebrationIcon className="w-12 h-12 text-[#1A1A1A] mx-auto" /></span>
               <p className="font-bold text-[#1A1A1A]">Pendaftaran Berhasil!</p>
               <p className="text-xs text-[#1A1A1A]/50">Mengalihkan Anda ke halaman masuk dalam 3 detik...</p>
             </div>

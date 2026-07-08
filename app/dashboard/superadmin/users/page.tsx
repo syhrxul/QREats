@@ -284,7 +284,7 @@ export default function SuperadminUsersPage() {
     return (
       <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center p-6 font-sans">
         <div className="text-center max-w-sm">
-          <span className="text-5xl block mb-4">🔒</span>
+          <span className="block mb-4"><LockIcon className="w-12 h-12 text-[#1A1A1A] mx-auto" /></span>
           <h1 className="text-2xl font-black text-[#1A1A1A] mb-2">Akses Dibatasi</h1>
           <p className="text-sm text-[#1A1A1A]/50">Halaman ini khusus untuk Superadmin.</p>
         </div>

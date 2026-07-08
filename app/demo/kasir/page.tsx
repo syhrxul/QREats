@@ -2,18 +2,80 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Order } from './types';
-import { playNotificationSound, initAndUnlockAudio } from '../../dashboard/kasir/soundHelper';
-import { formatRupiah } from '../../dashboard/kasir/formatHelpers';
-import DemoOrderCard from './DemoOrderCard';
-import DemoOrderDetailDrawer from './DemoOrderDetailDrawer';
+import { AlertIcon } from '../../components/Icons';
+
+// Synthesize pleasant chime sound
+function playNotificationSound() {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(587.33, ctx.currentTime);
+    gain1.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start();
+    osc1.stop(ctx.currentTime + 0.35);
+    
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(880, ctx.currentTime + 0.12);
+    gain2.gain.setValueAtTime(0.08, ctx.currentTime + 0.12);
+    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.55);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(ctx.currentTime + 0.12);
+    osc2.stop(ctx.currentTime + 0.55);
+  } catch (err) {
+    console.warn('Audio play blocked or failed:', err);
+  }
+}
+
+interface OrderItem {
+  id: string;
+  menu_name: string;
+  quantity: number;
+  price: number;
+}
+
+interface Order {
+  id: string;
+  table_number: string;
+  total_price: number;
+  status: 'pending' | 'paid' | 'rejected';
+  created_at: string;
+  receipt_path?: string | null;
+  customer_name?: string | null;
+  is_ready: boolean;
+  order_items: OrderItem[];
+}
+
+function formatRupiah(amount: number): string {
+  const rounded = Math.round(amount);
+  const thousands = rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return `Rp\u00A0${thousands}`;
+}
+
+function formatTime(iso: string): string {
+  try {
+    const d = new Date(iso);
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  } catch {
+    return '--:--';
+  }
+}
 
 const now = new Date();
 function minutesAgo(m: number) {
   return new Date(now.getTime() - m * 60000).toISOString();
 }
 
-// Data simulasi pesanan pelanggan
 const DUMMY_ORDERS: Order[] = [
   {
     id: 'demo-001', table_number: 'Meja 3', total_price: 67000, status: 'pending',
@@ -59,10 +121,6 @@ const DUMMY_ORDERS: Order[] = [
   },
 ];
 
-/**
- * Halaman utama Demo Kasir dengan data dummy (tidak bergantung Supabase/login).
- * File ini kurang dari 200 baris dengan memecah sub-komponen kartu dan laci detail.
- */
 export default function DemoKasirPage() {
   const [orders, setOrders] = useState<Order[]>(DUMMY_ORDERS);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -70,100 +128,13 @@ export default function DemoKasirPage() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [toasts, setToasts] = useState<{ id: string; message: string }[]>([]);
   const [tick, setTick] = useState(0);
-  const [showNotificationBanner, setShowNotificationBanner] = useState(false);
 
   const soundEnabledRef = useRef(soundEnabled);
-  useEffect(() => { soundEnabledRef.current = soundEnabled; }, [soundEnabled]);
-
-  const [isNotificationBlocked, setIsNotificationBlocked] = useState(false);
-
-  // Periksa status izin notifikasi saat dimuat dan dengarkan perubahannya secara real-time
   useEffect(() => {
-    if (typeof window === 'undefined' || !('Notification' in window)) return;
-
-    const updatePermissionStates = () => {
-      const state = Notification.permission;
-      setShowNotificationBanner(state === 'default');
-      setIsNotificationBlocked(state === 'denied');
-    };
-
-    // Jalankan pengecekan awal
-    updatePermissionStates();
-
-    // Dengarkan perubahan izin jika didukung oleh browser
-    if (typeof navigator !== 'undefined' && navigator.permissions && navigator.permissions.query) {
-      navigator.permissions.query({ name: 'notifications' as any }).then((permissionStatus) => {
-        permissionStatus.onchange = () => {
-          updatePermissionStates();
-        };
-      }).catch((err) => {
-        console.warn("navigator.permissions query notifikasi tidak didukung:", err);
-      });
-    }
-  }, []);
-
-  // Periksa status inisialisasi OneSignal secara global untuk sinkronisasi UI
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const OS = (window as any).OneSignal;
-    if (OS && OS.Notifications) {
-      const isPermissionDefault = Notification.permission === 'default';
-      setShowNotificationBanner(isPermissionDefault);
-      setIsNotificationBlocked(Notification.permission === 'denied');
-    }
-  }, []);
-
-  // Unlock AudioContext pada interaksi pertama (click/touchstart)
-  useEffect(() => {
-    const handleGesture = () => {
-      initAndUnlockAudio();
-      window.removeEventListener('click', handleGesture);
-      window.removeEventListener('touchstart', handleGesture);
-    };
-    window.addEventListener('click', handleGesture);
-    window.addEventListener('touchstart', handleGesture);
-    return () => {
-      window.removeEventListener('click', handleGesture);
-      window.removeEventListener('touchstart', handleGesture);
-    };
-  }, []);
-
-  // Meminta izin notifikasi browser secara manual (via OneSignal jika aktif, atau fallback native)
-  async function handleEnableNotifications() {
-    if (typeof window !== 'undefined') {
-      const isSecure = 
-        window.location.protocol === 'https:' || 
-        window.location.hostname === 'localhost' || 
-        window.location.hostname === '127.0.0.1';
-
-      try {
-        const OS = (window as any).OneSignal;
-        if (isSecure && OS && OS.Notifications) {
-          await OS.Notifications.requestPermission();
-        } else if ('Notification' in window) {
-          await Notification.requestPermission();
-        }
-        if (Notification.permission === 'granted') {
-          setShowNotificationBanner(false);
-          setIsNotificationBlocked(false);
-          playNotificationSound();
-        } else if (Notification.permission === 'denied') {
-          setShowNotificationBanner(false);
-          setIsNotificationBlocked(true);
-        }
-      } catch (err) {
-        console.warn("Gagal memproses perizinan notifikasi:", err);
-      }
-    }
-  }
+    soundEnabledRef.current = soundEnabled;
+  }, [soundEnabled]);
 
   useEffect(() => {
-    // Minta izin akses notifikasi sistem/window saat pertama kali dibuka
-    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
-
-    // Simulasi pesanan baru masuk setelah 5 detik
     const timer = setTimeout(() => {
       const newOrder: Order = {
         id: 'demo-new-' + Date.now(), table_number: 'Meja 9', total_price: 42000, status: 'pending',
@@ -175,27 +146,31 @@ export default function DemoKasirPage() {
       };
       setOrders((prev) => [newOrder, ...prev]);
       setNewOrderId(newOrder.id);
-      if (soundEnabledRef.current) playNotificationSound();
 
-      // Kirim notifikasi sistem/window jika diizinkan
-      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-        try {
-          new Notification("Pesanan Baru Masuk (Demo)", {
-            body: `${newOrder.table_number} (${newOrder.customer_name}) - Total ${formatRupiah(newOrder.total_price)}`,
-          });
-        } catch (err) {
-          console.warn("Gagal mengirim notifikasi window:", err);
-        }
+      // Play sound
+      if (soundEnabledRef.current) {
+        playNotificationSound();
       }
 
-      const toastText = `Pesanan Baru (Demo): ${newOrder.table_number} (${newOrder.customer_name}) - Total ${formatRupiah(newOrder.total_price)}`;
+      // Add toast
+      const toastText = `🛎️ Pesanan Baru (Demo): ${newOrder.table_number} (${newOrder.customer_name}) - Total ${formatRupiah(newOrder.total_price)}`;
       setToasts((prev) => [...prev, { id: newOrder.id, message: toastText }]);
-      setTimeout(() => setToasts((prev) => prev.filter(t => t.id !== newOrder.id)), 6000);
+
+      setTimeout(() => {
+        setToasts((prev) => prev.filter(t => t.id !== newOrder.id));
+      }, 6000);
+
       setTimeout(() => setNewOrderId(null), 6000);
     }, 5000);
 
-    const interval = setInterval(() => setTick((t) => t + 1), 30000);
-    return () => { clearTimeout(timer); clearInterval(interval); };
+    const interval = setInterval(() => {
+      setTick((t) => t + 1);
+    }, 30000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, []);
 
   function handleConfirmPaid(orderId: string) {
@@ -218,15 +193,15 @@ export default function DemoKasirPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F2EB] font-sans">
-      {/* Demo Banner */}
       <div className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
+          <span className="text-xl">🎯</span>
           <div>
-            <p className="font-bold text-xs">MODE DEMO - Dashboard Kasir</p>
+            <p className="font-bold text-xs">MODE DEMO — Dashboard Kasir</p>
             <p className="text-[10px] text-white/80">Semua data adalah simulasi. Tidak ada data nyata.</p>
           </div>
         </div>
-        <Link href="/" className="bg-white text-orange-600 hover:bg-white/90 text-xs font-black px-4 py-2 rounded-xl transition-all shadow">Kembali ke Beranda</Link>
+        <Link href="/" className="bg-white text-orange-600 hover:bg-white/90 text-xs font-black px-4 py-2 rounded-xl transition-all shadow">← Kembali ke Beranda</Link>
       </div>
 
       {/* Header */}
@@ -236,24 +211,24 @@ export default function DemoKasirPage() {
           <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Realtime monitoring pesanan meja (simulasi)</p>
         </div>
         <div className="flex items-center gap-3">
+          {/* Toggle Suara Notifikasi */}
           <button
             onClick={() => {
               const newVal = !soundEnabled;
               setSoundEnabled(newVal);
               if (newVal) {
                 playNotificationSound();
-                // Minta izin akses notifikasi sistem jika belum dikonfigurasi
-                if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
-                  Notification.requestPermission();
-                }
               }
             }}
             className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-all font-medium cursor-pointer ${
-              soundEnabled ? 'bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100' : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
+              soundEnabled
+                ? 'bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100'
+                : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
             }`}
           >
-            <span>{soundEnabled ? 'Suara Notifikasi: Aktif' : 'Suara Notifikasi: Mati'}</span>
+            <span>{soundEnabled ? '🔊 Suara Aktif' : '🔇 Suara Mati'}</span>
           </button>
+
           {pendingCount > 0 && (
             <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-1 rounded-full animate-pulse">{pendingCount} PENDING</span>
           )}
@@ -264,80 +239,172 @@ export default function DemoKasirPage() {
         </div>
       </div>
 
-      {/* Banner Perizinan Notifikasi Desktop */}
-      {showNotificationBanner && (
-        <div className="bg-amber-50 border-b border-amber-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm font-sans animate-fade-in">
-          <div className="flex items-center gap-3">
-            <span className="text-xl">Notifikasi</span>
-            <div>
-              <p className="font-bold text-sm text-amber-800">Aktifkan Notifikasi Desktop</p>
-              <p className="text-xs text-amber-600 mt-1">Izinkan notifikasi agar Anda mendapatkan pemberitahuan suara dan pop-up saat ada pesanan baru masuk seperti pada aplikasi WhatsApp.</p>
-            </div>
-          </div>
-          <button
-            onClick={handleEnableNotifications}
-            className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow flex-shrink-0 cursor-pointer"
-          >
-            Aktifkan Notifikasi
-          </button>
-        </div>
-      )}
-
-      {/* Banner Notifikasi Diblokir */}
-      {isNotificationBlocked && (
-        <div className="bg-rose-50 border-b border-rose-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm font-sans animate-fade-in">
-          <div className="flex items-center gap-3">
-            <span className="text-xl">Peringatan</span>
-            <div>
-              <p className="font-bold text-sm text-rose-800">Notifikasi Diblokir oleh Browser</p>
-              <p className="text-xs text-rose-600 mt-1">Anda memblokir izin notifikasi untuk situs ini. Harap aktifkan kembali izin notifikasi melalui ikon gembok di bar alamat browser Anda agar suara pemberitahuan dapat berbunyi.</p>
-            </div>
-          </div>
-        </div>
-      )}
-
       <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
         {activeOrders.length === 0 ? (
           <div className="text-center py-20 bg-white border border-[#1A1A1A]/8 rounded-3xl p-8 text-[#1A1A1A]/30">
+            <p className="text-5xl mb-4">🛎️</p>
             <p className="text-base font-bold">Tidak ada antrean aktif</p>
-            <p className="text-xs mt-1">Seluruh pesanan pelanggan sudah tersaji dan lunas.</p>
+            <p className="text-xs mt-1">Seluruh pesanan pelanggan sudah tersaji & lunas.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3">
-            {activeOrders.map((order) => (
-              <DemoOrderCard key={order.id} order={order} newOrderId={newOrderId} onClick={() => setSelectedOrder(order)} />
-            ))}
+            {activeOrders.map((order) => {
+              const orderTime = new Date(order.created_at).getTime();
+              const isDelayed = order.status === 'pending' && (new Date().getTime() - orderTime) > 5 * 60 * 1000;
+              return (
+                <div
+                  key={order.id}
+                  onClick={() => setSelectedOrder(order)}
+                  className={`bg-white border rounded-2xl p-5 cursor-pointer hover:shadow-md transition-all duration-300 relative ${
+                    isDelayed
+                      ? 'border-red-500 shadow-red-50 shadow-md ring-1 ring-red-400/50'
+                      : newOrderId === order.id
+                      ? 'border-amber-400 shadow-amber-100 shadow-lg ring-2 ring-amber-300/50'
+                      : 'border-[#1A1A1A]/8'
+                  }`}
+                >
+                  <div className="absolute top-5 right-5 flex items-center gap-2">
+                    {isDelayed && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-red-100 text-red-700 border border-red-300 animate-pulse">
+                        PENDING &gt; 5 MIN
+                      </span>
+                    )}
+                    {order.is_ready ? (
+                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-emerald-500 text-white border border-emerald-600">✓ SIAP SAJI</span>
+                    ) : (
+                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-[#1A1A1A]/5 text-[#1A1A1A]/60 border border-[#1A1A1A]/10">SEDANG DIBUAT</span>
+                    )}
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${
+                      order.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : order.status === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700 animate-pulse'
+                    }`}>
+                      {order.status === 'paid' ? 'Lunas' : order.status === 'rejected' ? 'Ditolak' : 'Pending'}
+                    </span>
+                  </div>
+                <div className="mb-2.5">
+                  <div className="flex items-center gap-2 mb-1">
+                    {newOrderId === order.id && (<span className="text-[10px] bg-amber-500 text-white font-bold px-2 py-0.5 rounded-full animate-pulse">BARU</span>)}
+                    <span className="font-bold text-[#1A1A1A] text-lg">{order.table_number}</span>
+                    {order.customer_name && (<span className="text-sm font-semibold text-[#1A1A1A]/60">({order.customer_name})</span>)}
+                  </div>
+                  <p className="text-xs text-[#1A1A1A]/40">Jam: {formatTime(order.created_at)} · ID: #{order.id.slice(0, 8)}</p>
+                </div>
+                <div className="text-sm text-[#1A1A1A]/70 mb-3 flex items-center gap-1">
+                  <span className="font-bold">{order.order_items.length} Menu:</span>
+                  <span className="truncate">{order.order_items.map((item) => `${item.quantity}x ${item.menu_name}`).join(', ')}</span>
+                </div>
+                <div className="flex items-center justify-between pt-3 border-t border-[#1A1A1A]/5">
+                  <div>
+                    <p className="text-[10px] text-[#1A1A1A]/40 uppercase font-bold tracking-wider">Total Tagihan</p>
+                    <p className="text-lg font-black text-[#1A1A1A]">{formatRupiah(order.total_price)}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {order.receipt_path && (<span className="text-[11px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg">📸 Ada Bukti Transfer</span>)}
+                    <span className="text-xs text-[#1A1A1A]/40 font-semibold flex items-center gap-1">
+                      Lihat Rincian
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
           </div>
         )}
       </main>
 
       {/* Drawer */}
       {selectedOrder && (
-        <DemoOrderDetailDrawer
-          selectedOrder={selectedOrder}
-          onClose={() => setSelectedOrder(null)}
-          onConfirmPaid={() => handleConfirmPaid(selectedOrder.id)}
-          onReject={() => handleReject(selectedOrder.id)}
-          onToggleReady={() => handleToggleReady(selectedOrder.id)}
-        />
+        <div className="fixed inset-0 z-50 overflow-hidden">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedOrder(null)} />
+          <div className="absolute inset-y-0 right-0 max-w-full flex">
+            <div className="w-screen max-w-md bg-[#F9F6EE] shadow-2xl flex flex-col justify-between border-l border-[#1A1A1A]/10">
+              <div className="px-6 py-5 bg-white border-b border-[#1A1A1A]/10 flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-[#1A1A1A]">Rincian Pesanan</h2>
+                  <p className="text-xs text-[#1A1A1A]/40 mt-0.5">ID: #{selectedOrder.id}</p>
+                </div>
+                <button onClick={() => setSelectedOrder(null)} className="w-8 h-8 rounded-full bg-[#1A1A1A]/10 flex items-center justify-center text-[#1A1A1A] hover:bg-[#1A1A1A]/20 transition-colors">✕</button>
+              </div>
+              <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+                <div className="bg-white border border-[#1A1A1A]/10 rounded-2xl p-5">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <p className="text-xl font-black text-[#1A1A1A]">{selectedOrder.table_number}</p>
+                      {selectedOrder.customer_name && (<p className="text-sm text-[#1A1A1A]/60 font-medium">{selectedOrder.customer_name}</p>)}
+                    </div>
+                    <span className={`text-xs font-bold px-3 py-1.5 rounded-xl ${
+                      selectedOrder.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : selectedOrder.status === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'
+                    }`}>
+                      {selectedOrder.status === 'paid' ? '✓ Lunas' : selectedOrder.status === 'rejected' ? '✕ Ditolak' : '⏳ Pending'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#1A1A1A]/40">Waktu: {formatTime(selectedOrder.created_at)}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-[#1A1A1A]/40 uppercase tracking-wider mb-3">Detail Menu Pesanan</p>
+                  <div className="space-y-2">
+                    {selectedOrder.order_items.map((item) => (
+                      <div key={item.id} className="flex justify-between items-center bg-white border border-[#1A1A1A]/8 rounded-xl px-4 py-3">
+                        <div>
+                          <p className="font-semibold text-sm text-[#1A1A1A]">{item.menu_name}</p>
+                          <p className="text-xs text-[#1A1A1A]/40">{item.quantity}x @ {formatRupiah(item.price)}</p>
+                        </div>
+                        <p className="font-bold text-sm text-[#1A1A1A]">{formatRupiah(item.quantity * item.price)}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="bg-[#1A1A1A] text-white rounded-2xl p-5 flex justify-between items-center">
+                  <p className="text-xs font-bold uppercase tracking-wider text-white/60">TOTAL TAGIHAN</p>
+                  <p className="text-2xl font-black">{formatRupiah(selectedOrder.total_price)}</p>
+                </div>
+                {selectedOrder.receipt_path && (
+                  <div>
+                    <p className="text-xs font-bold text-[#1A1A1A]/40 uppercase tracking-wider mb-3">Bukti Transfer</p>
+                    <div className="bg-white border border-[#1A1A1A]/10 rounded-2xl p-6 text-center">
+                      <div className="w-20 h-20 bg-[#F5F2EB] rounded-xl flex items-center justify-center text-3xl mx-auto mb-2">📸</div>
+                      <p className="text-xs text-[#1A1A1A]/40">Bukti transfer tersedia (demo)</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="p-6 border-t border-[#1A1A1A]/10 bg-white space-y-3">
+                {selectedOrder.status === 'pending' && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <button onClick={() => handleConfirmPaid(selectedOrder.id)} className="py-3.5 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 active:scale-[0.98] transition-all">✓ Konfirmasi Lunas</button>
+                    <button onClick={() => handleReject(selectedOrder.id)} className="py-3.5 bg-rose-600 text-white text-sm font-bold rounded-xl hover:bg-rose-700 active:scale-[0.98] transition-all">✕ Tolak</button>
+                  </div>
+                )}
+                {selectedOrder.status === 'paid' && (
+                  <button onClick={() => handleToggleReady(selectedOrder.id)} className={`w-full py-3.5 text-sm font-bold rounded-xl active:scale-[0.98] transition-all ${selectedOrder.is_ready ? 'bg-[#1A1A1A]/10 text-[#1A1A1A] hover:bg-[#1A1A1A]/15' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}>
+                    {selectedOrder.is_ready ? '↩ Batalkan Siap Saji' : '🍽️ Tandai Siap Saji'}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
-
-      {/* Toasts */}
+      {/* Toast Notification Container */}
       <div className="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none max-w-sm w-full">
         {toasts.map((t) => (
-          <div key={t.id} className="bg-[#1A1A1A] text-white border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center justify-between gap-4 pointer-events-auto animate-fade-in">
+          <div
+            key={t.id}
+            className="bg-[#1A1A1A] text-white border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center justify-between gap-4 pointer-events-auto animate-fade-in"
+          >
             <div className="flex items-center gap-3">
-              <span className="text-xs font-bold">{t.message}</span>
+              <span className="text-xl">🛎️</span>
+              <p className="text-xs font-bold">{t.message}</p>
             </div>
             <button
               onClick={() => setToasts((prev) => prev.filter((item) => item.id !== t.id))}
               className="text-white/60 hover:text-white text-xs font-bold bg-white/10 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer"
             >
-              Tutup
+              ✕
             </button>
           </div>
         ))}
       </div>
     </div>
   );
-}
+};

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../../../src/lib/supabase';
 import { logWebsiteEvent } from '../../../src/lib/logs';
+import { AlertIcon } from '../../components/Icons';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -273,7 +274,7 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
     // VALIDASI: Nama Pemesan Wajib Diisi
     if (!customerName.trim()) {
       setShowNameError(true);
-      alert('⚠️ Mohon isi Nama Pemesan terlebih dahulu.');
+      alert('Mohon isi Nama Pemesan terlebih dahulu.');
       return;
     }
 
@@ -557,7 +558,7 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
 
             {!loadingMenus && menuError && (
               <div className="text-center py-24">
-                <div className="text-5xl mb-4">⚠️</div>
+                <div className="flex justify-center mb-4"><AlertIcon className="w-12 h-12 text-amber-600" /></div>
                 <p className="font-semibold text-[#1A1A1A] mb-1">Gagal Memuat Menu</p>
                 <p className="text-sm text-[#1A1A1A]/50">{menuError}</p>
                 <button onClick={() => window.location.reload()} className="mt-5 px-5 py-2.5 bg-[#1A1A1A] text-white text-sm font-medium rounded-xl">Coba Lagi</button>
@@ -761,7 +762,7 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
                         </div>
                       ) : (
                         <div className="space-y-2.5">
-                          <p className="text-[10px] font-bold text-[#1A1A1A]/50 uppercase tracking-wide">⚠️ Upload Bukti Transfer Sekarang</p>
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#1A1A1A]/50 uppercase tracking-wide"><AlertIcon className="w-3.5 h-3.5" /><span>Upload Bukti Transfer Sekarang</span></div>
                           <label className="block cursor-pointer">
                             <input
                               type="file"

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../src/lib/supabase';
 import { logWebsiteEvent } from '../../../src/lib/logs';
+import { AlertIcon } from '../../components/Icons';
 
 interface ShopDB {
   id: string;
@@ -465,7 +466,10 @@ export default function SettingsPage() {
             {/* Input Activation Token */}
             {userRole !== 'superadmin' ? (
               <div className="border-t border-[#1A1A1A]/5 pt-4 space-y-2.5">
-                <p className="text-xs font-bold text-[#1A1A1A]/60">⚠️ Aktivasi Token Lisensi Baru</p>
+                <div className="flex items-center gap-2">
+                  <AlertIcon className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                  <p className="text-xs font-bold text-[#1A1A1A]/60">Aktivasi Token Lisensi Baru</p>
+                </div>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
@@ -485,9 +489,10 @@ export default function SettingsPage() {
               </div>
             ) : (
               <div className="border-t border-[#1A1A1A]/5 pt-4">
-                <p className="text-xs font-bold text-red-500 bg-red-50 border border-red-200 p-2.5 rounded-xl text-center uppercase tracking-wide">
-                  ⚠️ Mode Preview: Aktivasi Lisensi dinonaktifkan
-                </p>
+                <div className="text-xs font-bold text-red-500 bg-red-50 border border-red-200 p-2.5 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wide">
+                  <AlertIcon className="w-4 h-4 flex-shrink-0" />
+                  <span>Mode Preview: Aktivasi Lisensi dinonaktifkan</span>
+                </div>
               </div>
             )}
               <p className="text-[10px] text-[#1A1A1A]/40">

@@ -10,6 +10,10 @@ import { confirmOrderPaid, rejectOrder, toggleOrderReady } from './dbOperations'
 import OrderCard from './OrderCard';
 import OrderDetailDrawer from './OrderDetailDrawer';
 import ReceiptModal from './ReceiptModal';
+import OrderList from './components/OrderList';
+import KasirHeader from './components/KasirHeader';
+import Toasts from './components/Toasts';
+import { BellIcon } from '../../components/Icons';
 
 export default function KasirDashboardPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -114,7 +118,6 @@ export default function KasirDashboardPage() {
       if (Notification.permission === 'granted') {
         setShowNotificationBanner(false);
         setIsNotificationBlocked(false);
-        // Segera sinkronisasi tag shop_id agar server tahu device ini milik toko mana
         if (shopId) syncOneSignalTag(shopId);
         playNotificationSound();
       } else if (Notification.permission === 'denied') {
@@ -273,41 +276,13 @@ export default function KasirDashboardPage() {
 
   return (
     <div className="bg-[#F5F2EB]">
-      {/* Header Info */}
-      <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between bg-white">
-        <div>
-          <h2 className="text-lg font-black text-[#1A1A1A]">Daftar Antrean Order {shopName && `· ${shopName}`}</h2>
-          <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Realtime monitoring pesanan meja</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => {
-              const newVal = !soundEnabled;
-              setSoundEnabled(newVal);
-              localStorage.setItem('qreats_sound_enabled', String(newVal));
-              if (newVal) {
-                playNotificationSound();
-                // Minta izin akses notifikasi jika belum dikonfigurasi
-                if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
-                  Notification.requestPermission();
-                }
-              }
-            }}
-            className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-all font-medium cursor-pointer ${
-              soundEnabled ? 'bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100' : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
-            }`}
-          >
-            <span>{soundEnabled ? 'Suara Notifikasi: Aktif' : 'Suara Notifikasi: Mati'}</span>
-          </button>
-          {pendingCount > 0 && (
-            <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-1 rounded-full animate-pulse">{pendingCount} PENDING</span>
-          )}
-          <div className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-1 font-medium">
-            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-            Live Monitor
-          </div>
-        </div>
-      </div>
+      <KasirHeader
+        shopName={shopName}
+        pendingCount={pendingCount}
+        soundEnabled={soundEnabled}
+        onToggleSound={(v) => { setSoundEnabled(v); localStorage.setItem('qreats_sound_enabled', String(v)); if (v) playNotificationSound(); }}
+        onEnableNotifications={handleEnableNotifications}
+      />
 
       {/* Banner Perizinan Notifikasi Desktop */}
       {showNotificationBanner && (
@@ -341,25 +316,7 @@ export default function KasirDashboardPage() {
         </div>
       )}
 
-      <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
-        {loading ? (
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => <div key={i} className="h-32 bg-white/60 rounded-2xl animate-pulse" />)}
-          </div>
-        ) : activeOrders.length === 0 ? (
-          <div className="text-center py-20 bg-white border border-[#1A1A1A]/8 rounded-3xl p-8 text-[#1A1A1A]/30">
-            <p className="text-5xl mb-4">Kotak</p>
-            <p className="text-base font-bold">Tidak ada antrean aktif</p>
-            <p className="text-xs mt-1">Seluruh pesanan pelanggan sudah tersaji dan lunas.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-3">
-            {activeOrders.map((order) => (
-              <OrderCard key={order.id} order={order} newOrderIds={newOrderIds} onClick={() => setSelectedOrder(order)} />
-            ))}
-          </div>
-        )}
-      </main>
+      <OrderList shopId={shopId} userRole={userRole} onSelect={(o) => setSelectedOrder(o)} playSound={() => { if (soundEnabled) playNotificationSound(); }} />
 
       {/* Drawer Rincian */}
       {selectedOrder && (
@@ -381,22 +338,7 @@ export default function KasirDashboardPage() {
         <ReceiptModal receiptUrl={receiptUrl} tableNumber={selectedOrder?.table_number} onClose={() => setReceiptUrl(null)} />
       )}
 
-      {/* Toasts */}
-      <div className="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none max-w-sm w-full">
-        {toasts.map((t) => (
-          <div key={t.id} className="bg-[#1A1A1A] text-white border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center justify-between gap-4 pointer-events-auto animate-fade-in">
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold">{t.message}</span>
-            </div>
-            <button
-              onClick={() => setToasts((prev) => prev.filter((item) => item.id !== t.id))}
-              className="text-white/60 hover:text-white text-xs font-bold bg-white/10 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer"
-            >
-              Tutup
-            </button>
-          </div>
-        ))}
-      </div>
+      <Toasts toasts={toasts} onClose={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))} />
     </div>
   );
 }

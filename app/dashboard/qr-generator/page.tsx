@@ -12,6 +12,8 @@ interface TableDB {
   is_active: boolean;
 }
 
+import { AlertIcon } from '../../components/Icons';
+
 export default function QRGeneratorPage() {
   const [tables, setTables] = useState<TableDB[]>([]);
   const [loading, setLoading] = useState(true);
@@ -413,7 +415,7 @@ export default function QRGeneratorPage() {
         {/* Info card tentang cara akses */}
         <div className="bg-[#1A1A1A] text-white rounded-2xl p-5 mb-6 print:hidden">
           <div className="flex items-start gap-4">
-            <div className="text-3xl flex-shrink-0">🔒</div>
+            <div className="flex-shrink-0"><AlertIcon className="w-8 h-8 text-amber-600" /></div>
             <div>
               <h2 className="font-semibold text-base mb-1">QR Code Unik & Statis</h2>
               <p className="text-white/60 text-sm leading-relaxed">

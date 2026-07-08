@@ -3,6 +3,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../../../src/lib/supabase';
 import Link from 'next/link';
+import StatsCard from './components/StatsCard';
+import FaviconUploader from './components/FaviconUploader';
+import LogsFeed from './components/LogsFeed';
+import { LockIcon, FoodIcon } from './components/Icons';
 
 interface WebsiteLog {
   id: string;
@@ -141,13 +145,10 @@ export default function SuperadminPage() {
       fetchLogs();
       cleanupOldLogs();
       // Catat sesi masuk langsung ke Supabase
-      supabase.from('website_logs').insert([{
-        title: 'Sesi Terhubung',
-        description: 'Konsol pemantauan superadmin berhasil dimuat.',
-        type: 'system',
-      }]).then(({ error }) => {
+      (async () => {
+        const { error } = await supabase.from('website_logs').insert([{ title: 'Sesi Terhubung', description: 'Konsol pemantauan superadmin berhasil dimuat.', type: 'system' }]);
         if (error) console.warn('Gagal catat sesi (tabel belum dibuat?):', error.message);
-      });
+      })();
     }
   }, [authChecking, accessDenied, cleanupOldLogs, fetchLogs]);
 
@@ -278,7 +279,7 @@ export default function SuperadminPage() {
     return (
       <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center p-6 font-sans">
         <div className="text-center max-w-sm">
-          <span className="text-5xl block mb-4">🔒</span>
+          <span className="block mb-4"><LockIcon className="w-12 h-12 text-[#1A1A1A]" /></span>
           <h1 className="text-2xl font-black text-[#1A1A1A] mb-2">Akses Dibatasi</h1>
           <p className="text-sm text-[#1A1A1A]/50">Halaman ini khusus untuk Superadmin.</p>
         </div>
@@ -348,7 +349,7 @@ export default function SuperadminPage() {
               {currentFavicon ? (
                 <img src={currentFavicon} alt="Favicon Preview" className="w-10 h-10 object-contain" />
               ) : (
-                <span className="text-2xl">🍔</span>
+                <FoodIcon className="w-10 h-10 text-[#1A1A1A]" />
               )}
             </div>
             
