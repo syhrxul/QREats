@@ -67,6 +67,12 @@ export default function MenusDashboardPage() {
   const [shopId, setShopId] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
 
+  // AI Import State
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiPreviewMenus, setAiPreviewMenus] = useState<Partial<MenuItem>[]>([]);
+  const [aiError, setAiError] = useState('');
+
   // ─── Auth & Role Check ──────────────────────────────────────────────────────
 
   useEffect(() => {
@@ -285,6 +291,100 @@ export default function MenusDashboardPage() {
     setMenus((prev) => prev.map((m) => m.id === menu.id ? { ...m, is_available: next } : m));
   }
 
+  // ─── AI Extraction Logic ──────────────────────────────────────────────────────
+
+  async function handleAiUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setAiLoading(true);
+    setAiError('');
+
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const base64 = reader.result;
+        try {
+          const res = await fetch('/api/ai/extract-menu', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64: base64 })
+          });
+          const data = await res.json();
+
+          if (!res.ok) throw new Error(data.error || 'Failed to extract menu');
+          
+          if (data.menus && Array.isArray(data.menus)) {
+            // Defaulting is_available to true
+            const parsed = data.menus.map((m: any) => ({
+              ...m,
+              is_available: true
+            }));
+            setAiPreviewMenus(parsed);
+          }
+        } catch (err: any) {
+          setAiError(err.message || String(err));
+        } finally {
+          setAiLoading(false);
+        }
+      };
+      reader.onerror = () => {
+        setAiError('Gagal membaca file gambar');
+        setAiLoading(false);
+      };
+    } catch (err: any) {
+      setAiError(err.message);
+      setAiLoading(false);
+    }
+  }
+
+  async function handleBatchSave() {
+    if (!shopId || aiPreviewMenus.length === 0) return;
+    setAiLoading(true);
+    setAiError('');
+
+    try {
+      // 1. Dapatkan semua kategori unik dari AI yang bukan default
+      const aiCats = Array.from(new Set(aiPreviewMenus.map(m => m.category).filter(Boolean))) as string[];
+      for (const cat of aiCats) {
+        if (!categories.includes(cat)) {
+          // Insert kategori baru
+          await supabase.from('menu_categories').insert({ shop_id: shopId, name: cat });
+        }
+      }
+
+      // 2. Format payload untuk batch insert menus
+      const insertPayload = aiPreviewMenus.map(m => ({
+        shop_id: shopId,
+        name: m.name,
+        price: Number(m.price) || 0,
+        description: m.description || null,
+        category: m.category || 'Makanan',
+        is_available: true,
+      }));
+
+      const { error } = await supabase.from('menus').insert(insertPayload);
+      if (error) throw new Error(error.message);
+
+      // Refresh
+      await fetchCategories();
+      await fetchMenus();
+      setIsAiModalOpen(false);
+      setAiPreviewMenus([]);
+    } catch (err: any) {
+      setAiError(err.message);
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  function handleAiMenuChange(index: number, field: keyof MenuItem, value: string | number) {
+    const updated = [...aiPreviewMenus];
+    updated[index] = { ...updated[index], [field]: value };
+    setAiPreviewMenus(updated);
+  }
+
   // ─── Access Denied / Loading ────────────────────────────────────────────────
 
   if (authChecking) {
@@ -326,13 +426,21 @@ export default function MenusDashboardPage() {
           <p className="text-xs text-[#1A1A1A]/40 mt-0.5">{menus.length} item aktif terdaftar</p>
         </div>
         {role !== 'superadmin' && (
-          <button
-            id="btn-add-menu"
-            onClick={openAddModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl hover:bg-[#333] active:scale-95 transition-all"
-          >
-            <span>+ Tambah Menu</span>
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setIsAiModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-xs font-bold rounded-xl hover:from-purple-600 hover:to-indigo-600 active:scale-95 transition-all shadow-sm"
+            >
+              <span>✨ Import AI</span>
+            </button>
+            <button
+              id="btn-add-menu"
+              onClick={openAddModal}
+              className="flex items-center gap-2 px-4 py-2.5 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl hover:bg-[#333] active:scale-95 transition-all"
+            >
+              <span>+ Tambah Menu</span>
+            </button>
+          </div>
         )}
       </div>
 
@@ -577,6 +685,138 @@ export default function MenusDashboardPage() {
                 {saving ? 'Menyimpan...' : modalMode === 'add' ? 'Tambah Menu' : 'Simpan Perubahan'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* AI Import Modal */}
+      {isAiModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setIsAiModalOpen(false)} />
+          <div className="relative bg-[#F9F6EE] rounded-2xl p-6 max-w-2xl w-full shadow-2xl max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between mb-5 shrink-0">
+              <h3 className="text-lg font-bold text-[#1A1A1A]">
+                ✨ Import Menu Otomatis dengan AI
+              </h3>
+              <button
+                onClick={() => setIsAiModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-[#1A1A1A]/10 flex items-center justify-center text-[#1A1A1A] hover:bg-[#1A1A1A]/20 transition-colors text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+              <div className="bg-purple-100 border border-purple-200 text-purple-800 p-4 rounded-xl text-sm leading-relaxed">
+                <p>Upload foto/PDF dari buku menu fisik Anda. AI kami akan otomatis membaca daftar makanan, harga, deskripsi, dan kategorinya dalam hitungan detik!</p>
+              </div>
+
+              {!aiPreviewMenus.length && (
+                <div>
+                  <label className="block cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleAiUpload}
+                      disabled={aiLoading}
+                    />
+                    <div className={`border-2 border-dashed border-[#1A1A1A]/20 rounded-xl p-8 text-center transition-colors ${aiLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/50'}`}>
+                      {aiLoading ? (
+                        <p className="text-sm text-[#1A1A1A] font-bold animate-pulse">✨ AI sedang membaca menu Anda...</p>
+                      ) : (
+                        <p className="text-sm text-[#1A1A1A]/60 font-medium">📸 Tap untuk pilih foto menu dari Galeri/Kamera</p>
+                      )}
+                    </div>
+                  </label>
+                </div>
+              )}
+
+              {aiError && (
+                <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700">
+                  {aiError}
+                </div>
+              )}
+
+              {aiPreviewMenus.length > 0 && (
+                <div className="bg-white border border-[#1A1A1A]/15 rounded-xl overflow-hidden">
+                  <div className="max-h-64 overflow-y-auto">
+                    <table className="w-full text-left text-sm text-[#1A1A1A]">
+                      <thead className="bg-[#F5F2EB] sticky top-0 text-xs text-[#1A1A1A]/60 uppercase border-b border-[#1A1A1A]/10">
+                        <tr>
+                          <th className="px-4 py-3 font-semibold">Nama & Kategori</th>
+                          <th className="px-4 py-3 font-semibold text-right">Harga</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#1A1A1A]/10">
+                        {aiPreviewMenus.map((m, idx) => (
+                          <tr key={idx} className="hover:bg-[#1A1A1A]/5">
+                            <td className="px-4 py-3 align-top">
+                              <input 
+                                type="text"
+                                value={m.name || ''}
+                                onChange={(e) => handleAiMenuChange(idx, 'name', e.target.value)}
+                                className="font-bold w-full bg-transparent border-b border-transparent hover:border-[#1A1A1A]/20 focus:border-[#1A1A1A]/50 focus:outline-none transition-colors"
+                                placeholder="Nama Menu"
+                              />
+                              <div className="mt-1">
+                                <input
+                                  type="text"
+                                  value={m.category || ''}
+                                  onChange={(e) => handleAiMenuChange(idx, 'category', e.target.value)}
+                                  className="text-[10px] uppercase font-bold text-[#1A1A1A] bg-[#1A1A1A]/10 px-1.5 py-0.5 rounded border-none focus:outline-none focus:ring-1 focus:ring-[#1A1A1A]/30 w-1/3 min-w-[80px]"
+                                  placeholder="KATEGORI"
+                                />
+                              </div>
+                              <div className="mt-1">
+                                <input
+                                  type="text"
+                                  value={m.description || ''}
+                                  onChange={(e) => handleAiMenuChange(idx, 'description', e.target.value)}
+                                  className="text-xs text-[#1A1A1A]/60 w-full bg-transparent border-b border-transparent hover:border-[#1A1A1A]/20 focus:border-[#1A1A1A]/50 focus:outline-none transition-colors"
+                                  placeholder="Deskripsi (Opsional)"
+                                />
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-right align-top">
+                              <div className="flex items-center justify-end gap-1">
+                                <span className="text-sm font-semibold">Rp</span>
+                                <input
+                                  type="number"
+                                  value={m.price || ''}
+                                  onChange={(e) => handleAiMenuChange(idx, 'price', e.target.value)}
+                                  className="w-24 text-right font-semibold bg-transparent border-b border-transparent hover:border-[#1A1A1A]/20 focus:border-[#1A1A1A]/50 focus:outline-none transition-colors"
+                                  placeholder="0"
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {aiPreviewMenus.length > 0 && (
+              <div className="pt-4 shrink-0 mt-2 border-t border-[#1A1A1A]/10">
+                <button
+                  onClick={handleBatchSave}
+                  disabled={aiLoading}
+                  className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-sm rounded-xl hover:from-purple-700 hover:to-indigo-700 active:scale-[0.98] transition-all disabled:opacity-50"
+                >
+                  {aiLoading ? 'Menyimpan...' : `Simpan ${aiPreviewMenus.length} Menu ke Database`}
+                </button>
+                <button
+                  onClick={() => setAiPreviewMenus([])}
+                  disabled={aiLoading}
+                  className="w-full py-2.5 mt-2 text-[#1A1A1A] font-medium text-xs rounded-xl hover:bg-[#1A1A1A]/5 transition-all"
+                >
+                  Ulangi Upload
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
