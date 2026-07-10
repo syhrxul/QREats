@@ -6,7 +6,10 @@ import { supabase } from '@/src/lib/supabase';
 import { logWebsiteEvent } from '@/src/lib/logs';
 import { CelebrationIcon } from '@/app/[locale]/components/Icons';
 
+import { useTranslations } from 'next-intl';
+
 export default function RegisterPage() {
+  const t = useTranslations('Auth.register');
   const router = useRouter();
   const [registerMode, setRegisterMode] = useState<'owner' | 'staff'>('owner');
 
@@ -183,18 +186,18 @@ export default function RegisterPage() {
         {/* Brand */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">QREats</h1>
-          <p className="text-xs text-slate-900/40 mt-1 uppercase tracking-wider font-bold">Multi-Merchant SaaS Platform</p>
+          <p className="text-xs text-slate-900/40 mt-1 uppercase tracking-wider font-bold">{t('subtitle')}</p>
         </div>
 
         {/* Card */}
         <div className="bg-white border border-slate-900/10 rounded-xl p-8 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900">
-          <h2 className="text-xl font-bold text-slate-900 mb-6">Pendaftaran Akun</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-6">{t('title')}</h2>
 
           {success ? (
             <div className="text-center py-6 space-y-3">
               <span className="block"><CelebrationIcon className="w-12 h-12 text-slate-900 mx-auto" /></span>
-              <p className="font-bold text-slate-900">Pendaftaran Berhasil!</p>
-              <p className="text-xs text-slate-900/50">Mengalihkan Anda ke halaman masuk dalam 3 detik...</p>
+              <p className="font-bold text-slate-900">{t('successTitle')}</p>
+              <p className="text-xs text-slate-900/50">{t('successSubtitle')}</p>
             </div>
           ) : (
             <form onSubmit={handleRegister} className="space-y-4">
@@ -224,26 +227,26 @@ export default function RegisterPage() {
               {/* Input Fields */}
               <div className="space-y-3.5">
                 <div>
-                  <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">Nama Lengkap</label>
+                  <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">{t('nameLabel')}</label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Nama Anda"
+                    placeholder={t('namePlaceholder')}
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
                   />
                 </div>
 
                 {registerMode === 'owner' && (
                   <div>
-                    <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">Nama Toko / Resto</label>
+                    <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">{t('shopLabel')}</label>
                     <input
                       type="text"
                       required
                       value={shopName}
                       onChange={(e) => setShopName(e.target.value)}
-                      placeholder="Contoh: Kopi Kawa"
+                      placeholder={t('shopPlaceholder')}
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
                     />
                   </div>
@@ -251,38 +254,38 @@ export default function RegisterPage() {
 
                 {registerMode === 'staff' && (
                   <div>
-                    <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">Join Code Toko</label>
+                    <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">{t('joinCodeLabel')}</label>
                     <input
                       type="text"
                       required
                       value={joinCode}
                       onChange={(e) => setJoinCode(e.target.value)}
-                      placeholder="Masukkan kode QRE-XXXXXX"
+                      placeholder={t('joinCodePlaceholder')}
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all uppercase"
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">Email</label>
+                  <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">{t('emailLabel')}</label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="nama@email.com"
+                    placeholder={t('emailPlaceholder')}
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">Password</label>
+                  <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">{t('passwordLabel')}</label>
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Minimal 6 karakter"
+                    placeholder={t('passwordPlaceholder')}
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
                   />
                 </div>
@@ -299,7 +302,7 @@ export default function RegisterPage() {
                 disabled={loading}
                 className="w-full mt-3 py-3.5 bg-slate-900 text-white font-bold text-sm rounded-xl hover:bg-[#333] transition-all disabled:opacity-50"
               >
-                {loading ? 'Mendaftarkan Akun...' : 'Daftar Sekarang'}
+                {loading ? t('buttonLoading') : t('button')}
               </button>
 
               <div className="text-center pt-2">

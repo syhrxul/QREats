@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/src/lib/supabase';
 import { logWebsiteEvent } from '@/src/lib/logs';
 
+import { useTranslations } from 'next-intl';
+
 export default function LoginPage() {
+  const t = useTranslations('Auth.login');
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,7 +40,7 @@ export default function LoginPage() {
         .single();
 
       if (profileError || !profile) {
-        setError('Profil pengguna tidak ditemukan. Hubungi administrator.');
+        setError(t('errorProfile'));
         return;
       }
 
@@ -56,15 +59,16 @@ export default function LoginPage() {
       } else if (role === 'kasir') {
         window.location.href = '/dashboard/kasir';
       } else {
-        setError(`Role tidak dikenali: "${role}". Hubungi administrator.`);
+        //setError(`Role tidak dikenali: "${role}". Hubungi administrator.`);
+        setError(t('errorRole'));
       }
     } catch (err: unknown) {
       console.error('[QREats] Login error detail:', err);
       const errMsg = err instanceof Error ? err.message : String(err);
       if (errMsg.includes('Load failed') || errMsg.includes('fetch')) {
-        setError('Koneksi internet gagal. Pastikan HP Anda terhubung ke internet untuk menghubungi server Supabase.');
+        setError(t('errorInternet'));
       } else {
-        setError('Terjadi kesalahan sistem. Coba lagi.');
+        setError(t('errorSystem'));
       }
     } finally {
       setLoading(false);
@@ -85,12 +89,12 @@ export default function LoginPage() {
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">QREats</h1>
-          <p className="text-sm text-slate-900/50 mt-1">Sistem Pemesanan Meja Digital</p>
+          <p className="text-sm text-slate-900/50 mt-1">{t('subtitle')}</p>
         </div>
 
         {/* Card */}
         <div className="bg-white border border-slate-900/10 rounded-xl p-8 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900">
-          <h2 className="text-xl font-semibold text-slate-900 mb-6">Masuk ke Akun</h2>
+          <h2 className="text-xl font-semibold text-slate-900 mb-6">{t('title')}</h2>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
@@ -104,7 +108,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="nama@kafe.com"
+                placeholder={t('emailPlaceholder')}
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
               />
             </div>
@@ -120,7 +124,7 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder={t('passwordPlaceholder')}
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
               />
               <div className="flex justify-end mt-2">
@@ -151,7 +155,7 @@ export default function LoginPage() {
                   Sedang masuk...
                 </span>
               ) : (
-                'Masuk'
+                t('button')
               )}
             </button>
           </form>

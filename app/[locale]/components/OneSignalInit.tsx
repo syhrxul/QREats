@@ -13,7 +13,7 @@ export default function OneSignalInit() {
 
   useEffect(() => {
     const hostname = window.location.hostname;
-    const allowed = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === 'qr-eats-umber.vercel.app';
+    const allowed = hostname === 'qr-eats-umber.vercel.app';
     if (allowed) {
       setIsAllowedDomain(true);
     }

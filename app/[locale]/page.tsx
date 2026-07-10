@@ -159,15 +159,15 @@ export default function LandingPage() {
         <div className="max-w-7xl w-full mx-auto px-6 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center divide-y-2 sm:divide-y-0 sm:divide-x-2 divide-slate-700 p-8">
           <div className="p-4">
             <p className="text-4xl md:text-5xl font-bold text-white">{statCounter.orders.toLocaleString('id-ID')}+</p>
-            <p className="text-sm text-slate-400 font-medium tracking-wide mt-2">Transaksi Terproses</p>
+            <p className="text-sm text-slate-400 font-medium tracking-wide mt-2">{t('statsOrders')}</p>
           </div>
           <div className="p-4">
             <p className="text-4xl md:text-5xl font-bold text-white">{statCounter.merchants}+</p>
-            <p className="text-sm text-slate-400 font-medium tracking-wide mt-2">Mitra Korporat</p>
+            <p className="text-sm text-slate-400 font-medium tracking-wide mt-2">{t('statsMerchants')}</p>
           </div>
           <div className="p-4">
             <p className="text-4xl md:text-5xl font-bold text-white">{statCounter.tables.toLocaleString('id-ID')}+</p>
-            <p className="text-sm text-slate-400 font-medium tracking-wide mt-2">Titik Meja Terpadu</p>
+            <p className="text-sm text-slate-400 font-medium tracking-wide mt-2">{t('statsTables')}</p>
           </div>
         </div>
       </section>
@@ -176,8 +176,8 @@ export default function LandingPage() {
       <section className="bg-slate-50 py-24 relative">
         <div className="max-w-7xl w-full mx-auto px-6">
           <div className="text-center mb-16 relative">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">Standardisasi Operasional Bisnis</h2>
-            <p className="text-base font-medium mt-4 max-w-2xl mx-auto text-slate-600">Skalabilitas tinggi dan terintegrasi penuh untuk mengoptimalkan efisiensi manajemen pelayanan restoran berskala besar.</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">{t('featuresTitle')}</h2>
+            <p className="text-base font-medium mt-4 max-w-2xl mx-auto text-slate-600">{t('featuresSubtitle')}</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -240,14 +240,14 @@ export default function LandingPage() {
       <section className="py-24 bg-white border-t-2 border-slate-900 relative">
         <div className="max-w-7xl w-full mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">Implementasi yang Mudah</h2>
-            <p className="text-base font-medium mt-4 text-slate-600 max-w-xl mx-auto">Adaptasi teknologi tanpa hambatan operasional, dirancang untuk diaktifkan hanya dalam 3 langkah konkrit.</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">{t('hwTitle')}</h2>
+            <p className="text-base font-medium mt-4 text-slate-600 max-w-xl mx-auto">{t('hwSubtitle')}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { num: '1', title: 'Konfigurasi Sistem', desc: 'Pengaturan akun master, digitalisasi menu, dan penetapan harga.', color: 'bg-white' },
-              { num: '2', title: 'Distribusi QR', desc: 'Pembuatan dan pencetakan titik identifikasi meja (QR) untuk pelanggan.', color: 'bg-indigo-50' },
-              { num: '3', title: 'Eksekusi Layanan', desc: 'Penerimaan pesanan otomatis dan pengawasan langsung pada command center.', color: 'bg-emerald-50' },
+              { num: '1', title: t('hw1Title'), desc: t('hw1Desc'), color: 'bg-white' },
+              { num: '2', title: t('hw2Title'), desc: t('hw2Desc'), color: 'bg-indigo-50' },
+              { num: '3', title: t('hw3Title'), desc: t('hw3Desc'), color: 'bg-emerald-50' },
             ].map((s, i) => (
               <div key={i} className={`text-center flex flex-col items-center bg-white p-8 ${neoBorder} ${neoShadow} hover:-translate-y-1 transition-transform`}>
                 <div className={`w-14 h-14 ${s.color} ${neoBorder} shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] flex items-center justify-center text-slate-900 text-xl font-bold mb-6`}>{s.num}</div>
@@ -263,17 +263,17 @@ export default function LandingPage() {
       <section className="py-24 bg-slate-50 border-t-2 border-slate-900">
         <div className="max-w-7xl w-full mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">Paket Lisensi</h2>
-            <p className="text-base font-medium mt-4 text-slate-600 max-w-xl mx-auto">Dirancang secara skalabel untuk memenuhi kebutuhan bisnis f&b tahap menengah hingga enterprise.</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">{t('pricingTitle')}</h2>
+            <p className="text-base font-medium mt-4 text-slate-600 max-w-xl mx-auto">{t('pricingSubtitle')}</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Paket Basic */}
             <div className={`bg-white ${neoBorder} ${neoShadowLg} p-10 flex flex-col hover:-translate-y-1 transition-transform`}>
               <div className="mb-8 border-b-2 border-slate-100 pb-8">
-                <span className="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1 border border-slate-200 uppercase tracking-wide">Standard Tier</span>
-                <h3 className="text-3xl font-bold text-slate-900 mt-4">Basic</h3>
-                <p className="text-sm font-medium text-slate-500 mt-3 leading-relaxed">Infrastruktur standar untuk kafe atau restoran dengan skala operasional menengah.</p>
+                <span className="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1 border border-slate-200 uppercase tracking-wide">{t('p1Badge')}</span>
+                <h3 className="text-3xl font-bold text-slate-900 mt-4">{t('p1Title')}</h3>
+                <p className="text-sm font-medium text-slate-500 mt-3 leading-relaxed">{t('p1Desc')}</p>
               </div>
               <div className="flex-1">
                 <ul className="space-y-4 font-medium text-slate-700 text-sm">
@@ -291,9 +291,9 @@ export default function LandingPage() {
                 Enterprise Choice
               </div>
               <div className="mb-8 border-b-2 border-slate-800 pb-8">
-                <span className="bg-slate-800 text-slate-300 text-xs font-bold px-3 py-1 border border-slate-700 uppercase tracking-wide">Advanced Tier</span>
-                <h3 className="text-3xl font-bold text-white mt-4">Pro</h3>
-                <p className="text-sm font-medium text-slate-400 mt-3 leading-relaxed">Ekosistem tanpa batas untuk jaringan restoran atau pengelolaan volume transaksi tinggi.</p>
+                <span className="bg-slate-800 text-slate-300 text-xs font-bold px-3 py-1 border border-slate-700 uppercase tracking-wide">{t('p2Tag')}</span>
+                <h3 className="text-3xl font-bold text-white mt-4">{t('p2Title')}</h3>
+                <p className="text-sm font-medium text-slate-400 mt-3 leading-relaxed">{t('p2Desc')}</p>
               </div>
               <div className="flex-1">
                 <ul className="space-y-4 font-medium text-slate-300 text-sm">
@@ -312,26 +312,26 @@ export default function LandingPage() {
       <section className="bg-white py-24 border-t-2 border-slate-900">
         <div className="max-w-7xl w-full mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-12">
           <div className="md:col-span-4 sticky top-28 h-fit">
-            <h2 className="text-3xl font-bold text-slate-900 tracking-tight mb-4">Pusat Informasi</h2>
-            <p className="text-base font-medium text-slate-600 leading-relaxed">Basis pengetahuan seputar kapabilitas teknis dan operasional QREats.</p>
+            <h2 className="text-3xl font-bold text-slate-900 tracking-tight mb-4">{t('faqTitle')}</h2>
+            <p className="text-base font-medium text-slate-600 leading-relaxed">{t('faqSubtitle')}</p>
           </div>
           <div className="md:col-span-8 space-y-4">
             {[
               {
-                q: "Mekanisme operasional QREats?",
-                a: "QREats berfungsi sebagai SaaS Cloud POS yang menghubungkan titik temu pelanggan (via QR) secara langsung ke dasbor manajemen pesanan secara seketika tanpa perantara hardware pihak ketiga."
+                q: t('faq1Q'),
+                a: t('faq1A')
               },
               {
-                q: "Persyaratan instalasi pada perangkat pelanggan?",
-                a: "Sistem beroperasi 100% secara berbasis web (PWA). Pelanggan tidak diwajibkan untuk mengunduh atau menginstal aplikasi apa pun, mengurangi friksi transaksi."
+                q: t('faq2Q'),
+                a: t('faq2A')
               },
               {
-                q: "Bagaimana proses rekonsiliasi pembayaran?",
-                a: "Pelanggan mengunggah slip bukti transfer melalui halaman checkout. Sistem memberikan sinyal pada dasbor kasir untuk validasi akhir dengan satu tindakan konfirmasi manual atau penolakan."
+                q: t('faq3Q'),
+                a: t('faq3A')
               },
               {
-                q: "Tingkat keamanan arsitektur data?",
-                a: "Data dienkripsi pada tingkat basis data menggunakan cloud environment dengan kepatuhan standar industri untuk melindungi kerahasiaan pesanan dan kredensial akses."
+                q: t('faq4Q'),
+                a: t('faq4A')
               }
             ].map((faq, i) => (
               <div 
@@ -367,8 +367,8 @@ export default function LandingPage() {
       {/* CTA Section */}
       <section className="bg-indigo-600 py-24 border-t-2 border-slate-900 text-center">
         <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">Digitalisasi Bisnis Anda Hari Ini</h2>
-          <p className="text-lg font-medium text-indigo-100 mb-10 max-w-2xl mx-auto">Terapkan ekosistem manajemen pemesanan yang mutakhir dan efisien dalam hitungan menit.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">{t('ctaBottomTitle')}</h2>
+          <p className="text-lg font-medium text-indigo-100 mb-10 max-w-2xl mx-auto">{t('ctaBottomSubtitle')}</p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Link href="/register" className={`px-8 py-4 bg-white text-slate-900 font-bold text-sm ${neoBorder} shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] hover:-translate-y-1 hover:translate-x-1 hover:shadow-[6px_6px_0px_0px_rgba(15,23,42,1)] active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transition-all`}>
               Buat Akun Perusahaan
@@ -387,8 +387,8 @@ export default function LandingPage() {
           <div className={`relative bg-white ${neoBorder} shadow-[8px_8px_0px_0px_rgba(15,23,42,1)] p-8 max-w-lg w-full`}>
             <button onClick={() => setShowDemoModal(false)} className={`absolute -top-4 -right-4 w-10 h-10 bg-white ${neoBorder} flex items-center justify-center font-bold hover:bg-slate-50 transition-colors shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]`}>✕</button>
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-slate-900">Akses Sandbox Demo</h3>
-              <p className="text-sm font-medium text-slate-500 mt-2">Jelajahi fungsionalitas sistem secara langsung melalui ruang lingkup uji coba.</p>
+              <h3 className="text-2xl font-bold text-slate-900">{t('modalTitle')}</h3>
+              <p className="text-sm font-medium text-slate-500 mt-2">{t('modalSubtitle')}</p>
             </div>
             <div className="space-y-4">
               <Link href="/demo/kasir" onClick={() => setShowDemoModal(false)} className={`flex items-center gap-5 p-5 bg-white ${neoBorder} shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] ${neoHover} group`}>
@@ -396,8 +396,8 @@ export default function LandingPage() {
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900">Terminal Kasir</h4>
-                  <p className="text-xs font-medium text-slate-500 mt-1">Antrean & verifikasi transaksi.</p>
+                  <h4 className="font-bold text-slate-900">{t('modalCashierTitle')}</h4>
+                  <p className="text-xs font-medium text-slate-500 mt-1">{t('modalCashierDesc')}</p>
                 </div>
               </Link>
               <Link href="/demo/admin" onClick={() => setShowDemoModal(false)} className={`flex items-center gap-5 p-5 bg-white ${neoBorder} shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] ${neoHover} group`}>
@@ -405,8 +405,8 @@ export default function LandingPage() {
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900">Dasbor Administrator</h4>
-                  <p className="text-xs font-medium text-slate-500 mt-1">Pengaturan menu, QR, & analisis data.</p>
+                  <h4 className="font-bold text-slate-900">{t('modalAdminTitle')}</h4>
+                  <p className="text-xs font-medium text-slate-500 mt-1">{t('modalAdminDesc')}</p>
                 </div>
               </Link>
             </div>

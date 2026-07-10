@@ -99,7 +99,7 @@ export default function KasirDashboardPage() {
     if (typeof window === 'undefined') return;
 
     const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-    const isAllowedDomain = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === 'qr-eats-umber.vercel.app';
+    const isAllowedDomain = hostname === 'qr-eats-umber.vercel.app';
 
     try {
       const OS = (window as any).OneSignal;

@@ -51,3 +51,9 @@
 ## 21. Absolute Short-Circuit for OneSignal
 - **Pembaruan:** Menerapkan proteksi mutlak pada inisialisasi OneSignal.
 - **Eksekusi:** Mengubah struktur `OneSignalInit.tsx` dengan menambahkan `useState` dan `useEffect` untuk melakukan validasi domain di sisi klien. Jika domain tidak cocok, komponen merender `null` (short-circuit), mencegah pemuatan `Script` tag dan interaksi DOM tak diizinkan sama sekali.
+## 22. Eksekusi i18n Tahap 1 (Autentikasi & Landing Page)
+- **Pembaruan:** Menerapkan sinkronisasi kamus multi-bahasa murni pada tiga halaman krusial (`page.tsx`, `login/page.tsx`, `register/page.tsx`).
+- **Eksekusi:** 
+  - Mengekstraksi seluruh teks statis berbahasa Indonesia (*hardcoded*) ke dalam `messages/id.json` dan `messages/en.json` (termasuk *placeholder* form dan pesan *error* validasi).
+  - Me-*refactor* komponen UI dengan menyisipkan struktur hierarkis (`Auth.login`, `Auth.register`, `LandingPage`).
+  - Mengganti teks manual dengan fungsi `useTranslations()` (hook `next-intl`).
