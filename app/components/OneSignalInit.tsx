@@ -45,7 +45,7 @@ export default function OneSignalInit() {
               // langsung pastikan device ini ter-subscribe ke push server OneSignal.
               // Ini kunci agar notifikasi background bisa diterima meski tab ditutup.
               if (OneSignal.Notifications && OneSignal.Notifications.permission) {
-                const isSubscribed = await OneSignal.User?.PushSubscription?.optedIn;
+                const isSubscribed = OneSignal.User?.pushSubscription?.optedIn;
                 if (!isSubscribed) {
                   // Subscribe ulang jika entah kenapa subscripsi terputus
                   await OneSignal.Notifications.requestPermission();

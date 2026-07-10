@@ -31,3 +31,7 @@
   - Seluruh warna, bayangan (*shadows*), ketebalan garis (*borders*), dan *border-radius* kini dipaksa mengikuti *design tokens* "Muted Neobrutalism" yang ditetapkan di `PROJECT.MD`.
   - Mengubah dominasi hitam/gelap brutal menjadi paduan abu-abu, putih, *indigo*, dan *slate* yang profesional.
 - **Hasil:** Seluruh ekosistem QREats kini memiliki konsistensi bahasa desain kelas *enterprise*. Kompilasi build berjalan lancar 100%.
+## 18. Bug Fix: OneSignal SDK Initialization
+- **Perbaikan:** Menghapus `await` yang tidak perlu dan mengoreksi nama properti dari `PushSubscription` (kapital P) menjadi `pushSubscription` (huruf kecil p) pada file `app/components/OneSignalInit.tsx`.
+- **Alasan:** Pada OneSignal Web SDK v16, properti `User.pushSubscription` ditulis menggunakan format *camelCase*, dan `optedIn` merupakan properti *boolean*, bukan Promise. Kesalahan ini menyebabkan evaluasi keliru (*undefined*) yang memicu perulangan atau kegagalan *opt-in*.
+- **Hasil:** Integrasi *push notification* kembali stabil. Build terkonfirmasi sukses.
