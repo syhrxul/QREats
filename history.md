@@ -35,3 +35,10 @@
 - **Perbaikan:** Menghapus `await` yang tidak perlu dan mengoreksi nama properti dari `PushSubscription` (kapital P) menjadi `pushSubscription` (huruf kecil p) pada file `app/components/OneSignalInit.tsx`.
 - **Alasan:** Pada OneSignal Web SDK v16, properti `User.pushSubscription` ditulis menggunakan format *camelCase*, dan `optedIn` merupakan properti *boolean*, bukan Promise. Kesalahan ini menyebabkan evaluasi keliru (*undefined*) yang memicu perulangan atau kegagalan *opt-in*.
 - **Hasil:** Integrasi *push notification* kembali stabil. Build terkonfirmasi sukses.
+## 19. Architecture Upgrade: i18n Auto-Detection
+- **Pembaruan:** Mengimplementasikan infrastruktur translasi dan *routing* multi-bahasa menggunakan `next-intl` dengan deteksi lokasi otomatis berbasis *header* `Accept-Language`.
+- **Eksekusi:** 
+  - Restrukturisasi rute Next.js dari `app/*` menjadi `app/[locale]/*`.
+  - Penyesuaian ratusan *import paths* lintas direktori dan pembuatan modul *middleware*.
+  - Pembuatan kamus translasi `messages/id.json` (Bahasa Indonesia - *default*) dan `messages/en.json` (Bahasa Inggris).
+- **Hasil:** Aplikasi sekarang mendukung pergantian bahasa otomatis tanpa mengubah logika domain secara drastis. Struktur siap untuk translasi massal secara bertahap pada *sprint* berikutnya.

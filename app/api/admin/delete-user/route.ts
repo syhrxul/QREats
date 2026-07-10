@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { logWebsiteEventServer } from '../../../../src/lib/server-logs';
+import { logWebsiteEventServer } from '@/src/lib/server-logs';
 
 /**
  * API route server-side untuk menghapus user dari auth.users Supabase.

@@ -1,0 +1,15 @@
+{
+  "LandingPage": {
+    "heroTitle": "Digital Revolution for Your Culinary Business",
+    "heroSubtitle": "Change how customers interact with menus and orders. Boost efficiency and dining experience with our smart POS and QR menu system.",
+    "ctaDemoKasir": "POS Demo",
+    "ctaDemoMenu": "QR Menu Demo",
+    "featuresTitle": "QREats Key Features",
+    "featureQRTitle": "Dynamic QR Menu",
+    "featureQRDesc": "Customers simply scan a QR code at their table to view the menu and order without waiting for a waiter.",
+    "featureDashboardTitle": "Analytics Dashboard",
+    "featureDashboardDesc": "Monitor daily sales, top-selling items, and your restaurant's overall performance in real-time.",
+    "featurePOS": "Integrated POS System",
+    "featurePOSDesc": "Process orders quickly, manage tables, and print receipts from a single modern POS interface."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "LandingPage": {
+    "heroTitle": "Revolusi Digital Usaha Kuliner Anda",
+    "heroSubtitle": "Ubah cara pelanggan berinteraksi dengan menu dan pesanan. Tingkatkan efisiensi dan pengalaman bersantap dengan sistem kasir dan QR menu cerdas.",
+    "ctaDemoKasir": "Demo Kasir",
+    "ctaDemoMenu": "Demo Menu QR",
+    "featuresTitle": "Fitur Unggulan QREats",
+    "featureQRTitle": "QR Menu Dinamis",
+    "featureQRDesc": "Pelanggan cukup scan QR code di meja untuk melihat menu dan memesan tanpa perlu menunggu pelayan.",
+    "featureDashboardTitle": "Dashboard Analitik",
+    "featureDashboardDesc": "Pantau penjualan harian, menu terlaris, dan kinerja restoran Anda secara real-time.",
+    "featurePOS": "Sistem Kasir Terintegrasi",
+    "featurePOSDesc": "Proses pesanan dengan cepat, kelola meja, dan cetak struk dari satu antarmuka kasir modern."
+  }
+}

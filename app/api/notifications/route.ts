@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { logWebsiteEventServer } from '../../../src/lib/server-logs';
+import { logWebsiteEventServer } from '@/src/lib/server-logs';
 
 /**
  * Endpoint API internal untuk mengirim push notification via OneSignal
