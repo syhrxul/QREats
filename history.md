@@ -17,3 +17,11 @@
   - Mengganti bayangan *blur* yang lembut dengan bayangan solid dan *harsh* (`shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]`).
   - Menerapkan tipografi kapital, tebal ekstrem (`font-black uppercase tracking-tight`), dan efek *hover* yang tajam dan taktis (*rigid*).
 - **Hasil:** Halaman *landing page* kini tampil jauh lebih berani, modern, menonjol (*stand out*), tanpa *error build*.
+## 16. UI Update: Muted Neobrutalism untuk Enterprise
+- **Pembaruan:** Mengubah *styling* `app/page.tsx` dari gaya Neobrutalism liar menjadi **Muted Neobrutalism** yang tenang, profesional, dan berkelas korporat (B2B).
+- **Desain Baru:** 
+  - Palet warna: Putih bersih, `slate-50`, dengan aksen `indigo-600` dan `emerald-600`.
+  - Garis batas diperhalus: `border-2 border-slate-900`.
+  - Bayangan (*Shadow*): Diubah menggunakan warna navy gelap (`rgba(15,23,42,1)`) agar tidak terlalu memukul mata.
+  - Tipografi: Menjadi `font-bold tracking-tight` (tidak lagi *uppercase* brutal) demi kenyamanan membaca (*readability*).
+- **Hasil:** Landing page kini memancarkan aura *Enterprise-Grade* dengan tetap mempertahankan elemen struktural modern khas Neobrutalism. Build sukses.
