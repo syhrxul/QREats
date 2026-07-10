@@ -72,11 +72,11 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F5F2EB] flex items-center justify-center p-6">
+    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         {/* Logo / Brand */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-[#1A1A1A] rounded-2xl mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-slate-900 rounded-xl mb-4">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="7" height="7" />
               <rect x="14" y="3" width="7" height="7" />
@@ -84,17 +84,17 @@ export default function LoginPage() {
               <path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 17v3" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-[#1A1A1A] tracking-tight">QREats</h1>
-          <p className="text-sm text-[#1A1A1A]/50 mt-1">Sistem Pemesanan Meja Digital</p>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">QREats</h1>
+          <p className="text-sm text-slate-900/50 mt-1">Sistem Pemesanan Meja Digital</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white border border-[#1A1A1A]/10 rounded-2xl p-8 shadow-sm">
-          <h2 className="text-xl font-semibold text-[#1A1A1A] mb-6">Masuk ke Akun</h2>
+        <div className="bg-white border border-slate-900/10 rounded-xl p-8 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900">
+          <h2 className="text-xl font-semibold text-slate-900 mb-6">Masuk ke Akun</h2>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#1A1A1A]/70 mb-1.5">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-900/70 mb-1.5">
                 Email
               </label>
               <input
@@ -105,12 +105,12 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="nama@kafe.com"
-                className="w-full px-4 py-3 bg-[#F5F2EB] border border-[#1A1A1A]/15 rounded-xl text-[#1A1A1A] placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-[#1A1A1A]/40 transition-all"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#1A1A1A]/70 mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-900/70 mb-1.5">
                 Password
               </label>
               <input
@@ -121,10 +121,10 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 bg-[#F5F2EB] border border-[#1A1A1A]/15 rounded-xl text-[#1A1A1A] placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-[#1A1A1A]/40 transition-all"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
               />
               <div className="flex justify-end mt-2">
-                <a href="/lupa-password" className="text-[11px] text-[#1A1A1A]/50 hover:text-[#1A1A1A] font-medium underline underline-offset-2">
+                <a href="/lupa-password" className="text-[11px] text-slate-900/50 hover:text-slate-900 font-medium underline underline-offset-2">
                   Lupa Password?
                 </a>
               </div>
@@ -140,7 +140,7 @@ export default function LoginPage() {
               id="btn-login"
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-[#1A1A1A] text-white font-medium text-sm rounded-xl hover:bg-[#333] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className="w-full py-3.5 bg-slate-900 text-white font-medium text-sm rounded-xl hover:bg-[#333] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -156,13 +156,13 @@ export default function LoginPage() {
             </button>
           </form>
           <div className="text-center mt-5">
-            <a href="/register" className="text-xs text-[#1A1A1A]/40 font-semibold underline underline-offset-2 hover:text-[#1A1A1A]">
+            <a href="/register" className="text-xs text-slate-900/40 font-semibold underline underline-offset-2 hover:text-slate-900">
               Belum punya akun? Daftar sebagai Owner / Karyawan
             </a>
           </div>
         </div>
 
-        <p className="text-center text-xs text-[#1A1A1A]/30 mt-6">
+        <p className="text-center text-xs text-slate-900/30 mt-6">
           QREats © {new Date().getFullYear()} — Akses khusus staf & pengelola
         </p>
       </div>

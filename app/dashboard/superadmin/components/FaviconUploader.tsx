@@ -12,14 +12,14 @@ interface Props {
 
 export default function FaviconUploader({ currentFavicon, uploading, uploadError, uploadSuccess, onFileChange }: Props) {
   return (
-    <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 shadow-sm mb-6 space-y-4">
+    <div className="bg-white border border-slate-900/8 rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 mb-6 space-y-4">
       <div>
-        <h3 className="font-bold text-[#1A1A1A] text-base font-sans">Pengaturan Logo & Favicon</h3>
-        <p className="text-xs text-[#1A1A1A]/40 mt-0.5 font-sans">Unggah logo utama situs (ico/png/jpg), maksimal 2MB.</p>
+        <h3 className="font-bold text-slate-900 text-base font-sans">Pengaturan Logo & Favicon</h3>
+        <p className="text-xs text-slate-900/40 mt-0.5 font-sans">Unggah logo utama situs (ico/png/jpg), maksimal 2MB.</p>
       </div>
 
       <div className="flex flex-col sm:flex-row items-center gap-4">
-        <div className="w-16 h-16 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0">
+        <div className="w-16 h-16 bg-slate-50 border border-slate-900/10 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
           {currentFavicon ? (
             <img src={currentFavicon} alt="Favicon Preview" className="w-10 h-10 object-contain" />
           ) : (
@@ -33,9 +33,9 @@ export default function FaviconUploader({ currentFavicon, uploading, uploadError
             accept=".ico,.png,.jpg,.jpeg"
             onChange={onFileChange}
             disabled={uploading}
-            className="block w-full text-xs text-[#1A1A1A]/50 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1A1A1A] file:text-white hover:file:bg-[#333] cursor-pointer"
+            className="block w-full text-xs text-slate-900/50 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white hover:file:bg-[#333] cursor-pointer"
           />
-          <p className="text-[10px] text-[#1A1A1A]/35 font-sans">Mendukung .ico/.png/.jpg, maksimal 2MB.</p>
+          <p className="text-[10px] text-slate-900/35 font-sans">Mendukung .ico/.png/.jpg, maksimal 2MB.</p>
         </div>
       </div>
 

@@ -78,40 +78,40 @@ export default function DatabaseMonitorPage() {
 
   if (authChecking) {
     return (
-      <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center font-sans">
-        <p className="text-sm text-[#1A1A1A]/40">Memeriksa hak akses superadmin...</p>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center font-sans">
+        <p className="text-sm text-slate-900/40">Memeriksa hak akses superadmin...</p>
       </div>
     );
   }
 
   if (accessDenied) {
     return (
-      <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center p-6 font-sans">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans">
         <div className="text-center max-w-sm">
-          <span className="block mb-4"><LockIcon className="w-12 h-12 text-[#1A1A1A] mx-auto" /></span>
-          <h1 className="text-2xl font-black text-[#1A1A1A] mb-2">Akses Dibatasi</h1>
-          <p className="text-sm text-[#1A1A1A]/50">Halaman ini khusus untuk Superadmin.</p>
+          <span className="block mb-4"><LockIcon className="w-12 h-12 text-slate-900 mx-auto" /></span>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Akses Dibatasi</h1>
+          <p className="text-sm text-slate-900/50">Halaman ini khusus untuk Superadmin.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#F5F2EB] min-h-screen font-sans">
+    <div className="bg-slate-50 min-h-screen font-sans">
       {/* Header */}
-      <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between bg-white">
+      <div className="border-b border-slate-900/10 px-6 py-4 flex items-center justify-between bg-white">
         <div className="flex items-center gap-3">
-          <Link href="/dashboard/superadmin" className="px-3 py-1.5 border border-[#1A1A1A]/15 hover:bg-[#1A1A1A]/5 text-xs font-bold rounded-xl transition-all">
+          <Link href="/dashboard/superadmin" className="px-3 py-1.5 border border-slate-900/15 hover:bg-slate-900/5 text-xs font-bold rounded-xl transition-all">
             Kembali
           </Link>
           <div>
-            <h2 className="text-lg font-black text-[#1A1A1A]">Performa Database Supabase</h2>
-            <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Pemantauan kapasitas penyimpanan, koneksi aktif, dan ukuran tabel utama.</p>
+            <h2 className="text-lg font-bold text-slate-900">Performa Database Supabase</h2>
+            <p className="text-xs text-slate-900/40 mt-0.5">Pemantauan kapasitas penyimpanan, koneksi aktif, dan ukuran tabel utama.</p>
           </div>
         </div>
         <button
           onClick={fetchDbMetrics}
-          className="px-4 py-2 border border-[#1A1A1A]/20 hover:bg-[#1A1A1A]/5 text-xs font-bold rounded-xl transition-all cursor-pointer"
+          className="px-4 py-2 border border-slate-900/20 hover:bg-slate-900/5 text-xs font-bold rounded-xl transition-all cursor-pointer"
         >
           Refresh
         </button>
@@ -119,27 +119,27 @@ export default function DatabaseMonitorPage() {
 
       <main className="max-w-4xl mx-auto px-6 py-8 space-y-6">
         {loadingDb ? (
-          <div className="py-20 text-center text-xs text-[#1A1A1A]/40 animate-pulse font-sans bg-white border border-[#1A1A1A]/8 rounded-3xl">
+          <div className="py-20 text-center text-xs text-slate-900/40 animate-pulse font-sans bg-white border border-slate-900/8 rounded-xl">
             Memuat metrik kesehatan database...
           </div>
         ) : rpcSupported ? (
           <div className="space-y-6">
             {/* Metrik Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 shadow-sm flex items-center justify-between">
+              <div className="bg-white border border-slate-900/8 rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Penyimpanan Terpakai</span>
-                  <p className="text-3xl font-black text-[#1A1A1A] mt-1">{dbMetrics?.database_size || '...'}</p>
+                  <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide">Penyimpanan Terpakai</span>
+                  <p className="text-3xl font-bold text-slate-900 mt-1">{dbMetrics?.database_size || '...'}</p>
                 </div>
-                <div className="w-12 h-12 bg-[#F5F2EB] rounded-2xl flex items-center justify-center text-[#1A1A1A]/40 font-bold text-xs">
+                <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-900/40 font-bold text-xs">
                   Disk
                 </div>
               </div>
 
-              <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 shadow-sm flex items-center justify-between">
+              <div className="bg-white border border-slate-900/8 rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Koneksi Database Aktif</span>
-                  <p className="text-3xl font-black text-emerald-600 mt-1">{dbMetrics?.active_connections || 0}</p>
+                  <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide">Koneksi Database Aktif</span>
+                  <p className="text-3xl font-bold text-emerald-600 mt-1">{dbMetrics?.active_connections || 0}</p>
                 </div>
                 <div className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-3 py-1.5 text-[10px] font-bold">
                   <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
@@ -149,15 +149,15 @@ export default function DatabaseMonitorPage() {
             </div>
 
             {/* Tabel Ukuran Tabel */}
-            <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 shadow-sm space-y-4">
+            <div className="bg-white border border-slate-900/8 rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 space-y-4">
               <div>
-                <h3 className="font-bold text-[#1A1A1A] text-sm">Ukuran Data per Tabel Utama</h3>
-                <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Daftar tabel public dengan baris data & ukuran penyimpanan terbesar</p>
+                <h3 className="font-bold text-slate-900 text-sm">Ukuran Data per Tabel Utama</h3>
+                <p className="text-xs text-slate-900/40 mt-0.5">Daftar tabel public dengan baris data & ukuran penyimpanan terbesar</p>
               </div>
-              <div className="border border-[#1A1A1A]/5 rounded-2xl overflow-hidden">
+              <div className="border border-slate-900/5 rounded-xl overflow-hidden">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-[#F5F2EB]/60 border-b border-[#1A1A1A]/5 font-bold text-[#1A1A1A]/60">
+                    <tr className="bg-slate-50/60 border-b border-slate-900/5 font-bold text-slate-900/60">
                       <th className="p-3">Nama Tabel</th>
                       <th className="p-3">Ukuran Disk</th>
                       <th className="p-3">Total Baris</th>
@@ -165,10 +165,10 @@ export default function DatabaseMonitorPage() {
                   </thead>
                   <tbody>
                     {dbMetrics?.table_sizes?.map((t, idx) => (
-                      <tr key={idx} className="border-b border-[#1A1A1A]/5 hover:bg-[#F5F2EB]/10 transition-colors">
-                        <td className="p-3 font-mono text-[#1A1A1A]">{t.table_name}</td>
-                        <td className="p-3 text-[#1A1A1A]/70">{t.total_size}</td>
-                        <td className="p-3 font-semibold text-[#1A1A1A]">{t.row_count.toLocaleString('id-ID')}</td>
+                      <tr key={idx} className="border-b border-slate-900/5 hover:bg-slate-50/10 transition-colors">
+                        <td className="p-3 font-mono text-slate-900">{t.table_name}</td>
+                        <td className="p-3 text-slate-900/70">{t.total_size}</td>
+                        <td className="p-3 font-semibold text-slate-900">{t.row_count.toLocaleString('id-ID')}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -177,15 +177,15 @@ export default function DatabaseMonitorPage() {
             </div>
           </div>
         ) : (
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 shadow-sm space-y-4">
+          <div className="bg-white border border-slate-900/8 rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 space-y-4">
             <div className="space-y-1">
-              <h3 className="font-bold text-[#1A1A1A] text-sm">Aktivasi Metrik Performa</h3>
-              <p className="text-xs text-[#1A1A1A]/50 leading-relaxed">
+              <h3 className="font-bold text-slate-900 text-sm">Aktivasi Metrik Performa</h3>
+              <p className="text-xs text-slate-900/50 leading-relaxed">
                 Skrip SQL berikut dibutuhkan untuk membaca data kapasitas database secara aman. Salin kode di bawah ini lalu jalankan di **SQL Editor** Supabase Anda.
               </p>
             </div>
             <div className="relative">
-              <pre className="bg-[#1A1A1A] text-white/90 text-[10px] font-mono p-4 rounded-xl overflow-x-auto max-h-[200px] leading-relaxed">
+              <pre className="bg-slate-900 text-white/90 text-[10px] font-mono p-4 rounded-xl overflow-x-auto max-h-[200px] leading-relaxed">
 {`CREATE OR REPLACE FUNCTION get_db_metrics()
 RETURNS json
 SECURITY DEFINER
@@ -249,7 +249,7 @@ $$ LANGUAGE plpgsql;`;
                   setCopiedSql(true);
                   setTimeout(() => setCopiedSql(false), 2000);
                 }}
-                className="absolute top-2.5 right-2.5 px-3 py-1.5 bg-white hover:bg-gray-100 text-[#1A1A1A] font-bold text-[10px] rounded-lg shadow transition-all cursor-pointer"
+                className="absolute top-2.5 right-2.5 px-3 py-1.5 bg-white hover:bg-gray-100 text-slate-900 font-bold text-[10px] rounded-lg shadow transition-all cursor-pointer"
               >
                 {copiedSql ? 'Tersalin!' : 'Salin SQL'}
               </button>

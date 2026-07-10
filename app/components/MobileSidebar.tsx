@@ -211,7 +211,7 @@ export default function MobileSidebar({
   return (
     <>
       {/* Header Mobile Bar */}
-      <header className="md:hidden bg-[#1A1A1A] text-white px-4 py-3 flex items-center justify-between z-40 border-b border-white/5">
+      <header className="md:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between z-40 border-b border-white/5">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" strokeWidth="3">
@@ -242,7 +242,7 @@ export default function MobileSidebar({
 
       {/* Drawer Overlay & Menu */}
       {isMobileOpen && (
-        <div className="md:hidden fixed inset-0 z-30 flex flex-col bg-[#1A1A1A] pt-14 text-white animate-fade-in">
+        <div className="md:hidden fixed inset-0 z-30 flex flex-col bg-slate-900 pt-14 text-white animate-fade-in">
           <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
             {allowedNavItems.map((item) => {
               const isActive = pathname === item.href;
@@ -261,18 +261,18 @@ export default function MobileSidebar({
                     }
                   }}
                   className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all ${
-                    isActive ? 'bg-white text-[#1A1A1A] shadow-md' : 'text-white/60 hover:bg-white/10'
+                    isActive ? 'bg-white text-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900' : 'text-white/60 hover:bg-white/10'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className={isActive ? 'text-[#1A1A1A]' : 'text-white/50'}>
+                    <span className={isActive ? 'text-slate-900' : 'text-white/50'}>
                       {item.icon}
                     </span>
                     <span>{item.name}</span>
                   </div>
                   {item.badge !== undefined && item.badge !== null && !isClickBlocked && (
                     <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold ${
-                      isActive ? 'bg-[#1A1A1A] text-white' : 'bg-[#FF9F43] text-[#1A1A1A]'
+                      isActive ? 'bg-slate-900 text-white' : 'bg-[#FF9F43] text-slate-900'
                     }`}>
                       {item.badge}
                     </span>

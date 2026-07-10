@@ -45,15 +45,15 @@ export default function LogsPage() {
   const filteredLogs = logs.filter(log => filter === 'all' || log.type === filter);
 
   return (
-    <div className="bg-[#F5F2EB] min-h-screen font-sans">
+    <div className="bg-slate-50 min-h-screen font-sans">
 
       <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
 
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#1A1A1A]/5">
+      <div className="bg-white rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 border border-slate-900/5">
         <div className="flex flex-wrap gap-2 mb-6">
           <button 
             onClick={() => setFilter('all')} 
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition ${filter === 'all' ? 'bg-[#1A1A1A] text-white' : 'bg-[#F5F2EB] text-[#1A1A1A] hover:bg-gray-200'}`}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition ${filter === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-900 hover:bg-gray-200'}`}
           >
             Semua Log
           </button>
@@ -85,12 +85,12 @@ export default function LogsPage() {
 
         <div className="space-y-3">
           {loading && logs.length === 0 ? (
-            <div className="text-center py-20 text-[#1A1A1A]/40 font-medium text-sm">
+            <div className="text-center py-20 text-slate-900/40 font-medium text-sm">
               <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3 opacity-20" />
               Memuat data log...
             </div>
           ) : filteredLogs.length === 0 ? (
-            <div className="text-center py-20 text-[#1A1A1A]/40 font-medium text-sm bg-[#F5F2EB] rounded-2xl">
+            <div className="text-center py-20 text-slate-900/40 font-medium text-sm bg-slate-50 rounded-xl">
               <Activity className="w-8 h-8 mx-auto mb-3 opacity-20" />
               Tidak ada log yang sesuai filter.
             </div>
@@ -111,24 +111,24 @@ export default function LogsPage() {
               }
 
               return (
-                <div key={log.id} className="group bg-[#F5F2EB] border border-[#1A1A1A]/5 rounded-2xl p-4 flex gap-4 transition hover:bg-white hover:shadow-md hover:border-[#1A1A1A]/10">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm ${dotColor}`}>
+                <div key={log.id} className="group bg-slate-50 border border-slate-900/5 rounded-xl p-4 flex gap-4 transition hover:bg-white hover:shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 hover:border-slate-900/10">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 ${dotColor}`}>
                     {icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <h3 className="font-bold text-[#1A1A1A]">{log.title}</h3>
-                        <p className="text-xs text-[#1A1A1A]/60 font-mono mt-1 whitespace-pre-wrap max-h-32 overflow-y-auto pr-2 scrollbar-hide break-words">
+                        <h3 className="font-bold text-slate-900">{log.title}</h3>
+                        <p className="text-xs text-slate-900/60 font-mono mt-1 whitespace-pre-wrap max-h-32 overflow-y-auto pr-2 scrollbar-hide break-words">
                           {log.description}
                         </p>
                       </div>
                       <div className="text-right flex-shrink-0 flex flex-col items-end gap-1">
-                        <span className="text-[10px] font-bold text-[#1A1A1A]/40 bg-white px-2 py-1 rounded-lg border border-[#1A1A1A]/5 shadow-sm inline-block">
+                        <span className="text-[10px] font-bold text-slate-900/40 bg-white px-2 py-1 rounded-lg border border-slate-900/5 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 inline-block">
                           {log.time || (log.created_at ? new Date(log.created_at).toLocaleString('id-ID', { hour12: false }) : '-')}
                         </span>
                         {log.visitor_ip && (
-                          <span className="text-[9px] font-mono font-bold text-[#1A1A1A]/30 bg-black/5 px-1.5 py-0.5 rounded">
+                          <span className="text-[9px] font-mono font-bold text-slate-900/30 bg-black/5 px-1.5 py-0.5 rounded">
                             IP: {log.visitor_ip}
                           </span>
                         )}

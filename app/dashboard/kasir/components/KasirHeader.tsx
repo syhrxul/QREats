@@ -13,15 +13,15 @@ interface Props {
 
 export default function KasirHeader({ shopName, pendingCount, soundEnabled, onToggleSound, onEnableNotifications }: Props) {
   return (
-    <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between bg-white">
+    <div className="border-b border-slate-900/10 px-6 py-4 flex items-center justify-between bg-white">
       <div>
-        <h2 className="text-lg font-black text-[#1A1A1A]">Daftar Antrean Order {shopName && `· ${shopName}`}</h2>
-        <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Realtime monitoring pesanan meja</p>
+        <h2 className="text-lg font-bold text-slate-900">Daftar Antrean Order {shopName && `· ${shopName}`}</h2>
+        <p className="text-xs text-slate-900/40 mt-0.5">Realtime monitoring pesanan meja</p>
       </div>
       <div className="flex items-center gap-3">
         <button
           onClick={() => onToggleSound(!soundEnabled)}
-          className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border transition-all font-medium cursor-pointer ${soundEnabled ? 'bg-orange-50 border-orange-200 text-orange-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
+          className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border transition-all font-medium cursor-pointer ${soundEnabled ? 'bg-indigo-50 border-indigo-200 text-orange-700' : 'bg-gray-50 border-gray-200 text-gray-400'}`}>
           <SoundIcon className="w-4 h-4" />
           <span>{soundEnabled ? 'Suara: Aktif' : 'Suara: Mati'}</span>
         </button>

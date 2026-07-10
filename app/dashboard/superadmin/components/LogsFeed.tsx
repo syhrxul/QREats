@@ -18,7 +18,7 @@ interface Props {
 
 export default function LogsFeed({ liveLogs }: Props) {
   return (
-    <div className="bg-[#1A1A1A] text-white rounded-3xl p-6 space-y-4 shadow-sm flex flex-col justify-between min-h-[380px]">
+    <div className="bg-slate-900 text-white rounded-xl p-6 space-y-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 flex flex-col justify-between min-h-[380px]">
       <div>
         <div className="flex items-center justify-between">
           <h3 className="font-bold text-base">Log Website</h3>

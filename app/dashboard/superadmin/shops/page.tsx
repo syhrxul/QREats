@@ -255,40 +255,40 @@ export default function SuperadminShopsPage() {
 
   if (authChecking) {
     return (
-      <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center font-sans">
-        <p className="text-sm text-[#1A1A1A]/60">Memeriksa hak akses superadmin...</p>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center font-sans">
+        <p className="text-sm text-slate-900/60">Memeriksa hak akses superadmin...</p>
       </div>
     );
   }
 
   if (accessDenied) {
     return (
-      <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center p-6 font-sans">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans">
         <div className="text-center max-w-sm">
-          <span className="block mb-4"><LockIcon className="w-12 h-12 text-[#1A1A1A] mx-auto" /></span>
-          <h1 className="text-2xl font-black text-[#1A1A1A] mb-2">Akses Dibatasi</h1>
-          <p className="text-sm text-[#1A1A1A]/70">Halaman ini khusus untuk Superadmin.</p>
+          <span className="block mb-4"><LockIcon className="w-12 h-12 text-slate-900 mx-auto" /></span>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Akses Dibatasi</h1>
+          <p className="text-sm text-slate-900/70">Halaman ini khusus untuk Superadmin.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#F5F2EB] min-h-screen font-sans">
+    <div className="bg-slate-50 min-h-screen font-sans">
       
       {/* Custom Alert Modal */}
       {alertMsg && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAlertMsg(null)} />
-          <div className="relative bg-[#F9F6EE] rounded-3xl overflow-hidden max-w-sm w-full shadow-2xl p-6 text-center border border-[#1A1A1A]/10 animate-fade-in-up">
-            <div className={`w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 ${alertMsg.type === 'error' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}>
+          <div className="relative bg-[#F9F6EE] rounded-xl overflow-hidden max-w-sm w-full shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 p-6 text-center border border-slate-900/10 animate-fade-in-up">
+            <div className={`w-16 h-16 rounded-xl mx-auto flex items-center justify-center mb-4 ${alertMsg.type === 'error' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}>
                <AlertIcon className="w-8 h-8" />
             </div>
-            <h3 className="font-black text-lg text-[#1A1A1A] mb-2">{alertMsg.title}</h3>
-            <p className="text-sm text-[#1A1A1A]/60 leading-relaxed mb-6">{alertMsg.message}</p>
+            <h3 className="font-bold text-lg text-slate-900 mb-2">{alertMsg.title}</h3>
+            <p className="text-sm text-slate-900/60 leading-relaxed mb-6">{alertMsg.message}</p>
             <button
               onClick={() => setAlertMsg(null)}
-              className="w-full py-3 bg-[#1A1A1A] text-white font-bold rounded-xl hover:bg-[#333] transition-all"
+              className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-[#333] transition-all"
             >
               Mengerti
             </button>
@@ -297,14 +297,14 @@ export default function SuperadminShopsPage() {
       )}
 
       {/* Header */}
-      <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between bg-white">
+      <div className="border-b border-slate-900/10 px-6 py-4 flex items-center justify-between bg-white">
         <div>
-          <h2 className="text-lg font-black text-[#1A1A1A]">Kelola Merchant Toko</h2>
-          <p className="text-xs text-[#1A1A1A]/60 mt-0.5">Daftar toko merchant, masa aktif lisensi, staf karyawan terdaftar</p>
+          <h2 className="text-lg font-bold text-slate-900">Kelola Merchant Toko</h2>
+          <p className="text-xs text-slate-900/60 mt-0.5">Daftar toko merchant, masa aktif lisensi, staf karyawan terdaftar</p>
         </div>
         <button
           onClick={fetchShops}
-          className="px-4 py-2 border border-[#1A1A1A]/20 bg-white text-[#1A1A1A] hover:bg-[#F5F2EB] text-xs font-bold rounded-xl transition-all flex items-center gap-1"
+          className="px-4 py-2 border border-slate-900/20 bg-white text-slate-900 hover:bg-slate-50 text-xs font-bold rounded-xl transition-all flex items-center gap-1"
         >
           <RefreshIcon className="w-4 h-4" /> Refresh
         </button>
@@ -313,13 +313,13 @@ export default function SuperadminShopsPage() {
       <main className="max-w-5xl mx-auto px-6 py-8">
         
         {/* Table Card */}
-        <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 shadow-sm space-y-4">
+        <div className="bg-white border border-slate-900/8 rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-bold text-[#1A1A1A] text-base">Toko Terdaftar</h3>
-              <p className="text-xs text-[#1A1A1A]/60 mt-0.5">Pantau status & intip dashboard menu kasir toko</p>
+              <h3 className="font-bold text-slate-900 text-base">Toko Terdaftar</h3>
+              <p className="text-xs text-slate-900/60 mt-0.5">Pantau status & intip dashboard menu kasir toko</p>
             </div>
-            <span className="bg-[#1A1A1A] text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="bg-slate-900 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
               {shops.length} Toko
             </span>
           </div>
@@ -328,15 +328,15 @@ export default function SuperadminShopsPage() {
             {loading ? (
               <div className="space-y-3 py-6">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-10 bg-[#F5F2EB]/50 rounded-xl animate-pulse" />
+                  <div key={i} className="h-10 bg-slate-50/50 rounded-xl animate-pulse" />
                 ))}
               </div>
             ) : shops.length === 0 ? (
-              <p className="text-xs text-center py-12 text-[#1A1A1A]/60">Belum ada toko yang terdaftar.</p>
+              <p className="text-xs text-center py-12 text-slate-900/60">Belum ada toko yang terdaftar.</p>
             ) : (
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-[#F5F2EB]/60 border-b border-[#1A1A1A]/5 text-[#1A1A1A]/60 font-bold">
+                  <tr className="bg-slate-50/60 border-b border-slate-900/5 text-slate-900/60 font-bold">
                     <th className="p-3">Nama Toko</th>
                     <th className="p-3">ID Toko</th>
                     <th className="p-3 text-center">Staf Karyawan</th>
@@ -353,21 +353,21 @@ export default function SuperadminShopsPage() {
                     return (
                       <tr 
                         key={s.id} 
-                        className="border-b border-[#1A1A1A]/5 last:border-b-0 hover:bg-[#F5F2EB]/10 transition-colors cursor-pointer"
+                        className="border-b border-slate-900/5 last:border-b-0 hover:bg-slate-50/10 transition-colors cursor-pointer"
                         onClick={() => handleOpenShopDetail(s)}
                       >
-                        <td className="p-3 font-bold text-[#1A1A1A] flex items-center gap-2">
+                        <td className="p-3 font-bold text-slate-900 flex items-center gap-2">
                           {s.name}
                           {s.upgrade_request && (
-                            <span className="bg-amber-100 text-amber-700 text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 font-black" title={s.upgrade_reason || ''}>
+                            <span className="bg-amber-100 text-amber-700 text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 font-bold" title={s.upgrade_reason || ''}>
                               <Crown className="w-3 h-3" /> PRO REQ
                             </span>
                           )}
                         </td>
-                        <td className="p-3 font-mono text-[#1A1A1A]/60 text-[10px]">
+                        <td className="p-3 font-mono text-slate-900/60 text-[10px]">
                           {s.id}
                         </td>
-                        <td className="p-3 text-center font-semibold text-[#1A1A1A]">
+                        <td className="p-3 text-center font-semibold text-slate-900">
                           {s.employeeCount} Staf
                         </td>
                         <td className="p-3 font-semibold">
@@ -380,12 +380,12 @@ export default function SuperadminShopsPage() {
                               {new Date(s.trial_ends_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                             </span>
                             {isExpiringSoon && (
-                              <span className="bg-amber-100 text-amber-700 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">
+                              <span className="bg-amber-100 text-amber-700 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
                                 {daysLeft === 0 ? 'Hari Ini' : `H-${daysLeft}`}
                               </span>
                             )}
                             {!isTrialActive && (
-                              <span className="bg-red-100 text-red-700 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">
+                              <span className="bg-red-100 text-red-700 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
                                 HABIS
                               </span>
                             )}
@@ -397,7 +397,7 @@ export default function SuperadminShopsPage() {
                               e.stopPropagation();
                               handleOpenShopDetail(s);
                             }}
-                            className="px-3.5 py-2 bg-[#1A1A1A] hover:bg-[#333] active:scale-95 text-white font-bold text-[10px] rounded-lg transition-all flex items-center justify-center gap-1 mx-auto"
+                            className="px-3.5 py-2 bg-slate-900 hover:bg-[#333] active:scale-95 text-white font-bold text-[10px] rounded-lg transition-all flex items-center justify-center gap-1 mx-auto"
                           >
                             <EyeIcon className="w-4 h-4" /> Intip
                           </button>
@@ -416,25 +416,25 @@ export default function SuperadminShopsPage() {
       {selectedShop && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedShop(null)} />
-          <div className="relative bg-[#F9F6EE] rounded-3xl overflow-hidden max-w-md w-full shadow-2xl border border-[#1A1A1A]/10 p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-[#1A1A1A]/10 pb-4">
+          <div className="relative bg-[#F9F6EE] rounded-xl overflow-hidden max-w-md w-full shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 border border-slate-900/10 p-6 space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-900/10 pb-4">
               <div>
-                <h3 className="font-bold text-[#1A1A1A] text-lg font-sans">Detail Merchant Toko</h3>
-                <p className="text-xs text-[#1A1A1A]/60 font-mono mt-0.5">ID: {selectedShop.id}</p>
+                <h3 className="font-bold text-slate-900 text-lg font-sans">Detail Merchant Toko</h3>
+                <p className="text-xs text-slate-900/60 font-mono mt-0.5">ID: {selectedShop.id}</p>
               </div>
-              <button onClick={() => setSelectedShop(null)} className="text-xl text-[#1A1A1A]/60 hover:text-[#1A1A1A] cursor-pointer">
+              <button onClick={() => setSelectedShop(null)} className="text-xl text-slate-900/60 hover:text-slate-900 cursor-pointer">
                 ✕
               </button>
             </div>
             
             <div className="space-y-4 text-sm">
-              <div className="grid grid-cols-2 gap-4 bg-white p-4 rounded-2xl border border-[#1A1A1A]/5">
+              <div className="grid grid-cols-2 gap-4 bg-white p-4 rounded-xl border border-slate-900/5">
                 <div>
-                  <span className="text-[10px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide">Nama Toko</span>
-                  <p className="font-bold text-[#1A1A1A] text-sm mt-0.5">{selectedShop.name}</p>
+                  <span className="text-[10px] font-bold text-slate-900/60 uppercase tracking-wide">Nama Toko</span>
+                  <p className="font-bold text-slate-900 text-sm mt-0.5">{selectedShop.name}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide">Status Lisensi</span>
+                  <span className="text-[10px] font-bold text-slate-900/60 uppercase tracking-wide">Status Lisensi</span>
                   <p className="mt-0.5">
                     <span className={`inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                       new Date(selectedShop.trial_ends_at) > new Date()
@@ -456,26 +456,26 @@ export default function SuperadminShopsPage() {
 
               {/* Stats Grid */}
               <div className="space-y-2">
-                <span className="text-[10px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide">Statistik Operasional</span>
+                <span className="text-[10px] font-bold text-slate-900/60 uppercase tracking-wide">Statistik Operasional</span>
                 {shopStats.loading ? (
-                  <p className="text-xs text-[#1A1A1A]/60 animate-pulse py-2">Memuat statistik toko...</p>
+                  <p className="text-xs text-slate-900/60 animate-pulse py-2">Memuat statistik toko...</p>
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-white p-3.5 rounded-xl border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide font-sans">Jumlah Menu</span>
-                      <p className="text-xl font-black text-[#1A1A1A] mt-1">{shopStats.menuCount} Item</p>
+                    <div className="bg-white p-3.5 rounded-xl border border-slate-900/5 text-center">
+                      <span className="text-[9px] font-bold text-slate-900/60 uppercase tracking-wide font-sans">Jumlah Menu</span>
+                      <p className="text-xl font-bold text-slate-900 mt-1">{shopStats.menuCount} Item</p>
                     </div>
-                    <div className="bg-white p-3.5 rounded-xl border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide font-sans">Jumlah Karyawan</span>
-                      <p className="text-xl font-black text-[#1A1A1A] mt-1">{shopStats.employeeCount} Staf</p>
+                    <div className="bg-white p-3.5 rounded-xl border border-slate-900/5 text-center">
+                      <span className="text-[9px] font-bold text-slate-900/60 uppercase tracking-wide font-sans">Jumlah Karyawan</span>
+                      <p className="text-xl font-bold text-slate-900 mt-1">{shopStats.employeeCount} Staf</p>
                     </div>
-                    <div className="bg-white p-3.5 rounded-xl border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide font-sans">Jumlah Meja</span>
-                      <p className="text-xl font-black text-[#1A1A1A] mt-1">{shopStats.tableCount} Meja</p>
+                    <div className="bg-white p-3.5 rounded-xl border border-slate-900/5 text-center">
+                      <span className="text-[9px] font-bold text-slate-900/60 uppercase tracking-wide font-sans">Jumlah Meja</span>
+                      <p className="text-xl font-bold text-slate-900 mt-1">{shopStats.tableCount} Meja</p>
                     </div>
-                    <div className="bg-white p-3.5 rounded-xl border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide font-sans">Total Orderan</span>
-                      <p className="text-xl font-black text-[#1A1A1A] mt-1">{shopStats.orderCount} Order</p>
+                    <div className="bg-white p-3.5 rounded-xl border border-slate-900/5 text-center">
+                      <span className="text-[9px] font-bold text-slate-900/60 uppercase tracking-wide font-sans">Total Orderan</span>
+                      <p className="text-xl font-bold text-slate-900 mt-1">{shopStats.orderCount} Order</p>
                     </div>
                   </div>
                 )}
@@ -483,10 +483,10 @@ export default function SuperadminShopsPage() {
 
               {/* Upgrade Request Panel */}
               {selectedShop.upgrade_request && (
-                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-3">
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
                   <div className="flex items-center gap-2">
                     <Crown className="w-5 h-5 text-amber-500" />
-                    <span className="text-xs font-black text-amber-800 uppercase tracking-wide">Pengajuan Upgrade Pro</span>
+                    <span className="text-xs font-bold text-amber-800 uppercase tracking-wide">Pengajuan Upgrade Pro</span>
                   </div>
                   <div className="bg-white/60 p-3 rounded-xl border border-amber-100 text-sm text-amber-900 italic">
                     "{selectedShop.upgrade_reason}"
@@ -502,15 +502,15 @@ export default function SuperadminShopsPage() {
               )}
 
               {/* Superadmin Actions */}
-              <div className="bg-[#F5F2EB]/60 rounded-2xl p-4 border border-[#1A1A1A]/5 space-y-3">
-                <span className="text-[10px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide">Tindakan Superadmin</span>
+              <div className="bg-slate-50/60 rounded-xl p-4 border border-slate-900/5 space-y-3">
+                <span className="text-[10px] font-bold text-slate-900/60 uppercase tracking-wide">Tindakan Superadmin</span>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <input 
                       type="number"
                       value={addDaysInput}
                       onChange={(e) => setAddDaysInput(Number(e.target.value))}
-                      className="w-20 px-3 py-2 rounded-lg border border-[#1A1A1A]/10 text-xs font-bold text-center text-[#1A1A1A] bg-white"
+                      className="w-20 px-3 py-2 rounded-lg border border-slate-900/10 text-xs font-bold text-center text-slate-900 bg-white"
                     />
                     <button
                       onClick={handleAddLicenseDays}
@@ -523,7 +523,7 @@ export default function SuperadminShopsPage() {
                   <button
                     onClick={handleToggleFreeze}
                     disabled={isProcessingAction}
-                    className={`w-full py-2 text-white text-xs font-bold rounded-lg transition-all disabled:opacity-50 ${selectedShop.is_active ? 'bg-red-600 hover:bg-red-700' : 'bg-[#1A1A1A] hover:bg-[#333]'}`}
+                    className={`w-full py-2 text-white text-xs font-bold rounded-lg transition-all disabled:opacity-50 ${selectedShop.is_active ? 'bg-red-600 hover:bg-red-700' : 'bg-slate-900 hover:bg-[#333]'}`}
                   >
                     {selectedShop.is_active ? 'Bekukan Toko' : 'Aktifkan Toko'}
                   </button>
@@ -531,12 +531,12 @@ export default function SuperadminShopsPage() {
               </div>
 
               {/* Edit Limits & Add-ons */}
-              <div className="bg-[#F5F2EB]/60 rounded-2xl p-4 border border-[#1A1A1A]/5 space-y-3">
+              <div className="bg-slate-50/60 rounded-xl p-4 border border-slate-900/5 space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-[#1A1A1A]/60 uppercase tracking-wide">Pengaturan Paket & Kuota</span>
+                  <span className="text-[10px] font-bold text-slate-900/60 uppercase tracking-wide">Pengaturan Paket & Kuota</span>
                   <button 
                     onClick={() => setIsEditingLimits(!isEditingLimits)}
-                    className="text-[10px] font-bold text-[#1A1A1A] hover:underline"
+                    className="text-[10px] font-bold text-slate-900 hover:underline"
                   >
                     {isEditingLimits ? 'Batal Edit' : 'Edit Kuota'}
                   </button>
@@ -549,7 +549,7 @@ export default function SuperadminShopsPage() {
                       <select 
                         value={editTier}
                         onChange={(e) => setEditTier(e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-[#1A1A1A]/10 text-xs text-[#1A1A1A] bg-white"
+                        className="w-full px-3 py-2 rounded-lg border border-slate-900/10 text-xs text-slate-900 bg-white"
                       >
                         <option value="basic">Basic (Max 10 Meja, 1 Kasir)</option>
                         <option value="pro">Pro (Unlimited)</option>
@@ -564,7 +564,7 @@ export default function SuperadminShopsPage() {
                             min="0"
                             value={editAddonTables}
                             onChange={(e) => setEditAddonTables(Number(e.target.value))}
-                            className="w-full px-3 py-2 rounded-lg border border-[#1A1A1A]/10 text-xs text-[#1A1A1A] bg-white"
+                            className="w-full px-3 py-2 rounded-lg border border-slate-900/10 text-xs text-slate-900 bg-white"
                           />
                         </div>
                         <div>
@@ -574,7 +574,7 @@ export default function SuperadminShopsPage() {
                             min="0"
                             value={editAddonCashiers}
                             onChange={(e) => setEditAddonCashiers(Number(e.target.value))}
-                            className="w-full px-3 py-2 rounded-lg border border-[#1A1A1A]/10 text-xs text-[#1A1A1A] bg-white"
+                            className="w-full px-3 py-2 rounded-lg border border-slate-900/10 text-xs text-slate-900 bg-white"
                           />
                         </div>
                       </div>
@@ -582,24 +582,24 @@ export default function SuperadminShopsPage() {
                     <button
                       onClick={handleSaveLimits}
                       disabled={savingLimits}
-                      className="w-full py-2 bg-[#1A1A1A] text-white text-xs font-bold rounded-lg hover:bg-[#333] transition-all"
+                      className="w-full py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-[#333] transition-all"
                     >
                       {savingLimits ? 'Menyimpan...' : 'Simpan Perubahan Kuota'}
                     </button>
                   </div>
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
-                    <div className="bg-white p-2 rounded-lg border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 block capitalize">{selectedShop.subscription_tier || 'basic'}</span>
-                      <span className="text-xs font-black">Paket</span>
+                    <div className="bg-white p-2 rounded-lg border border-slate-900/5 text-center">
+                      <span className="text-[9px] font-bold text-slate-900/60 block capitalize">{selectedShop.subscription_tier || 'basic'}</span>
+                      <span className="text-xs font-bold">Paket</span>
                     </div>
-                    <div className="bg-white p-2 rounded-lg border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 block">+ {selectedShop.addon_tables || 0}</span>
-                      <span className="text-xs font-black">Addon Meja</span>
+                    <div className="bg-white p-2 rounded-lg border border-slate-900/5 text-center">
+                      <span className="text-[9px] font-bold text-slate-900/60 block">+ {selectedShop.addon_tables || 0}</span>
+                      <span className="text-xs font-bold">Addon Meja</span>
                     </div>
-                    <div className="bg-white p-2 rounded-lg border border-[#1A1A1A]/5 text-center">
-                      <span className="text-[9px] font-bold text-[#1A1A1A]/60 block">+ {selectedShop.addon_cashiers || 0}</span>
-                      <span className="text-xs font-black">Addon Kasir</span>
+                    <div className="bg-white p-2 rounded-lg border border-slate-900/5 text-center">
+                      <span className="text-[9px] font-bold text-slate-900/60 block">+ {selectedShop.addon_cashiers || 0}</span>
+                      <span className="text-xs font-bold">Addon Kasir</span>
                     </div>
                   </div>
                 )}
@@ -613,7 +613,7 @@ export default function SuperadminShopsPage() {
             
             <button
               onClick={() => setSelectedShop(null)}
-              className="w-full py-3 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl hover:bg-[#333] transition-all cursor-pointer font-sans"
+              className="w-full py-3 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-[#333] transition-all cursor-pointer font-sans"
             >
               Tutup Detail
             </button>

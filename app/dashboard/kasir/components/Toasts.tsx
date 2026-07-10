@@ -16,7 +16,7 @@ export default function Toasts({ toasts, onClose }: Props) {
   return (
     <div className="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none max-w-sm w-full">
       {toasts.map((t) => (
-        <div key={t.id} className="bg-[#1A1A1A] text-white border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center justify-between gap-4 pointer-events-auto animate-fade-in">
+        <div key={t.id} className="bg-slate-900 text-white border border-white/10 rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 flex items-center justify-between gap-4 pointer-events-auto animate-fade-in">
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold">{t.message}</span>
           </div>

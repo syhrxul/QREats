@@ -87,28 +87,28 @@ export default function FeedbacksPage() {
     } catch (err: any) { addToast('Gagal mengirim: ' + err.message, 'error'); } finally { setIsSubmitting(false); }
   };
 
-  if (authChecking) return <div className="flex items-center justify-center min-h-screen bg-[#F5F2EB]"><div className="w-8 h-8 border-2 border-[#1A1A1A]/20 border-t-[#1A1A1A] rounded-full animate-spin"></div></div>;
-  if (!role || role === 'superadmin') return <div className="flex items-center justify-center min-h-screen bg-[#F5F2EB]"><p className="text-sm font-bold text-[#1A1A1A]/50">Akses ditolak.</p></div>;
+  if (authChecking) return <div className="flex items-center justify-center min-h-screen bg-slate-50"><div className="w-8 h-8 border-2 border-slate-900/20 border-t-[#1A1A1A] rounded-full animate-spin"></div></div>;
+  if (!role || role === 'superadmin') return <div className="flex items-center justify-center min-h-screen bg-slate-50"><p className="text-sm font-bold text-slate-900/50">Akses ditolak.</p></div>;
   
   const displayFeedbacks = feedbacks.filter((f) => isOwner ? f.escalation_level === activeTab : f.escalation_level === 'shop');
 
   return (
-    <div className="bg-[#F5F2EB] min-h-screen pb-10">
+    <div className="bg-slate-50 min-h-screen pb-10">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       
-      <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between bg-white">
+      <div className="border-b border-slate-900/10 px-6 py-4 flex items-center justify-between bg-white">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center"><MessageSquare className="w-5 h-5" /></div>
-          <div><h1 className="text-lg font-black text-[#1A1A1A]">Kritik & Saran</h1><p className="text-xs text-[#1A1A1A]/50 mt-0.5">Kelola keluhan dan masukan dari pelanggan</p></div>
+          <div><h1 className="text-lg font-bold text-slate-900">Kritik & Saran</h1><p className="text-xs text-slate-900/50 mt-0.5">Kelola keluhan dan masukan dari pelanggan</p></div>
         </div>
-        <button onClick={() => setIsComposeOpen(true)} className="px-4 py-2 bg-[#1A1A1A] text-white font-bold text-xs rounded-xl hover:bg-[#333] transition-all cursor-pointer flex items-center gap-2 shadow-sm"><Send className="w-3.5 h-3.5" />Tulis Saran</button>
+        <button onClick={() => setIsComposeOpen(true)} className="px-4 py-2 bg-slate-900 text-white font-bold text-xs rounded-xl hover:bg-[#333] transition-all cursor-pointer flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900"><Send className="w-3.5 h-3.5" />Tulis Saran</button>
       </div>
 
       <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
         {isOwner && (
           <div className="flex gap-2 mb-6">
             {['shop', 'owner'].map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab as any)} className={`px-4 py-2 text-sm font-bold rounded-xl transition-all ${activeTab === tab ? 'bg-[#1A1A1A] text-white shadow-md' : 'bg-white text-[#1A1A1A]/70 border border-[#1A1A1A]/10 hover:bg-gray-50'}`}>
+              <button key={tab} onClick={() => setActiveTab(tab as any)} className={`px-4 py-2 text-sm font-bold rounded-xl transition-all ${activeTab === tab ? 'bg-slate-900 text-white shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900' : 'bg-white text-slate-900/70 border border-slate-900/10 hover:bg-gray-50'}`}>
                 {tab === 'shop' ? 'Semua Masukan' : 'Diteruskan Kasir'}
               </button>
             ))}
@@ -116,29 +116,29 @@ export default function FeedbacksPage() {
         )}
 
         {loading ? (
-          <div className="space-y-4">{[1, 2, 3].map(i => <div key={i} className="h-24 bg-white/50 border border-[#1A1A1A]/5 rounded-2xl animate-pulse" />)}</div>
+          <div className="space-y-4">{[1, 2, 3].map(i => <div key={i} className="h-24 bg-white/50 border border-slate-900/5 rounded-xl animate-pulse" />)}</div>
         ) : displayFeedbacks.length === 0 ? (
-          <div className="bg-white border border-[#1A1A1A]/5 rounded-3xl p-10 text-center shadow-sm">
-            <div className="w-16 h-16 bg-[#F5F2EB] rounded-full flex items-center justify-center mx-auto mb-4"><Check className="w-8 h-8 text-emerald-500" /></div>
-            <h3 className="text-base font-bold text-[#1A1A1A]">Belum ada masukan.</h3><p className="text-sm text-[#1A1A1A]/50 mt-1">Pelayanan Anda sangat baik sejauh ini!</p>
+          <div className="bg-white border border-slate-900/5 rounded-xl p-10 text-center shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900">
+            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4"><Check className="w-8 h-8 text-emerald-500" /></div>
+            <h3 className="text-base font-bold text-slate-900">Belum ada masukan.</h3><p className="text-sm text-slate-900/50 mt-1">Pelayanan Anda sangat baik sejauh ini!</p>
           </div>
         ) : (
           <div className="space-y-4">
             {displayFeedbacks.map((f) => (
-              <div key={f.id} className={`bg-white border ${f.is_read ? 'border-[#1A1A1A]/5 opacity-70' : 'border-[#1A1A1A]/15 shadow-sm'} rounded-3xl p-5 transition-all`}>
+              <div key={f.id} className={`bg-white border ${f.is_read ? 'border-slate-900/5 opacity-70' : 'border-slate-900/15 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900'} rounded-xl p-5 transition-all`}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       {!f.is_read && <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />}
-                      <span className="text-[10px] font-bold text-[#1A1A1A]/40 flex items-center gap-1"><Clock className="w-3 h-3" />{new Date(f.created_at).toLocaleString('id-ID')}</span>
+                      <span className="text-[10px] font-bold text-slate-900/40 flex items-center gap-1"><Clock className="w-3 h-3" />{new Date(f.created_at).toLocaleString('id-ID')}</span>
                     </div>
-                    <p className="text-sm text-[#1A1A1A] leading-relaxed font-medium">"{f.content}"</p>
+                    <p className="text-sm text-slate-900 leading-relaxed font-medium">"{f.content}"</p>
                   </div>
                   <div className="flex flex-col gap-2 min-w-[140px]">
-                    <button onClick={() => handleMarkAsRead(f.id, f.is_read)} className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all border ${f.is_read ? 'bg-[#F5F2EB] text-[#1A1A1A]/50 border-transparent hover:bg-[#1A1A1A]/5' : 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100'}`}>
+                    <button onClick={() => handleMarkAsRead(f.id, f.is_read)} className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all border ${f.is_read ? 'bg-slate-50 text-slate-900/50 border-transparent hover:bg-slate-900/5' : 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100'}`}>
                       {f.is_read ? 'Tandai Belum Dibaca' : 'Tandai Dibaca'}
                     </button>
-                    <button onClick={() => handleEscalate(f.id, f.escalation_level)} className="px-3 py-1.5 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 hover:bg-[#333] transition-all active:scale-95 shadow-sm">
+                    <button onClick={() => handleEscalate(f.id, f.escalation_level)} className="px-3 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 hover:bg-[#333] transition-all active:scale-95 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900">
                       Teruskan ke {!isOwner ? 'Owner' : 'Pusat'}<ArrowUpRight className="w-3.5 h-3.5" />
                     </button>
                   </div>

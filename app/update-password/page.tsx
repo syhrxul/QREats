@@ -144,25 +144,25 @@ export default function UpdatePasswordPage() {
       <div className="w-full max-w-md relative z-10 animate-fade-in-up">
         {/* Logo / Brand */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#1A1A1A] text-[#F9F6EE] mb-4 shadow-xl transform rotate-6 hover:rotate-0 transition-transform duration-300">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-slate-900 text-[#F9F6EE] mb-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 transform rotate-6 hover:rotate-0 transition-transform duration-300">
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-black text-[#1A1A1A] tracking-tighter">Kata Sandi Baru</h1>
-          <p className="text-sm text-[#1A1A1A]/60 mt-2 font-medium max-w-xs mx-auto leading-relaxed">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tighter">Kata Sandi Baru</h1>
+          <p className="text-sm text-slate-900/60 mt-2 font-medium max-w-xs mx-auto leading-relaxed">
             Masukkan kata sandi baru Anda di bawah ini untuk mengakses kembali akun QREats Anda.
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#1A1A1A]/5 p-8 backdrop-blur-sm">
+        <div className="bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-900/5 p-8 backdrop-blur-sm">
           <div className="space-y-5">
             
             {userEmail && (
-              <div className="bg-[#F5F2EB]/50 p-4 rounded-xl border border-[#1A1A1A]/5 mb-6 text-center">
-                <span className="text-[10px] font-bold text-[#1A1A1A]/40 block uppercase tracking-wide mb-1">Mengatur sandi untuk</span>
-                <span className="font-bold text-[#1A1A1A]">{userEmail}</span>
+              <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-900/5 mb-6 text-center">
+                <span className="text-[10px] font-bold text-slate-900/40 block uppercase tracking-wide mb-1">Mengatur sandi untuk</span>
+                <span className="font-bold text-slate-900">{userEmail}</span>
               </div>
             )}
             
@@ -181,7 +181,7 @@ export default function UpdatePasswordPage() {
             )}
             
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#1A1A1A]/70 mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-900/70 mb-1.5">
                 Password Baru
               </label>
               <input type="text" autoComplete="username" style={{ display: 'none' }} />
@@ -197,7 +197,7 @@ export default function UpdatePasswordPage() {
                   if (e.key === 'Enter') handleUpdatePassword();
                 }}
                 placeholder={sessionChecking ? "Memverifikasi tautan..." : "Minimal 6 karakter"}
-                className="w-full px-4 py-3 bg-[#F5F2EB] border border-[#1A1A1A]/15 rounded-xl text-[#1A1A1A] placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-[#1A1A1A]/40 transition-all disabled:opacity-50"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all disabled:opacity-50"
               />
             </div>
 
@@ -205,7 +205,7 @@ export default function UpdatePasswordPage() {
               type="button"
               onClick={() => handleUpdatePassword()}
               disabled={loading || sessionChecking || !!errorMsg || !!successMsg}
-              className="w-full py-3.5 bg-[#1A1A1A] text-white font-medium text-sm rounded-xl hover:bg-[#333] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className="w-full py-3.5 bg-slate-900 text-white font-medium text-sm rounded-xl hover:bg-[#333] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
               {sessionChecking ? 'Memproses Tautan...' : loading ? 'Menyimpan...' : 'Simpan Kata Sandi'}
             </button>

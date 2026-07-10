@@ -211,10 +211,10 @@ export default function Sidebar({
   });
 
   return (
-    <aside className="hidden md:flex md:flex-col md:w-64 bg-[#1A1A1A] border-r border-white/5 text-white flex-shrink-0">
+    <aside className="hidden md:flex md:flex-col md:w-64 bg-slate-900 border-r border-white/5 text-white flex-shrink-0">
       {/* Brand Header */}
       <div className="px-6 py-6 border-b border-white/10 flex items-center gap-3">
-        <div className="w-8.5 h-8.5 bg-white rounded-xl flex items-center justify-center shadow-sm">
+        <div className="w-8.5 h-8.5 bg-white rounded-xl flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" strokeWidth="2.5">
             <rect x="3" y="3" width="7" height="7" />
             <rect x="14" y="3" width="7" height="7" />
@@ -223,7 +223,7 @@ export default function Sidebar({
           </svg>
         </div>
         <div className="min-w-0 flex-1">
-          <span className="font-black text-sm tracking-tight block truncate text-white" title={shop ? shop.name : 'QREats'}>
+          <span className="font-bold text-sm tracking-tight block truncate text-white" title={shop ? shop.name : 'QREats'}>
             {shop ? shop.name : 'QREats'}
           </span>
           <span className="text-[9px] text-[#FF9F43] font-bold tracking-wider uppercase">
@@ -250,19 +250,19 @@ export default function Sidebar({
               }}
               className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group active:scale-[0.98] ${
                 isActive
-                  ? 'bg-white text-[#1A1A1A] shadow-md'
+                  ? 'bg-white text-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900'
                   : 'text-white/60 hover:bg-white/5 hover:text-white'
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className={`transition-colors ${isActive ? 'text-[#1A1A1A]' : 'text-white/50 group-hover:text-white'}`}>
+                <span className={`transition-colors ${isActive ? 'text-slate-900' : 'text-white/50 group-hover:text-white'}`}>
                   {item.icon}
                 </span>
                 <span>{item.name}</span>
               </div>
               {item.badge !== undefined && item.badge !== null && !isClickBlocked && (
                 <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold transition-all ${
-                  isActive ? 'bg-[#1A1A1A] text-white' : 'bg-[#FF9F43] text-[#1A1A1A]'
+                  isActive ? 'bg-slate-900 text-white' : 'bg-[#FF9F43] text-slate-900'
                 }`}>
                   {item.badge}
                 </span>
@@ -274,7 +274,7 @@ export default function Sidebar({
 
       {/* Trial info */}
       {shop && !isSuperadmin && (
-        <div className="mx-4 mb-3 p-3 bg-white/5 rounded-2xl border border-white/5 text-xs">
+        <div className="mx-4 mb-3 p-3 bg-white/5 rounded-xl border border-white/5 text-xs">
           <p className="text-[9px] text-white/40 uppercase tracking-wider font-bold">Masa Aktif Merchant</p>
           <p className="font-bold mt-0.5 text-white">
             {isTrialActive ? `${daysLeft} Hari Tersisa` : 'Masa Trial Habis'}

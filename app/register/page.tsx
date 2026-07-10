@@ -177,35 +177,35 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F5F2EB] flex items-center justify-center p-6 font-sans">
+    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans">
       <div className="w-full max-w-md">
         
         {/* Brand */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-black text-[#1A1A1A] tracking-tight">QREats</h1>
-          <p className="text-xs text-[#1A1A1A]/40 mt-1 uppercase tracking-wider font-bold">Multi-Merchant SaaS Platform</p>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">QREats</h1>
+          <p className="text-xs text-slate-900/40 mt-1 uppercase tracking-wider font-bold">Multi-Merchant SaaS Platform</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white border border-[#1A1A1A]/10 rounded-3xl p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-[#1A1A1A] mb-6">Pendaftaran Akun</h2>
+        <div className="bg-white border border-slate-900/10 rounded-xl p-8 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900">
+          <h2 className="text-xl font-bold text-slate-900 mb-6">Pendaftaran Akun</h2>
 
           {success ? (
             <div className="text-center py-6 space-y-3">
-              <span className="block"><CelebrationIcon className="w-12 h-12 text-[#1A1A1A] mx-auto" /></span>
-              <p className="font-bold text-[#1A1A1A]">Pendaftaran Berhasil!</p>
-              <p className="text-xs text-[#1A1A1A]/50">Mengalihkan Anda ke halaman masuk dalam 3 detik...</p>
+              <span className="block"><CelebrationIcon className="w-12 h-12 text-slate-900 mx-auto" /></span>
+              <p className="font-bold text-slate-900">Pendaftaran Berhasil!</p>
+              <p className="text-xs text-slate-900/50">Mengalihkan Anda ke halaman masuk dalam 3 detik...</p>
             </div>
           ) : (
             <form onSubmit={handleRegister} className="space-y-4">
               
               {/* Toggle Mode */}
-              <div className="grid grid-cols-2 gap-2 bg-[#F5F2EB] p-1 rounded-xl mb-4">
+              <div className="grid grid-cols-2 gap-2 bg-slate-50 p-1 rounded-xl mb-4">
                 <button
                   type="button"
                   onClick={() => setRegisterMode('owner')}
                   className={`py-2 rounded-lg text-xs font-bold transition-all ${
-                    registerMode === 'owner' ? 'bg-[#1A1A1A] text-white' : 'text-[#1A1A1A]/40 hover:text-[#1A1A1A]/60'
+                    registerMode === 'owner' ? 'bg-slate-900 text-white' : 'text-slate-900/40 hover:text-slate-900/60'
                   }`}
                 >
                   💼 Pemilik Toko
@@ -214,7 +214,7 @@ export default function RegisterPage() {
                   type="button"
                   onClick={() => setRegisterMode('staff')}
                   className={`py-2 rounded-lg text-xs font-bold transition-all ${
-                    registerMode === 'staff' ? 'bg-[#1A1A1A] text-white' : 'text-[#1A1A1A]/40 hover:text-[#1A1A1A]/60'
+                    registerMode === 'staff' ? 'bg-slate-900 text-white' : 'text-slate-900/40 hover:text-slate-900/60'
                   }`}
                 >
                   🛎️ Karyawan / Kasir
@@ -224,66 +224,66 @@ export default function RegisterPage() {
               {/* Input Fields */}
               <div className="space-y-3.5">
                 <div>
-                  <label className="block text-xs font-bold text-[#1A1A1A]/60 uppercase tracking-wide mb-1.5">Nama Lengkap</label>
+                  <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">Nama Lengkap</label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Nama Anda"
-                    className="w-full px-4 py-3 bg-[#F5F2EB] border border-[#1A1A1A]/15 rounded-xl text-[#1A1A1A] placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-[#1A1A1A]/40 transition-all"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
                   />
                 </div>
 
                 {registerMode === 'owner' && (
                   <div>
-                    <label className="block text-xs font-bold text-[#1A1A1A]/60 uppercase tracking-wide mb-1.5">Nama Toko / Resto</label>
+                    <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">Nama Toko / Resto</label>
                     <input
                       type="text"
                       required
                       value={shopName}
                       onChange={(e) => setShopName(e.target.value)}
                       placeholder="Contoh: Kopi Kawa"
-                      className="w-full px-4 py-3 bg-[#F5F2EB] border border-[#1A1A1A]/15 rounded-xl text-[#1A1A1A] placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-[#1A1A1A]/40 transition-all"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
                     />
                   </div>
                 )}
 
                 {registerMode === 'staff' && (
                   <div>
-                    <label className="block text-xs font-bold text-[#1A1A1A]/60 uppercase tracking-wide mb-1.5">Join Code Toko</label>
+                    <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">Join Code Toko</label>
                     <input
                       type="text"
                       required
                       value={joinCode}
                       onChange={(e) => setJoinCode(e.target.value)}
                       placeholder="Masukkan kode QRE-XXXXXX"
-                      className="w-full px-4 py-3 bg-[#F5F2EB] border border-[#1A1A1A]/15 rounded-xl text-[#1A1A1A] placeholder-[#1A1A1A]/30 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-[#1A1A1A]/40 transition-all uppercase"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all uppercase"
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs font-bold text-[#1A1A1A]/60 uppercase tracking-wide mb-1.5">Email</label>
+                  <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">Email</label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="nama@email.com"
-                    className="w-full px-4 py-3 bg-[#F5F2EB] border border-[#1A1A1A]/15 rounded-xl text-[#1A1A1A] placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-[#1A1A1A]/40 transition-all"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#1A1A1A]/60 uppercase tracking-wide mb-1.5">Password</label>
+                  <label className="block text-xs font-bold text-slate-900/60 uppercase tracking-wide mb-1.5">Password</label>
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Minimal 6 karakter"
-                    className="w-full px-4 py-3 bg-[#F5F2EB] border border-[#1A1A1A]/15 rounded-xl text-[#1A1A1A] placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-[#1A1A1A]/40 transition-all"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-900/15 rounded-xl text-slate-900 placeholder-[#1A1A1A]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/20 focus:border-slate-900/40 transition-all"
                   />
                 </div>
               </div>
@@ -297,13 +297,13 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-3 py-3.5 bg-[#1A1A1A] text-white font-bold text-sm rounded-xl hover:bg-[#333] transition-all disabled:opacity-50"
+                className="w-full mt-3 py-3.5 bg-slate-900 text-white font-bold text-sm rounded-xl hover:bg-[#333] transition-all disabled:opacity-50"
               >
                 {loading ? 'Mendaftarkan Akun...' : 'Daftar Sekarang'}
               </button>
 
               <div className="text-center pt-2">
-                <a href="/login" className="text-xs text-[#1A1A1A]/40 font-semibold underline underline-offset-2 hover:text-[#1A1A1A]">
+                <a href="/login" className="text-xs text-slate-900/40 font-semibold underline underline-offset-2 hover:text-slate-900">
                   Sudah punya akun? Masuk di sini
                 </a>
               </div>

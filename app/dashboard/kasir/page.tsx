@@ -275,7 +275,7 @@ export default function KasirDashboardPage() {
   const activeOrders = orders.filter((o) => (o.status === 'pending' || !o.is_ready) && o.status !== 'rejected');
 
   return (
-    <div className="bg-[#F5F2EB]">
+    <div className="bg-slate-50">
       <KasirHeader
         shopName={shopName}
         pendingCount={pendingCount}
@@ -286,7 +286,7 @@ export default function KasirDashboardPage() {
 
       {/* Banner Perizinan Notifikasi Desktop */}
       {showNotificationBanner && (
-        <div className="bg-amber-50 border-b border-amber-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm font-sans animate-fade-in">
+        <div className="bg-amber-50 border-b border-amber-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 font-sans animate-fade-in">
           <div className="flex items-center gap-3">
             <span className="text-xl">Notifikasi</span>
             <div>
@@ -305,7 +305,7 @@ export default function KasirDashboardPage() {
 
       {/* Banner Notifikasi Diblokir */}
       {isNotificationBlocked && (
-        <div className="bg-rose-50 border-b border-rose-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm font-sans animate-fade-in">
+        <div className="bg-rose-50 border-b border-rose-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 font-sans animate-fade-in">
           <div className="flex items-center gap-3">
             <span className="text-xl">Peringatan</span>
             <div>

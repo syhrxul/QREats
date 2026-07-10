@@ -16,18 +16,18 @@ export default function ReceiptModal({ receiptUrl, tableNumber, onClose }: Recei
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="relative bg-[#F9F6EE] rounded-3xl overflow-hidden max-w-sm w-full shadow-2xl border border-[#1A1A1A]/10">
+      <div className="relative bg-[#F9F6EE] rounded-xl overflow-hidden max-w-sm w-full shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 border border-slate-900/10">
         {/* Header Modal */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#1A1A1A]/10 bg-white">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-900/10 bg-white">
           <div>
-            <h3 className="font-bold text-[#1A1A1A] text-sm">Preview Struk</h3>
+            <h3 className="font-bold text-slate-900 text-sm">Preview Struk</h3>
             {tableNumber && (
-              <p className="text-[10px] text-[#1A1A1A]/50 mt-0.5">{tableNumber}</p>
+              <p className="text-[10px] text-slate-900/50 mt-0.5">{tableNumber}</p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-[#1A1A1A]/10 flex items-center justify-center text-[#1A1A1A] hover:bg-[#1A1A1A]/20 transition-colors text-sm"
+            className="w-8 h-8 rounded-full bg-slate-900/10 flex items-center justify-center text-slate-900 hover:bg-slate-900/20 transition-colors text-sm"
           >
             Tutup
           </button>
@@ -39,15 +39,15 @@ export default function ReceiptModal({ receiptUrl, tableNumber, onClose }: Recei
           <img
             src={receiptUrl}
             alt="Bukti Transfer Pembayaran"
-            className="w-full h-auto object-contain max-h-[60vh] rounded-xl border border-[#1A1A1A]/5"
+            className="w-full h-auto object-contain max-h-[60vh] rounded-xl border border-slate-900/5"
           />
         </div>
         
         {/* Footer Modal */}
-        <div className="p-4 bg-[#F5F2EB] flex justify-end">
+        <div className="p-4 bg-slate-50 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl hover:bg-[#333] transition-colors"
+            className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-[#333] transition-colors"
           >
             Tutup Preview
           </button>

@@ -21,12 +21,12 @@ export default function OrderCard({ order, newOrderIds, onClick }: OrderCardProp
   return (
     <div
       onClick={onClick}
-      className={`bg-white border rounded-2xl p-5 cursor-pointer hover:shadow-md transition-all duration-300 relative ${
+      className={`bg-white border rounded-xl p-5 cursor-pointer hover:shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 transition-all duration-300 relative ${
         isDelayed
-          ? 'border-red-500 shadow-red-50 shadow-md ring-1 ring-red-400/50'
+          ? 'border-red-500 shadow-red-50 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 ring-1 ring-red-400/50'
           : newOrderIds.has(order.id)
-          ? 'border-amber-400 shadow-amber-100 shadow-lg ring-2 ring-amber-300/50'
-          : 'border-[#1A1A1A]/10'
+          ? 'border-amber-400 shadow-amber-100 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 ring-2 ring-amber-300/50'
+          : 'border-slate-900/10'
       }`}
     >
       {/* Badge Status */}
@@ -42,7 +42,7 @@ export default function OrderCard({ order, newOrderIds, onClick }: OrderCardProp
             SIAP SAJI
           </span>
         ) : (
-          <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-[#1A1A1A]/5 text-[#1A1A1A]/60 border border-[#1A1A1A]/10">
+          <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-900/5 text-slate-900/60 border border-slate-900/10">
             SEDANG DIBUAT
           </span>
         )}
@@ -65,30 +65,30 @@ export default function OrderCard({ order, newOrderIds, onClick }: OrderCardProp
               BARU
             </span>
           )}
-          <span className="font-bold text-[#1A1A1A] text-lg">{order.table_number}</span>
+          <span className="font-bold text-slate-900 text-lg">{order.table_number}</span>
           {order.customer_name && (
-            <span className="text-sm font-semibold text-[#1A1A1A]/60">
+            <span className="text-sm font-semibold text-slate-900/60">
               ({order.customer_name})
             </span>
           )}
         </div>
-        <p className="text-xs text-[#1A1A1A]/40" suppressHydrationWarning>
+        <p className="text-xs text-slate-900/40" suppressHydrationWarning>
           Jam: {formatTime(order.created_at)} · ID: #{order.id.slice(0, 8)}
         </p>
       </div>
 
       {/* Rincian Menu */}
-      <div className="text-sm text-[#1A1A1A]/70 mb-3 flex items-center gap-1">
+      <div className="text-sm text-slate-900/70 mb-3 flex items-center gap-1">
         <span className="font-bold">{order.order_items?.length} Menu:</span>
         <span className="truncate">
           {order.order_items?.map((item) => `${item.quantity}x ${item.menu_name}`).join(', ')}
         </span>
       </div>
 
-      <div className="flex items-center justify-between pt-3 border-t border-[#1A1A1A]/5">
+      <div className="flex items-center justify-between pt-3 border-t border-slate-900/5">
         <div>
-          <p className="text-[10px] text-[#1A1A1A]/40 uppercase font-bold tracking-wider">Total Tagihan</p>
-          <p className="text-lg font-black text-[#1A1A1A]" suppressHydrationWarning>
+          <p className="text-[10px] text-slate-900/40 uppercase font-bold tracking-wider">Total Tagihan</p>
+          <p className="text-lg font-bold text-slate-900" suppressHydrationWarning>
             {formatRupiah(order.total_price)}
           </p>
         </div>
@@ -99,7 +99,7 @@ export default function OrderCard({ order, newOrderIds, onClick }: OrderCardProp
               Bukti Transfer
             </span>
           )}
-          <span className="text-xs text-[#1A1A1A]/40 font-semibold flex items-center gap-1">
+          <span className="text-xs text-slate-900/40 font-semibold flex items-center gap-1">
             Lihat Rincian
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />

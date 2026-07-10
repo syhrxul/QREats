@@ -73,7 +73,7 @@ export default function OrderList({ shopId, userRole, onSelect, playSound }: Pro
     return (
       <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
         <div className="space-y-3">
-          {[1,2,3].map(i => <div key={i} className="h-32 bg-white/60 rounded-2xl animate-pulse" />)}
+          {[1,2,3].map(i => <div key={i} className="h-32 bg-white/60 rounded-xl animate-pulse" />)}
         </div>
       </main>
     );
@@ -84,7 +84,7 @@ export default function OrderList({ shopId, userRole, onSelect, playSound }: Pro
   return (
     <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
       {activeOrders.length === 0 ? (
-        <div className="text-center py-20 bg-white border border-[#1A1A1A]/8 rounded-3xl p-8 text-[#1A1A1A]/30">
+        <div className="text-center py-20 bg-white border border-slate-900/8 rounded-xl p-8 text-slate-900/30">
           <p className="text-base font-bold">Tidak ada antrean aktif</p>
           <p className="text-xs mt-1">Seluruh pesanan pelanggan sudah tersaji dan lunas.</p>
         </div>

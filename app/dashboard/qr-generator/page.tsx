@@ -182,23 +182,23 @@ export default function QRGeneratorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F2EB]">
+    <div className="min-h-screen bg-slate-50">
       {alertMsg && (
-        <div className="fixed top-4 right-4 z-50 bg-white border border-[#1A1A1A]/10 shadow-lg rounded-xl p-4 max-w-sm flex gap-3 animate-in fade-in slide-in-from-top-4 print:hidden">
+        <div className="fixed top-4 right-4 z-50 bg-white border border-slate-900/10 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 rounded-xl p-4 max-w-sm flex gap-3 animate-in fade-in slide-in-from-top-4 print:hidden">
           <div className="mt-0.5">{alertMsg.type === 'error' ? '❌' : '✅'}</div>
           <div>
-            <h4 className="font-bold text-sm text-[#1A1A1A]">{alertMsg.title}</h4>
-            <p className="text-xs text-[#1A1A1A]/60 mt-1">{alertMsg.message}</p>
+            <h4 className="font-bold text-sm text-slate-900">{alertMsg.title}</h4>
+            <p className="text-xs text-slate-900/60 mt-1">{alertMsg.message}</p>
             <button onClick={() => setAlertMsg(null)} className="text-[10px] uppercase font-bold text-blue-500 mt-2 hover:text-blue-600">Tutup</button>
           </div>
         </div>
       )}
 
       {/* Header Info */}
-      <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between print:hidden">
+      <div className="border-b border-slate-900/10 px-6 py-4 flex items-center justify-between print:hidden">
         <div>
-          <h2 className="text-lg font-black text-[#1A1A1A]">QR Code Generator</h2>
-          <p className="text-xs text-[#1A1A1A]/40 mt-0.5 flex gap-2">
+          <h2 className="text-lg font-bold text-slate-900">QR Code Generator</h2>
+          <p className="text-xs text-slate-900/40 mt-0.5 flex gap-2">
             <span>{selectedIds.length} dicetak</span>
             <span>&bull;</span>
             <span>{tables.filter(t => t.is_active).length} meja aktif (Kuota: {maxTables})</span>
@@ -207,7 +207,7 @@ export default function QRGeneratorPage() {
         {selectedIds.length > 0 && (
           <button
             onClick={() => setShowPrintModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl hover:bg-[#333] active:scale-95 transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-[#333] active:scale-95 transition-all"
           >
             🖨️ Cetak QR
           </button>
@@ -215,7 +215,7 @@ export default function QRGeneratorPage() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 py-8">
-        <div className="bg-[#1A1A1A] text-white rounded-2xl p-5 mb-6 print:hidden">
+        <div className="bg-slate-900 text-white rounded-xl p-5 mb-6 print:hidden">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0"><AlertIcon className="w-8 h-8 text-amber-600" /></div>
             <div>
@@ -225,21 +225,21 @@ export default function QRGeneratorPage() {
           </div>
         </div>
 
-        <div className="bg-white border border-[#1A1A1A]/8 rounded-2xl p-6 mb-6 print:hidden">
+        <div className="bg-white border border-slate-900/8 rounded-xl p-6 mb-6 print:hidden">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="font-semibold text-[#1A1A1A]">Pilih Meja untuk Dicetak</h2>
-              <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Semua data dimuat langsung dari Supabase.</p>
+              <h2 className="font-semibold text-slate-900">Pilih Meja untuk Dicetak</h2>
+              <p className="text-xs text-slate-900/40 mt-0.5">Semua data dimuat langsung dari Supabase.</p>
             </div>
             <div className="flex gap-2 text-xs">
-              <button onClick={() => setSelectedIds(tables.map(t => t.id))} className="px-3 py-1.5 border border-[#1A1A1A]/20 rounded-lg text-[#1A1A1A]/60 hover:bg-[#1A1A1A]/5">Pilih Semua</button>
-              <button onClick={() => setSelectedIds([])} className="px-3 py-1.5 border border-[#1A1A1A]/20 rounded-lg text-[#1A1A1A]/60 hover:bg-[#1A1A1A]/5">Hapus Semua</button>
+              <button onClick={() => setSelectedIds(tables.map(t => t.id))} className="px-3 py-1.5 border border-slate-900/20 rounded-lg text-slate-900/60 hover:bg-slate-900/5">Pilih Semua</button>
+              <button onClick={() => setSelectedIds([])} className="px-3 py-1.5 border border-slate-900/20 rounded-lg text-slate-900/60 hover:bg-slate-900/5">Hapus Semua</button>
             </div>
           </div>
           {loading ? (
-            <div className="h-10 bg-[#F5F2EB] rounded-xl animate-pulse" />
+            <div className="h-10 bg-slate-50 rounded-xl animate-pulse" />
           ) : tables.length === 0 ? (
-            <p className="text-sm text-[#1A1A1A]/40">Belum ada meja. Silakan tambah di bawah.</p>
+            <p className="text-sm text-slate-900/40">Belum ada meja. Silakan tambah di bawah.</p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {tables.map((t) => (
@@ -247,7 +247,7 @@ export default function QRGeneratorPage() {
                   key={t.id}
                   onClick={() => toggleTable(t.id)}
                   className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all active:scale-95 ${
-                    selectedIds.includes(t.id) ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]' : 'bg-[#F5F2EB] text-[#1A1A1A]/50 border-transparent hover:border-[#1A1A1A]/20'
+                    selectedIds.includes(t.id) ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 text-slate-900/50 border-transparent hover:border-slate-900/20'
                   }`}
                 >
                   {t.name}
@@ -269,40 +269,40 @@ export default function QRGeneratorPage() {
       {/* PRINT MODAL */}
       {showPrintModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 print:hidden">
-          <div className="absolute inset-0 bg-[#1A1A1A]/40 backdrop-blur-sm" onClick={() => setShowPrintModal(false)} />
-          <div className="relative bg-[#F5F2EB] rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col md:flex-row">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowPrintModal(false)} />
+          <div className="relative bg-slate-50 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 flex flex-col md:flex-row">
             {/* Left Sidebar (Settings) */}
             <div className="w-full md:w-1/2 p-6 md:p-8 bg-white md:rounded-l-3xl">
-              <h2 className="text-2xl font-black tracking-tight text-[#1A1A1A] mb-1">Cetak / Download</h2>
-              <p className="text-sm text-[#1A1A1A]/50 mb-6">Pilih template dan cara mencetak QR Code.</p>
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 mb-1">Cetak / Download</h2>
+              <p className="text-sm text-slate-900/50 mb-6">Pilih template dan cara mencetak QR Code.</p>
               
               <div className="space-y-3 mb-8">
-                <label className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A]/40">Pilih Template Desain</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-900/40">Pilih Template Desain</label>
                 <div className="grid grid-cols-2 gap-3">
                   {templates.map(tpl => (
                     <button
                       key={tpl.id}
                       onClick={() => setSelectedTemplate(tpl.id as any)}
-                      className={`text-left p-3 rounded-2xl border-2 transition-all ${
-                        selectedTemplate === tpl.id ? 'border-[#1A1A1A] bg-[#1A1A1A]/5' : 'border-transparent bg-[#F5F2EB] hover:border-[#1A1A1A]/20'
+                      className={`text-left p-3 rounded-xl border-2 transition-all ${
+                        selectedTemplate === tpl.id ? 'border-slate-900 bg-slate-900/5' : 'border-transparent bg-slate-50 hover:border-slate-900/20'
                       }`}
                     >
                       <div className="text-xl mb-1">{tpl.emoji}</div>
-                      <h4 className="font-bold text-sm text-[#1A1A1A]">{tpl.name}</h4>
-                      <p className="text-[10px] text-[#1A1A1A]/50 mt-1 leading-tight">{tpl.desc}</p>
+                      <h4 className="font-bold text-sm text-slate-900">{tpl.name}</h4>
+                      <p className="text-[10px] text-slate-900/50 mt-1 leading-tight">{tpl.desc}</p>
                     </button>
                   ))}
                 </div>
               </div>
 
               <div className="space-y-4">
-                <label className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A]/40">Opsi Eksekusi</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-900/40">Opsi Eksekusi</label>
                 <div className="grid grid-cols-2 gap-3">
-                  <button onClick={() => handlePrint('selected')} className="p-4 rounded-2xl bg-white border border-[#1A1A1A]/10 hover:border-[#1A1A1A] transition-all text-left group">
-                    <h4 className="font-bold text-sm text-[#1A1A1A] group-hover:text-blue-600">🖨️ Print Pilihan</h4>
-                    <p className="text-[10px] text-[#1A1A1A]/50 mt-1">Hanya {selectedIds.length} meja terpilih</p>
+                  <button onClick={() => handlePrint('selected')} className="p-4 rounded-xl bg-white border border-slate-900/10 hover:border-slate-900 transition-all text-left group">
+                    <h4 className="font-bold text-sm text-slate-900 group-hover:text-blue-600">🖨️ Print Pilihan</h4>
+                    <p className="text-[10px] text-slate-900/50 mt-1">Hanya {selectedIds.length} meja terpilih</p>
                   </button>
-                  <button onClick={() => handleDownloadPNGs('selected')} className="p-4 rounded-2xl bg-[#1A1A1A] text-white hover:bg-[#333] transition-all text-left">
+                  <button onClick={() => handleDownloadPNGs('selected')} className="p-4 rounded-xl bg-slate-900 text-white hover:bg-[#333] transition-all text-left">
                     <h4 className="font-bold text-sm">📥 Download PNG</h4>
                     <p className="text-[10px] text-white/50 mt-1">{selectedIds.length} gambar (.png)</p>
                   </button>
@@ -311,13 +311,13 @@ export default function QRGeneratorPage() {
             </div>
 
             {/* Right Sidebar (Preview) */}
-            <div className="w-full md:w-1/2 p-6 md:p-8 bg-[#F5F2EB] flex flex-col justify-center items-center">
-              <label className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A]/40 mb-4 self-start">Live Preview</label>
-              <div className="w-full max-w-[280px] transform scale-90 md:scale-100 origin-top pointer-events-none shadow-xl rounded-3xl">
+            <div className="w-full md:w-1/2 p-6 md:p-8 bg-slate-50 flex flex-col justify-center items-center">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-900/40 mb-4 self-start">Live Preview</label>
+              <div className="w-full max-w-[280px] transform scale-90 md:scale-100 origin-top pointer-events-none shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 rounded-xl">
                 {tables.length > 0 ? (
                    <QRTemplateCard templateId={selectedTemplate} table={tables[0]} shopName={shopName} appDomain={appDomain} />
                 ) : (
-                   <div className="h-[360px] w-full bg-white/50 rounded-3xl flex items-center justify-center text-[#1A1A1A]/30 font-semibold">Tidak ada meja</div>
+                   <div className="h-[360px] w-full bg-white/50 rounded-xl flex items-center justify-center text-slate-900/30 font-semibold">Tidak ada meja</div>
                 )}
               </div>
             </div>

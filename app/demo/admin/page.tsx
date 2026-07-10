@@ -57,7 +57,7 @@ export default function DemoAdminPage() {
   ];
 
   const stats = [
-    { label: 'Pesanan Hari Ini', value: '27', color: 'text-[#1A1A1A]' },
+    { label: 'Pesanan Hari Ini', value: '27', color: 'text-slate-900' },
     { label: 'Pesanan Pending', value: '3', color: 'text-amber-600' },
     { label: 'Pesanan Selesai', value: '24', color: 'text-emerald-600' },
     { label: 'Menu Aktif', value: String(menus.filter(m => m.is_available).length), color: 'text-blue-600' }
@@ -72,24 +72,24 @@ export default function DemoAdminPage() {
   ];
 
   return (
-    <div className="flex h-screen bg-[#F5F2EB] overflow-hidden font-sans">
+    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
       {/* Sidebar Desktop */}
-      <aside className="hidden md:flex md:flex-col md:w-64 bg-[#1A1A1A] text-white flex-shrink-0">
+      <aside className="hidden md:flex md:flex-col md:w-64 bg-slate-900 text-white flex-shrink-0">
         <div className="px-6 py-6 border-b border-white/10 flex items-center gap-3">
           <div>
-            <span className="font-black text-base tracking-tight block">Kafe Demo</span>
+            <span className="font-bold text-base tracking-tight block">Kafe Demo</span>
             <span className="text-[10px] text-white/40 font-semibold tracking-wider uppercase">Portal Admin</span>
           </div>
         </div>
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
           {navItems.map((item) => (
-            <button key={item.id} onClick={() => setActiveTab(item.id)} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === item.id ? 'bg-white text-[#1A1A1A]' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}>
+            <button key={item.id} onClick={() => setActiveTab(item.id)} className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === item.id ? 'bg-white text-slate-900' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}>
               <span>{item.name}</span>
-              {item.badge !== null && (<span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${activeTab === item.id ? 'bg-[#1A1A1A] text-white' : 'bg-amber-500 text-[#1A1A1A]'}`}>{item.badge}</span>)}
+              {item.badge !== null && (<span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${activeTab === item.id ? 'bg-slate-900 text-white' : 'bg-amber-500 text-slate-900'}`}>{item.badge}</span>)}
             </button>
           ))}
         </nav>
-        <div className="mx-4 mb-4 p-3 bg-orange-500/20 border border-orange-400/30 rounded-2xl text-xs">
+        <div className="mx-4 mb-4 p-3 bg-indigo-600/20 border border-orange-400/30 rounded-xl text-xs">
           <p className="text-[10px] text-orange-300 uppercase tracking-wider font-bold">Mode Demo</p>
           <p className="text-white/70 mt-1">Semua data bersifat simulasi.</p>
         </div>
@@ -105,7 +105,7 @@ export default function DemoAdminPage() {
       {/* Main Panel Wrapper */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Mobile Header */}
-        <header className="md:hidden bg-[#1A1A1A] text-white px-4 py-3 flex items-center justify-between z-40">
+        <header className="md:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between z-40">
           <span className="font-bold text-base tracking-tight">Kafe Demo</span>
           <button onClick={() => setIsMobileOpen(!isMobileOpen)} className="p-1.5 rounded-lg bg-white/10 text-white hover:bg-white/25 active:scale-95 transition-all text-xs font-bold">
             {isMobileOpen ? 'Tutup' : 'Menu'}
@@ -113,16 +113,16 @@ export default function DemoAdminPage() {
         </header>
 
         {isMobileOpen && (
-          <div className="md:hidden fixed inset-0 z-30 flex flex-col bg-[#1A1A1A] pt-16 text-white">
+          <div className="md:hidden fixed inset-0 z-30 flex flex-col bg-slate-900 pt-16 text-white">
             <nav className="flex-1 px-6 py-8 space-y-2 overflow-y-auto">
               {navItems.map((item) => (
-                <button key={item.id} onClick={() => { setActiveTab(item.id); setIsMobileOpen(false); }} className={`w-full flex items-center justify-between px-5 py-4 rounded-2xl text-base font-bold transition-all ${activeTab === item.id ? 'bg-white text-[#1A1A1A]' : 'text-white/60 hover:bg-white/10'}`}>
+                <button key={item.id} onClick={() => { setActiveTab(item.id); setIsMobileOpen(false); }} className={`w-full flex items-center justify-between px-5 py-4 rounded-xl text-base font-bold transition-all ${activeTab === item.id ? 'bg-white text-slate-900' : 'text-white/60 hover:bg-white/10'}`}>
                   <span>{item.name}</span>
                 </button>
               ))}
             </nav>
             <div className="p-6 border-t border-white/10">
-              <Link href="/" className="w-full flex items-center justify-center gap-2 px-5 py-4 border border-white/20 text-white rounded-2xl text-sm font-bold hover:bg-white/10 active:scale-95 transition-all">Kembali ke Beranda</Link>
+              <Link href="/" className="w-full flex items-center justify-center gap-2 px-5 py-4 border border-white/20 text-white rounded-xl text-sm font-bold hover:bg-white/10 active:scale-95 transition-all">Kembali ke Beranda</Link>
             </div>
           </div>
         )}
@@ -133,11 +133,11 @@ export default function DemoAdminPage() {
             <p className="font-bold text-xs">MODE DEMO - Dashboard Admin</p>
             <p className="text-[10px] text-white/80">Semua data simulasi. Perubahan tidak tersimpan.</p>
           </div>
-          <Link href="/" className="hidden sm:block bg-white text-orange-600 hover:bg-white/90 text-xs font-black px-4 py-2 rounded-xl transition-all shadow">Kembali</Link>
+          <Link href="/" className="hidden sm:block bg-white text-indigo-600 hover:bg-white/90 text-xs font-bold px-4 py-2 rounded-xl transition-all shadow">Kembali</Link>
         </div>
 
         {/* Banner Pesanan Terlambat (Escalation Demo) */}
-        <div className="bg-rose-50 border-b border-rose-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm font-sans animate-fade-in">
+        <div className="bg-rose-50 border-b border-rose-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 font-sans animate-fade-in">
           <div>
             <p className="font-bold text-sm text-rose-800">Ada 2 Pesanan Pending Belum Diproses Kasir (&gt; 5 Menit)! [MODE DEMO]</p>
             <p className="text-xs text-rose-600 mt-1">Meja terpengaruh: <span className="font-bold">Meja 5 (Teh Tarik, Nasi Uduk) &amp; Meja 7 (Mie Ayam Bakso, Es Teh Manis)</span>.</p>
@@ -148,7 +148,7 @@ export default function DemoAdminPage() {
         </div>
 
         {/* Render Tab Panel */}
-        <div className="flex-1 overflow-y-auto min-w-0 bg-[#F5F2EB]">
+        <div className="flex-1 overflow-y-auto min-w-0 bg-slate-50">
           {activeTab === 'menus' && <MenusTab menus={menus} onToggleAvailability={handleToggleAvailability} />}
           {activeTab === 'orders' && <OrdersTab orders={dummyOrders} />}
           {activeTab === 'analytics' && <AnalyticsTab stats={stats} bestSellers={bestSellers} />}

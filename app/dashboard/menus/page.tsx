@@ -202,23 +202,23 @@ export default function MenusDashboardPage() {
     setAiPreviewMenus(updated);
   }
 
-  if (authChecking) return <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center"><p className="text-[#1A1A1A]/40 text-sm">Memeriksa akses...</p></div>;
-  if (accessDenied) return <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center p-6"><div className="text-center max-w-sm"><div className="text-5xl mb-4">🚫</div><h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">Access Denied</h1><a href="/login" className="inline-block mt-6 px-6 py-3 bg-[#1A1A1A] text-white text-sm font-medium rounded-xl hover:bg-[#333] transition-colors">Kembali ke Login</a></div></div>;
+  if (authChecking) return <div className="min-h-screen bg-slate-50 flex items-center justify-center"><p className="text-slate-900/40 text-sm">Memeriksa akses...</p></div>;
+  if (accessDenied) return <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6"><div className="text-center max-w-sm"><div className="text-5xl mb-4">🚫</div><h1 className="text-2xl font-bold text-slate-900 mb-2">Access Denied</h1><a href="/login" className="inline-block mt-6 px-6 py-3 bg-slate-900 text-white text-sm font-medium rounded-xl hover:bg-[#333] transition-colors">Kembali ke Login</a></div></div>;
 
   return (
-    <div className="bg-[#F5F2EB] min-h-screen">
-      <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between">
+    <div className="bg-slate-50 min-h-screen">
+      <div className="border-b border-slate-900/10 px-6 py-4 flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-black text-[#1A1A1A]">Kelola Menu Kafe</h2>
-          <p className="text-xs text-[#1A1A1A]/40 mt-0.5">{menus.length} item aktif terdaftar</p>
+          <h2 className="text-lg font-bold text-slate-900">Kelola Menu Kafe</h2>
+          <p className="text-xs text-slate-900/40 mt-0.5">{menus.length} item aktif terdaftar</p>
         </div>
         {role !== 'superadmin' && (
           <div className="flex gap-2">
-            <button onClick={() => setIsAiModalOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#1A1A1A]/10 text-[#1A1A1A] text-xs font-bold rounded-xl hover:bg-[#F5F2EB] hover:border-[#1A1A1A]/20 active:scale-95 transition-all shadow-sm group">
+            <button onClick={() => setIsAiModalOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-900/10 text-slate-900 text-xs font-bold rounded-xl hover:bg-slate-50 hover:border-slate-900/20 active:scale-95 transition-all shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 group">
               <Sparkles className="w-4 h-4 text-amber-500 group-hover:rotate-12 transition-transform" />
               <span>Import Menu</span>
             </button>
-            <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2.5 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl hover:bg-[#333] active:scale-95 transition-all">
+            <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-[#333] active:scale-95 transition-all">
               <span>+ Tambah Menu</span>
             </button>
           </div>
@@ -228,33 +228,33 @@ export default function MenusDashboardPage() {
       <main className="max-w-5xl mx-auto px-4 py-6">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => <div key={i} className="h-[280px] bg-white rounded-2xl animate-pulse border border-[#1A1A1A]/5" />)}
+            {[...Array(6)].map((_, i) => <div key={i} className="h-[280px] bg-white rounded-xl animate-pulse border border-slate-900/5" />)}
           </div>
         ) : menus.length === 0 ? (
-          <div className="text-center py-20 bg-white border border-[#1A1A1A]/5 rounded-3xl">
+          <div className="text-center py-20 bg-white border border-slate-900/5 rounded-xl">
             <div className="text-4xl mb-3">🍽️</div>
-            <h3 className="text-lg font-bold text-[#1A1A1A]">Menu Masih Kosong</h3>
-            <p className="text-sm text-[#1A1A1A]/50 max-w-sm mx-auto mb-6">Belum ada menu yang ditambahkan.</p>
-            {role !== 'superadmin' && <button onClick={openAddModal} className="px-6 py-3 bg-[#1A1A1A] text-white font-medium text-sm rounded-xl hover:bg-[#333] transition-colors">+ Tambah Menu Pertama</button>}
+            <h3 className="text-lg font-bold text-slate-900">Menu Masih Kosong</h3>
+            <p className="text-sm text-slate-900/50 max-w-sm mx-auto mb-6">Belum ada menu yang ditambahkan.</p>
+            {role !== 'superadmin' && <button onClick={openAddModal} className="px-6 py-3 bg-slate-900 text-white font-medium text-sm rounded-xl hover:bg-[#333] transition-colors">+ Tambah Menu Pertama</button>}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {menus.map((menu) => (
-              <div key={menu.id} className={`group bg-white rounded-2xl border border-[#1A1A1A]/5 p-4 flex flex-col justify-between transition-all hover:border-[#1A1A1A]/20 hover:shadow-md ${!menu.is_available ? 'opacity-60 grayscale' : ''}`}>
+              <div key={menu.id} className={`group bg-white rounded-xl border border-slate-900/5 p-4 flex flex-col justify-between transition-all hover:border-slate-900/20 hover:shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 ${!menu.is_available ? 'opacity-60 grayscale' : ''}`}>
                 <div className="flex gap-4">
-                  <div className="w-24 h-24 rounded-xl bg-[#F5F2EB] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                  <div className="w-24 h-24 rounded-xl bg-slate-50 flex-shrink-0 flex items-center justify-center overflow-hidden">
                     {menu.image_url ? <img src={menu.image_url} alt={menu.name} className="w-full h-full object-cover" loading="lazy" /> : <div className="text-2xl opacity-40">🍲</div>}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-[#1A1A1A] text-base leading-tight mb-1 truncate" title={menu.name}>{menu.name}</h3>
-                    <p className="font-mono font-medium text-sm text-[#1A1A1A]/80 mb-1.5">{formatRupiah(menu.price)}</p>
-                    <span className="inline-block px-2 py-0.5 bg-[#F5F2EB] text-[#1A1A1A]/60 text-[10px] font-bold uppercase tracking-wider rounded-md truncate max-w-full">{menu.category || 'Umum'}</span>
+                    <h3 className="font-bold text-slate-900 text-base leading-tight mb-1 truncate" title={menu.name}>{menu.name}</h3>
+                    <p className="font-mono font-medium text-sm text-slate-900/80 mb-1.5">{formatRupiah(menu.price)}</p>
+                    <span className="inline-block px-2 py-0.5 bg-slate-50 text-slate-900/60 text-[10px] font-bold uppercase tracking-wider rounded-md truncate max-w-full">{menu.category || 'Umum'}</span>
                   </div>
                 </div>
-                {menu.description && <p className="text-xs text-[#1A1A1A]/50 mt-3 line-clamp-2 leading-relaxed">{menu.description}</p>}
+                {menu.description && <p className="text-xs text-slate-900/50 mt-3 line-clamp-2 leading-relaxed">{menu.description}</p>}
                 {role !== 'superadmin' && (
-                  <div className="mt-4 pt-4 border-t border-[#1A1A1A]/5 flex items-center justify-between">
-                    <button onClick={() => handleToggleAvailability(menu)} className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg transition-colors ${menu.is_available ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-[#F5F2EB] text-[#1A1A1A]/40 hover:bg-[#1A1A1A]/10'}`}>
+                  <div className="mt-4 pt-4 border-t border-slate-900/5 flex items-center justify-between">
+                    <button onClick={() => handleToggleAvailability(menu)} className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg transition-colors ${menu.is_available ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-slate-50 text-slate-900/40 hover:bg-slate-900/10'}`}>
                       {menu.is_available ? '✅ Tersedia' : '❌ Habis'}
                     </button>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

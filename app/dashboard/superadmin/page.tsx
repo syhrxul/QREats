@@ -202,39 +202,39 @@ export default function SuperadminPage() {
 
   if (authChecking) {
     return (
-      <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center font-sans">
-        <p className="text-sm text-[#1A1A1A]/40">Memeriksa hak akses superadmin...</p>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center font-sans">
+        <p className="text-sm text-slate-900/40">Memeriksa hak akses superadmin...</p>
       </div>
     );
   }
 
   if (accessDenied) {
     return (
-      <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center p-6 font-sans">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans">
         <div className="text-center max-w-sm">
-          <span className="block mb-4"><LockIcon className="w-12 h-12 text-[#1A1A1A]" /></span>
-          <h1 className="text-2xl font-black text-[#1A1A1A] mb-2">Akses Dibatasi</h1>
-          <p className="text-sm text-[#1A1A1A]/50">Halaman ini khusus untuk Superadmin.</p>
+          <span className="block mb-4"><LockIcon className="w-12 h-12 text-slate-900" /></span>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Akses Dibatasi</h1>
+          <p className="text-sm text-slate-900/50">Halaman ini khusus untuk Superadmin.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#F5F2EB] min-h-screen font-sans">
+    <div className="bg-slate-50 min-h-screen font-sans">
       
       {/* Header */}
-      <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between bg-white">
+      <div className="border-b border-slate-900/10 px-6 py-4 flex items-center justify-between bg-white">
         <div>
-          <h2 className="text-lg font-black text-[#1A1A1A]">Superadmin Central</h2>
-          <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Statistik keseluruhan platform & log aktivitas transaksi real-time</p>
+          <h2 className="text-lg font-bold text-slate-900">Superadmin Central</h2>
+          <p className="text-xs text-slate-900/40 mt-0.5">Statistik keseluruhan platform & log aktivitas transaksi real-time</p>
         </div>
         <button
           onClick={() => {
             fetchStats();
             addWebLog('Penyegaran Data', 'Statistik keseluruhan platform berhasil diperbarui.', 'system');
           }}
-          className="px-4 py-2 border border-[#1A1A1A]/20 hover:bg-[#1A1A1A]/5 text-xs font-bold rounded-xl transition-all cursor-pointer"
+          className="px-4 py-2 border border-slate-900/20 hover:bg-slate-900/5 text-xs font-bold rounded-xl transition-all cursor-pointer"
         >
           Refresh
         </button>
@@ -244,45 +244,45 @@ export default function SuperadminPage() {
         
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-2xl p-4">
-            <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Total merchant</span>
-            <p className="text-2xl font-black text-[#1A1A1A] mt-1">
+          <div className="bg-white border border-slate-900/8 rounded-xl p-4">
+            <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide">Total merchant</span>
+            <p className="text-2xl font-bold text-slate-900 mt-1">
               {loading ? '...' : stats.totalShops}
             </p>
           </div>
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-2xl p-4">
-            <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Merchant Aktif</span>
-            <p className="text-2xl font-black text-emerald-600 mt-1">
+          <div className="bg-white border border-slate-900/8 rounded-xl p-4">
+            <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide">Merchant Aktif</span>
+            <p className="text-2xl font-bold text-emerald-600 mt-1">
               {loading ? '...' : stats.activeShops}
             </p>
           </div>
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-2xl p-4">
-            <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Staf Karyawan</span>
-            <p className="text-2xl font-black text-indigo-600 mt-1">
+          <div className="bg-white border border-slate-900/8 rounded-xl p-4">
+            <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide">Staf Karyawan</span>
+            <p className="text-2xl font-bold text-indigo-600 mt-1">
               {loading ? '...' : stats.totalEmployees}
             </p>
           </div>
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-2xl p-4">
-            <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Transaksi Hari Ini</span>
-            <p className="text-2xl font-black text-amber-600 mt-1">
+          <div className="bg-white border border-slate-900/8 rounded-xl p-4">
+            <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide">Transaksi Hari Ini</span>
+            <p className="text-2xl font-bold text-amber-600 mt-1">
               {loading ? '...' : stats.activeTransactions}
             </p>
           </div>
         </div>
 
         {/* Upload Logo QREats (Favicon) */}
-        <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 shadow-sm mb-6 space-y-4">
+        <div className="bg-white border border-slate-900/8 rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 mb-6 space-y-4">
           <div>
-            <h3 className="font-bold text-[#1A1A1A] text-base font-sans">Pengaturan Logo & Favicon QREats</h3>
-            <p className="text-xs text-[#1A1A1A]/40 mt-0.5 font-sans">Unggah logo utama QREats (format .png, .ico, atau .jpg) yang akan digunakan sebagai ikon situs web (favicon).</p>
+            <h3 className="font-bold text-slate-900 text-base font-sans">Pengaturan Logo & Favicon QREats</h3>
+            <p className="text-xs text-slate-900/40 mt-0.5 font-sans">Unggah logo utama QREats (format .png, .ico, atau .jpg) yang akan digunakan sebagai ikon situs web (favicon).</p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <div className="w-16 h-16 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-2xl flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="w-16 h-16 bg-slate-50 border border-slate-900/10 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
               {currentFavicon ? (
                 <img src={currentFavicon} alt="Favicon Preview" className="w-10 h-10 object-contain" />
               ) : (
-                <FoodIcon className="w-10 h-10 text-[#1A1A1A]" />
+                <FoodIcon className="w-10 h-10 text-slate-900" />
               )}
             </div>
             
@@ -292,9 +292,9 @@ export default function SuperadminPage() {
                 accept=".ico,.png,.jpg,.jpeg"
                 onChange={handleFaviconChange}
                 disabled={uploading}
-                className="block w-full text-xs text-[#1A1A1A]/50 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1A1A1A] file:text-white hover:file:bg-[#333] cursor-pointer file:cursor-pointer"
+                className="block w-full text-xs text-slate-900/50 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white hover:file:bg-[#333] cursor-pointer file:cursor-pointer"
               />
-              <p className="text-[10px] text-[#1A1A1A]/35 font-sans">Mendukung format file .ico, .png, atau .jpg dengan ukuran maksimal 2MB.</p>
+              <p className="text-[10px] text-slate-900/35 font-sans">Mendukung format file .ico, .png, atau .jpg dengan ukuran maksimal 2MB.</p>
             </div>
           </div>
           

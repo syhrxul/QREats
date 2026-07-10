@@ -25,3 +25,9 @@
   - Bayangan (*Shadow*): Diubah menggunakan warna navy gelap (`rgba(15,23,42,1)`) agar tidak terlalu memukul mata.
   - Tipografi: Menjadi `font-bold tracking-tight` (tidak lagi *uppercase* brutal) demi kenyamanan membaca (*readability*).
 - **Hasil:** Landing page kini memancarkan aura *Enterprise-Grade* dengan tetap mempertahankan elemen struktural modern khas Neobrutalism. Build sukses.
+## 17. Massive UI Refactor: Workspace-Wide Muted Neobrutalism
+- **Pembaruan:** Melakukan skrip *mass refactor* pada lebih dari 50 file komponen UI (termasuk modul `/dashboard`, `/order`, `/components`, dan halaman autentikasi).
+- **Desain Baru:** 
+  - Seluruh warna, bayangan (*shadows*), ketebalan garis (*borders*), dan *border-radius* kini dipaksa mengikuti *design tokens* "Muted Neobrutalism" yang ditetapkan di `PROJECT.MD`.
+  - Mengubah dominasi hitam/gelap brutal menjadi paduan abu-abu, putih, *indigo*, dan *slate* yang profesional.
+- **Hasil:** Seluruh ekosistem QREats kini memiliki konsistensi bahasa desain kelas *enterprise*. Kompilasi build berjalan lancar 100%.

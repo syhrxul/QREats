@@ -332,24 +332,24 @@ export default function SettingsPage() {
 
   if (authChecking) {
     return (
-      <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center font-sans">
-        <p className="text-sm text-[#1A1A1A]/40">Memeriksa hak akses toko...</p>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center font-sans">
+        <p className="text-sm text-slate-900/40">Memeriksa hak akses toko...</p>
       </div>
     );
   }
 
   if (accessDenied) {
     return (
-      <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center p-6 font-sans">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans">
         <div className="text-center max-w-sm">
-          <div className="w-16 h-16 bg-red-100 text-red-600 rounded-2xl mx-auto flex items-center justify-center mb-4">
+          <div className="w-16 h-16 bg-red-100 text-red-600 rounded-xl mx-auto flex items-center justify-center mb-4">
             <BlockIcon className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-black text-[#1A1A1A] mb-2">Akses Ditolak</h1>
-          <p className="text-sm text-[#1A1A1A]/50">
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Akses Ditolak</h1>
+          <p className="text-sm text-slate-900/50">
             Halaman pengaturan toko & karyawan ini hanya dapat diakses oleh Owner toko.
           </p>
-          <a href="/login" className="inline-block mt-6 px-6 py-3 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl">
+          <a href="/login" className="inline-block mt-6 px-6 py-3 bg-slate-900 text-white text-xs font-bold rounded-xl">
             Kembali ke Login
           </a>
         </div>
@@ -365,21 +365,21 @@ export default function SettingsPage() {
   const totalEarningsAllTime = revenues.reduce((sum, r) => sum + r.amount, 0);
 
   return (
-    <div className="bg-[#F5F2EB] min-h-screen font-sans">
+    <div className="bg-slate-50 min-h-screen font-sans">
       
       {/* Custom Alert Modal */}
       {alertMsg && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAlertMsg(null)} />
-          <div className="relative bg-[#F9F6EE] rounded-3xl overflow-hidden max-w-sm w-full shadow-2xl p-6 text-center border border-[#1A1A1A]/10 animate-fade-in-up">
-            <div className={`w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 ${alertMsg.type === 'error' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}>
+          <div className="relative bg-[#F9F6EE] rounded-xl overflow-hidden max-w-sm w-full shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 p-6 text-center border border-slate-900/10 animate-fade-in-up">
+            <div className={`w-16 h-16 rounded-xl mx-auto flex items-center justify-center mb-4 ${alertMsg.type === 'error' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}>
                <AlertIcon className="w-8 h-8" />
             </div>
-            <h3 className="font-black text-lg text-[#1A1A1A] mb-2">{alertMsg.title}</h3>
-            <p className="text-sm text-[#1A1A1A]/60 leading-relaxed mb-6">{alertMsg.message}</p>
+            <h3 className="font-bold text-lg text-slate-900 mb-2">{alertMsg.title}</h3>
+            <p className="text-sm text-slate-900/60 leading-relaxed mb-6">{alertMsg.message}</p>
             <button
               onClick={() => setAlertMsg(null)}
-              className="w-full py-3 bg-[#1A1A1A] text-white font-bold rounded-xl hover:bg-[#333] transition-all"
+              className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-[#333] transition-all"
             >
               Mengerti
             </button>
@@ -388,38 +388,38 @@ export default function SettingsPage() {
       )}
       
       {/* Header Info */}
-      <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between">
+      <div className="border-b border-slate-900/10 px-6 py-4 flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-black text-[#1A1A1A]">Profil Toko & Karyawan</h2>
-          <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Kelola staf, lisensi langganan, dan pantau omzet toko</p>
+          <h2 className="text-lg font-bold text-slate-900">Profil Toko & Karyawan</h2>
+          <p className="text-xs text-slate-900/40 mt-0.5">Kelola staf, lisensi langganan, dan pantau omzet toko</p>
         </div>
       </div>
 
       <main className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-min">
         
         {/* Info Toko (Row Span 2) */}
-        <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 lg:col-span-4 lg:row-span-2 flex flex-col h-full">
+        <div className="bg-white border border-slate-900/8 rounded-xl p-6 space-y-4 lg:col-span-4 lg:row-span-2 flex flex-col h-full">
             <div>
-              <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Nama Usaha / Toko</span>
-              <h3 className="text-xl font-black text-[#1A1A1A] mt-1">{shop?.name}</h3>
+              <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide">Nama Usaha / Toko</span>
+              <h3 className="text-xl font-bold text-slate-900 mt-1">{shop?.name}</h3>
             </div>
             
-            <div className="bg-[#F5F2EB]/60 rounded-2xl p-4 border border-[#1A1A1A]/5 space-y-2">
-              <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide block">Kode Gabung Karyawan (Join Code)</span>
-              <p className="font-mono text-lg font-black text-[#1A1A1A] text-center select-all bg-white border border-[#1A1A1A]/10 py-1.5 rounded-lg cursor-pointer" title="Klik untuk salin">
+            <div className="bg-slate-50/60 rounded-xl p-4 border border-slate-900/5 space-y-2">
+              <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide block">Kode Gabung Karyawan (Join Code)</span>
+              <p className="font-mono text-lg font-bold text-slate-900 text-center select-all bg-white border border-slate-900/10 py-1.5 rounded-lg cursor-pointer" title="Klik untuk salin">
                 {shop?.join_code}
               </p>
-              <p className="text-[10px] text-[#1A1A1A]/50 text-center leading-relaxed">
+              <p className="text-[10px] text-slate-900/50 text-center leading-relaxed">
                 Bagikan kode unik di atas kepada kasir/admin Anda agar mereka dapat mendaftar.
               </p>
             </div>
 
             {/* QRIS Upload */}
-            <div className="border-t border-[#1A1A1A]/5 pt-4 space-y-3">
-              <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide block">QRIS Pembayaran Toko</span>
+            <div className="border-t border-slate-900/5 pt-4 space-y-3">
+              <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide block">QRIS Pembayaran Toko</span>
               
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
+                <div className="w-12 h-12 bg-slate-50 border border-slate-900/10 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
                   {qrisPreview ? (
                     <img 
                       src={qrisPreview} 
@@ -428,7 +428,7 @@ export default function SettingsPage() {
                       onError={() => setQrisPreview(null)}
                     />
                   ) : (
-                    <PhoneIcon className="w-6 h-6 text-[#1A1A1A]/40" />
+                    <PhoneIcon className="w-6 h-6 text-slate-900/40" />
                   )}
                 </div>
                 
@@ -438,36 +438,36 @@ export default function SettingsPage() {
                     accept="image/*"
                     onChange={handleQrisUpload}
                     disabled={uploadingQris}
-                    className="block w-full text-[10px] text-[#1A1A1A]/50 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-[#1A1A1A] file:text-white hover:file:bg-[#333] cursor-pointer"
+                    className="block w-full text-[10px] text-slate-900/50 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-900 file:text-white hover:file:bg-[#333] cursor-pointer"
                   />
-                  <p className="text-[9px] text-[#1A1A1A]/30 font-sans">Format .png, .jpg (maks. 2MB).</p>
+                  <p className="text-[9px] text-slate-900/30 font-sans">Format .png, .jpg (maks. 2MB).</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Lisensi Toko */}
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 lg:col-span-4">
+          <div className="bg-white border border-slate-900/8 rounded-xl p-6 space-y-4 lg:col-span-4">
             <div>
-              <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Status Lisensi SaaS</span>
-              <h3 className="text-lg font-black text-[#1A1A1A] mt-1">
+              <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide">Status Lisensi SaaS</span>
+              <h3 className="text-lg font-bold text-slate-900 mt-1">
                 {isTrialActive ? (
                   <span className="text-emerald-600 flex items-center gap-1"><AlertIcon className="w-5 h-5" /> Lisensi Aktif ({daysLeft} Hari Tersisa)</span>
                 ) : (
                   <span className="text-red-500 flex items-center gap-1"><AlertIcon className="w-5 h-5" /> Masa Aktif Habis (Kedaluwarsa)</span>
                 )}
               </h3>
-              <p className="text-xs text-[#1A1A1A]/40 mt-1">
+              <p className="text-xs text-slate-900/40 mt-1">
                 Lisensi sampai: {shop && new Date(shop.trial_ends_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             </div>
 
             {/* Input Activation Token */}
             {userRole !== 'superadmin' ? (
-              <div className="border-t border-[#1A1A1A]/5 pt-4 space-y-2.5">
+              <div className="border-t border-slate-900/5 pt-4 space-y-2.5">
                 <div className="flex items-center gap-2">
                   <AlertIcon className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                  <p className="text-xs font-bold text-[#1A1A1A]/60">Aktivasi Token Lisensi Baru</p>
+                  <p className="text-xs font-bold text-slate-900/60">Aktivasi Token Lisensi Baru</p>
                 </div>
                 <div className="flex flex-col gap-2">
                   <input
@@ -475,65 +475,65 @@ export default function SettingsPage() {
                     placeholder="Masukkan Token (contoh: QRE-XXXX-XXXX-XXXX)"
                     value={tokenInput}
                     onChange={(e) => setTokenInput(e.target.value)}
-                    className="flex-1 px-4 py-2.5 bg-[#F5F2EB] border border-[#1A1A1A]/10 rounded-xl text-sm font-mono uppercase focus:outline-none text-[#1A1A1A] placeholder-[#1A1A1A]/40"
+                    className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-900/10 rounded-xl text-sm font-mono uppercase focus:outline-none text-slate-900 placeholder-[#1A1A1A]/40"
                   />
                   <button
                     onClick={handleActivateToken}
                     disabled={activating || !tokenInput.trim()}
-                    className="bg-[#1A1A1A] hover:bg-[#333] active:scale-[0.98] text-white text-xs font-bold px-6 py-2.5 rounded-xl transition-all disabled:opacity-50"
+                    className="bg-slate-900 hover:bg-[#333] active:scale-[0.98] text-white text-xs font-bold px-6 py-2.5 rounded-xl transition-all disabled:opacity-50"
                   >
                     {activating ? 'Memproses...' : 'Aktivasi'}
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="border-t border-[#1A1A1A]/5 pt-4">
+              <div className="border-t border-slate-900/5 pt-4">
                 <div className="text-xs font-bold text-red-500 bg-red-50 border border-red-200 p-2.5 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wide">
                   <AlertIcon className="w-4 h-4 flex-shrink-0" />
                   <span>Mode Preview: Aktivasi Lisensi dinonaktifkan</span>
                 </div>
               </div>
             )}
-              <p className="text-[10px] text-[#1A1A1A]/40 mt-4">
+              <p className="text-[10px] text-slate-900/40 mt-4">
                 Hubungi Superadmin platform untuk memesan dan membeli token aktivasi berlangganan kafe Anda.
               </p>
             </div>
 
           {/* Langganan & Add-on (New Col) */}
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 lg:col-span-4">
+          <div className="bg-white border border-slate-900/8 rounded-xl p-6 space-y-4 lg:col-span-4">
             <div>
-              <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Langganan & Add-on</span>
-              <h3 className="text-xl font-black text-[#1A1A1A] mt-1 capitalize">Paket {shop?.subscription_tier || 'Basic'}</h3>
+              <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide">Langganan & Add-on</span>
+              <h3 className="text-xl font-bold text-slate-900 mt-1 capitalize">Paket {shop?.subscription_tier || 'Basic'}</h3>
             </div>
             
             <div className="space-y-3">
               {/* Meja */}
-              <div className="bg-[#F5F2EB]/60 rounded-2xl p-4 border border-[#1A1A1A]/5 flex justify-between items-center">
+              <div className="bg-slate-50/60 rounded-xl p-4 border border-slate-900/5 flex justify-between items-center">
                 <div>
-                  <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase block">Kuota Meja (QR)</span>
-                  <span className="text-sm font-black text-[#1A1A1A]">{tablesCount} / {(shop?.base_table_limit || 20) + (shop?.addon_tables || 0)}</span>
+                  <span className="text-[10px] font-bold text-slate-900/40 uppercase block">Kuota Meja (QR)</span>
+                  <span className="text-sm font-bold text-slate-900">{tablesCount} / {(shop?.base_table_limit || 20) + (shop?.addon_tables || 0)}</span>
                 </div>
               </div>
               
               {/* Kasir */}
-              <div className="bg-[#F5F2EB]/60 rounded-2xl p-4 border border-[#1A1A1A]/5 flex justify-between items-center">
+              <div className="bg-slate-50/60 rounded-xl p-4 border border-slate-900/5 flex justify-between items-center">
                 <div>
-                  <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase block">Kuota Kasir</span>
-                  <span className="text-sm font-black text-[#1A1A1A]">{cashiersCount} / {(shop?.base_cashier_limit || 1) + (shop?.addon_cashiers || 0)}</span>
+                  <span className="text-[10px] font-bold text-slate-900/40 uppercase block">Kuota Kasir</span>
+                  <span className="text-sm font-bold text-slate-900">{cashiersCount} / {(shop?.base_cashier_limit || 1) + (shop?.addon_cashiers || 0)}</span>
                 </div>
               </div>
             </div>
-            <p className="text-[9px] text-[#1A1A1A]/40 leading-relaxed pt-2">
+            <p className="text-[9px] text-slate-900/40 leading-relaxed pt-2">
               Batas kuota tidak dapat ditambah sendiri. Silakan hubungi Superadmin platform untuk melakukan upgrade paket atau pembelian Add-on Kuota.
             </p>
           </div>
 
         {/* Kelola Staf Karyawan */}
-        <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 lg:col-span-8">
+        <div className="bg-white border border-slate-900/8 rounded-xl p-6 space-y-4 lg:col-span-8">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="font-bold text-[#1A1A1A] text-base">Daftar Karyawan</h3>
-                <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Daftar staf kasir yang tergabung ke toko Anda</p>
+                <h3 className="font-bold text-slate-900 text-base">Daftar Karyawan</h3>
+                <p className="text-xs text-slate-900/40 mt-0.5">Daftar staf kasir yang tergabung ke toko Anda</p>
               </div>
 
             </div>
@@ -542,15 +542,15 @@ export default function SettingsPage() {
 
             <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
               {employees.length === 0 ? (
-                <div className="text-center py-8 bg-[#F5F2EB]/30 rounded-2xl border border-dashed border-[#1A1A1A]/10">
-                  <p className="text-xs text-[#1A1A1A]/30">Belum ada karyawan terdaftar.</p>
+                <div className="text-center py-8 bg-slate-50/30 rounded-xl border border-dashed border-slate-900/10">
+                  <p className="text-xs text-slate-900/30">Belum ada karyawan terdaftar.</p>
                 </div>
               ) : (
                 employees.map((emp) => (
-                  <div key={emp.id} className="border border-[#1A1A1A]/5 rounded-xl p-3 flex items-center justify-between text-xs hover:bg-[#F5F2EB]/10">
+                  <div key={emp.id} className="border border-slate-900/5 rounded-xl p-3 flex items-center justify-between text-xs hover:bg-slate-50/10">
                     <div>
-                      <p className="font-bold text-[#1A1A1A]">{emp.email}</p>
-                      <p className="text-[9px] text-[#1A1A1A]/30 font-mono mt-0.5">ID: {emp.id.slice(0, 10)}...</p>
+                      <p className="font-bold text-slate-900">{emp.email}</p>
+                      <p className="text-[9px] text-slate-900/30 font-mono mt-0.5">ID: {emp.id.slice(0, 10)}...</p>
                     </div>
                     <span className="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded text-[9px] uppercase">
                       {emp.role}
@@ -562,15 +562,15 @@ export default function SettingsPage() {
           </div>
 
           {/* Pendapatan Harian */}
-          <div className="bg-white border border-[#1A1A1A]/8 rounded-3xl p-6 space-y-4 lg:col-span-12">
+          <div className="bg-white border border-slate-900/8 rounded-xl p-6 space-y-4 lg:col-span-12">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="font-bold text-[#1A1A1A] text-base">Statistik Pendapatan</h3>
-                <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Total omzet bisnis berdasarkan pesanan terverifikasi lunas</p>
+                <h3 className="font-bold text-slate-900 text-base">Statistik Pendapatan</h3>
+                <p className="text-xs text-slate-900/40 mt-0.5">Total omzet bisnis berdasarkan pesanan terverifikasi lunas</p>
               </div>
               <div className="text-right">
-                <span className="text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wide block">Akumulasi Total</span>
-                <span className="text-base font-black text-[#1A1A1A]" suppressHydrationWarning>
+                <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-wide block">Akumulasi Total</span>
+                <span className="text-base font-bold text-slate-900" suppressHydrationWarning>
                   {formatRupiah(totalEarningsAllTime)}
                 </span>
               </div>
@@ -578,12 +578,12 @@ export default function SettingsPage() {
 
             <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
               {revenues.length === 0 ? (
-                <p className="text-xs text-[#1A1A1A]/30 text-center py-10">Belum ada omzet harian yang lunas.</p>
+                <p className="text-xs text-slate-900/30 text-center py-10">Belum ada omzet harian yang lunas.</p>
               ) : (
-                <div className="border border-[#1A1A1A]/8 rounded-2xl overflow-hidden">
+                <div className="border border-slate-900/8 rounded-xl overflow-hidden">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="bg-[#F5F2EB]/80 border-b border-[#1A1A1A]/8 font-bold text-[#1A1A1A]">
+                      <tr className="bg-slate-50/80 border-b border-slate-900/8 font-bold text-slate-900">
                         <th className="p-3">Tanggal</th>
                         <th className="p-3 text-center">Jumlah Order</th>
                         <th className="p-3 text-right">Pendapatan</th>
@@ -591,10 +591,10 @@ export default function SettingsPage() {
                     </thead>
                     <tbody>
                       {revenues.map((rev) => (
-                        <tr key={rev.date} className="border-b border-[#1A1A1A]/5 last:border-b-0 hover:bg-[#F5F2EB]/10 transition-colors">
-                          <td className="p-3 font-semibold text-[#1A1A1A]">{rev.date}</td>
-                          <td className="p-3 text-center font-medium text-[#1A1A1A]/60">{rev.ordersCount}x order</td>
-                          <td className="p-3 text-right font-bold text-[#1A1A1A]" suppressHydrationWarning>
+                        <tr key={rev.date} className="border-b border-slate-900/5 last:border-b-0 hover:bg-slate-50/10 transition-colors">
+                          <td className="p-3 font-semibold text-slate-900">{rev.date}</td>
+                          <td className="p-3 text-center font-medium text-slate-900/60">{rev.ordersCount}x order</td>
+                          <td className="p-3 text-right font-bold text-slate-900" suppressHydrationWarning>
                             {formatRupiah(rev.amount)}
                           </td>
                         </tr>

@@ -25,18 +25,18 @@ export function QRTableList({
   handleSaveEdit
 }: any) {
   return (
-    <div className="bg-white border border-[#1A1A1A]/8 rounded-2xl p-6 mb-8 print:hidden">
-      <h2 className="font-semibold text-[#1A1A1A] mb-1">Kelola & Tambah Meja</h2>
-      <p className="text-xs text-[#1A1A1A]/40 mb-4">
+    <div className="bg-white border border-slate-900/8 rounded-xl p-6 mb-8 print:hidden">
+      <h2 className="font-semibold text-slate-900 mb-1">Kelola & Tambah Meja</h2>
+      <p className="text-xs text-slate-900/40 mb-4">
         Pilih mode penambahan meja: satu per satu atau generate secara massal.
       </p>
 
-      <div className="grid grid-cols-2 gap-2 bg-[#F5F2EB] p-1 rounded-xl mb-4 max-w-xs">
+      <div className="grid grid-cols-2 gap-2 bg-slate-50 p-1 rounded-xl mb-4 max-w-xs">
         <button
           type="button"
           onClick={() => setAddingMode('single')}
           className={`py-1.5 rounded-lg text-xs font-bold transition-all ${
-            addingMode === 'single' ? 'bg-[#1A1A1A] text-white shadow-sm' : 'text-[#1A1A1A]/40 hover:text-[#1A1A1A]/60'
+            addingMode === 'single' ? 'bg-slate-900 text-white shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900' : 'text-slate-900/40 hover:text-slate-900/60'
           }`}
         >
           ➕ Tambah Satu
@@ -45,7 +45,7 @@ export function QRTableList({
           type="button"
           onClick={() => setAddingMode('bulk')}
           className={`py-1.5 rounded-lg text-xs font-bold transition-all ${
-            addingMode === 'bulk' ? 'bg-[#1A1A1A] text-white shadow-sm' : 'text-[#1A1A1A]/40 hover:text-[#1A1A1A]/60'
+            addingMode === 'bulk' ? 'bg-slate-900 text-white shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900' : 'text-slate-900/40 hover:text-slate-900/60'
           }`}
         >
           📦 Bulk Generate
@@ -59,7 +59,7 @@ export function QRTableList({
             placeholder="Nama Meja (Contoh: VIP-01)"
             value={newTableName}
             onChange={(e) => setNewTableName(e.target.value)}
-            className="flex-1 bg-[#F5F2EB] border-transparent rounded-xl px-4 py-2 text-sm focus:border-[#1A1A1A]/20 focus:ring-0 outline-none"
+            className="flex-1 bg-slate-50 border-transparent rounded-xl px-4 py-2 text-sm focus:border-slate-900/20 focus:ring-0 outline-none"
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleAddTable();
             }}
@@ -67,7 +67,7 @@ export function QRTableList({
           <button
             onClick={handleAddTable}
             disabled={generating || !newTableName.trim()}
-            className="px-4 py-2 bg-[#1A1A1A] text-white rounded-xl text-sm font-semibold hover:bg-[#333] transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-[#333] transition-colors disabled:opacity-50"
           >
             {generating ? 'Menyimpan...' : 'Tambah'}
           </button>
@@ -75,31 +75,31 @@ export function QRTableList({
       ) : (
         <div className="flex flex-col sm:flex-row gap-2 w-full max-w-2xl">
           <div className="flex-1">
-            <label className="block text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wider mb-1">Prefix Nama</label>
+            <label className="block text-[10px] font-bold text-slate-900/40 uppercase tracking-wider mb-1">Prefix Nama</label>
             <input
               type="text"
               placeholder="Contoh: Meja"
               value={bulkPrefix}
               onChange={(e) => setBulkPrefix(e.target.value)}
-              className="w-full bg-[#F5F2EB] border-transparent rounded-xl px-4 py-2 text-sm focus:border-[#1A1A1A]/20 focus:ring-0 outline-none"
+              className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-2 text-sm focus:border-slate-900/20 focus:ring-0 outline-none"
             />
           </div>
           <div className="w-full sm:w-24">
-            <label className="block text-[10px] font-bold text-[#1A1A1A]/40 uppercase tracking-wider mb-1">Jumlah</label>
+            <label className="block text-[10px] font-bold text-slate-900/40 uppercase tracking-wider mb-1">Jumlah</label>
             <input
               type="number"
               min="1"
               max="100"
               value={bulkQuantity}
               onChange={(e) => setBulkQuantity(Number(e.target.value))}
-              className="w-full bg-[#F5F2EB] border-transparent rounded-xl px-4 py-2 text-sm focus:border-[#1A1A1A]/20 focus:ring-0 outline-none"
+              className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-2 text-sm focus:border-slate-900/20 focus:ring-0 outline-none"
             />
           </div>
           <div className="flex items-end">
             <button
               onClick={handleAddBulkTables}
               disabled={generating || !bulkPrefix.trim() || bulkQuantity < 1}
-              className="w-full sm:w-auto h-[36px] px-6 bg-[#1A1A1A] text-white rounded-xl text-sm font-semibold hover:bg-[#333] transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto h-[36px] px-6 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-[#333] transition-colors disabled:opacity-50"
             >
               {generating ? 'Memproses...' : 'Generate Massal'}
             </button>
@@ -109,9 +109,9 @@ export function QRTableList({
 
       {/* Tabel Data List */}
       {tables.length > 0 && (
-        <div className="mt-8 overflow-hidden rounded-xl border border-[#1A1A1A]/8">
+        <div className="mt-8 overflow-hidden rounded-xl border border-slate-900/8">
           <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-[#F5F2EB] text-[#1A1A1A]/60 font-semibold">
+            <thead className="bg-slate-50 text-slate-900/60 font-semibold">
               <tr>
                 <th className="px-4 py-3">Nama Meja</th>
                 <th className="px-4 py-3">Token UUID</th>
@@ -121,15 +121,15 @@ export function QRTableList({
             </thead>
             <tbody className="divide-y divide-[#1A1A1A]/5">
               {tables.map((t: any) => (
-                <tr key={t.id} className="hover:bg-[#1A1A1A]/[0.02] transition-colors">
-                  <td className="px-4 py-3 font-semibold text-[#1A1A1A]">
+                <tr key={t.id} className="hover:bg-slate-900/[0.02] transition-colors">
+                  <td className="px-4 py-3 font-semibold text-slate-900">
                     {editingTable?.id === t.id ? (
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
-                          className="bg-white border border-[#1A1A1A]/20 rounded-lg px-2 py-1 text-sm outline-none"
+                          className="bg-white border border-slate-900/20 rounded-lg px-2 py-1 text-sm outline-none"
                           autoFocus
                           onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
                         />
@@ -140,7 +140,7 @@ export function QRTableList({
                       t.name
                     )}
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-[#1A1A1A]/40">{t.token}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-slate-900/40">{t.token}</td>
                   <td className="px-4 py-3 text-center">
                     <span className={`inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
                       t.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'

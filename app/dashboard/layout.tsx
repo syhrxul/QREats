@@ -315,17 +315,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center font-sans">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center font-sans">
         <div className="text-center">
-          <div className="w-10 h-10 border-2 border-[#1A1A1A]/20 border-t-[#1A1A1A] rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-xs text-[#1A1A1A]/40">Memuat sesi dashboard...</p>
+          <div className="w-10 h-10 border-2 border-slate-900/20 border-t-[#1A1A1A] rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xs text-slate-900/40">Memuat sesi dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-[#F5F2EB] overflow-hidden font-sans">
+    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
       
       {/* ── 1. SIDEBAR DESKTOP ── */}
       <Sidebar
@@ -357,11 +357,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         />
 
         {/* ── 4. DASHBOARD CONTENT ── */}
-        <div className="flex-1 overflow-y-auto min-w-0 bg-[#F5F2EB] flex flex-col justify-between">
+        <div className="flex-1 overflow-y-auto min-w-0 bg-slate-50 flex flex-col justify-between">
           
           {/* Banner Impersonate Superadmin */}
           {impersonateShopId && isSuperadmin && (
-            <div className="bg-red-600 text-white px-6 py-3 flex items-center justify-between shadow-md font-sans">
+            <div className="bg-red-600 text-white px-6 py-3 flex items-center justify-between shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 font-sans">
               <div className="flex items-center gap-3">
                 <span className="text-xl">👁️</span>
                 <div>
@@ -371,7 +371,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
               <button
                 onClick={handleExitImpersonate}
-                className="bg-white text-red-600 hover:bg-white/90 text-xs font-black px-3.5 py-1.5 rounded-xl transition-all shadow"
+                className="bg-white text-red-600 hover:bg-white/90 text-xs font-bold px-3.5 py-1.5 rounded-xl transition-all shadow"
               >
                 Kembali ke Admin ↩
               </button>
@@ -380,7 +380,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           {/* Banner Kritis */}
           {isMasaKritis && (
-            <div className="bg-amber-500 text-white px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md font-sans">
+            <div className="bg-amber-500 text-white px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 font-sans">
               <div className="flex items-center gap-3">
                 <AlertIcon className="w-6 h-6 flex-shrink-0" />
                 <div>
@@ -410,7 +410,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           
           {/* Banner Pesanan Terlambat Belum Diproses (Admin/Owner Escalation) */}
           {(profile?.role === 'owner' || profile?.role === 'admin') && delayedOrders.length > 0 && (
-            <div className="bg-rose-50 border-b border-rose-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm font-sans animate-fade-in">
+            <div className="bg-rose-50 border-b border-rose-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 font-sans animate-fade-in">
               <div className="flex items-center gap-3">
                 <AlertTriangle className="w-6 h-6 text-rose-600 animate-bounce flex-shrink-0" />
                 <div>
@@ -435,33 +435,33 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {/* Blokir Layar jika Expired */}
           {isShopExpired && !isSuperadmin && pathname !== '/dashboard/settings' ? (
             <div className="flex-1 flex items-center justify-center p-6 text-center">
-              <div className="bg-white border border-red-200 rounded-3xl p-8 max-w-sm shadow-md space-y-4">
+              <div className="bg-white border border-red-200 rounded-xl p-8 max-w-sm shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 space-y-4">
                 <Clock className="w-12 h-12 text-red-500 mx-auto" />
-                <h3 className="text-xl font-black text-red-600">Masa Aktif Habis</h3>
-                <p className="text-sm text-[#1A1A1A]/50">
+                <h3 className="text-xl font-bold text-red-600">Masa Aktif Habis</h3>
+                <p className="text-sm text-slate-900/50">
                   Masa aktif/trial toko **{shop?.name}** telah berakhir. Silakan hubungi Superadmin untuk membeli token aktivasi baru.
                 </p>
-                <div className="border-t border-[#1A1A1A]/10 pt-4 space-y-3">
-                  <p className="text-xs text-[#1A1A1A]/40">Sudah punya token aktivasi? Masukkan di bawah:</p>
+                <div className="border-t border-slate-900/10 pt-4 space-y-3">
+                  <p className="text-xs text-slate-900/40">Sudah punya token aktivasi? Masukkan di bawah:</p>
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
                       placeholder="QRE-XXXX-XXXX-XXXX"
                       value={activationToken}
                       onChange={(e) => setActivationToken(e.target.value)}
-                      className="bg-[#F5F2EB] border border-[#1A1A1A]/15 text-[#1A1A1A] placeholder-[#1A1A1A]/40 text-xs px-3 py-2.5 rounded-xl focus:outline-none w-full font-mono uppercase"
+                      className="bg-slate-50 border border-slate-900/15 text-slate-900 placeholder-[#1A1A1A]/40 text-xs px-3 py-2.5 rounded-xl focus:outline-none w-full font-mono uppercase"
                     />
                     <button
                       onClick={handleActivateToken}
                       disabled={activating || !activationToken.trim()}
-                      className="bg-[#1A1A1A] hover:bg-[#333] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all disabled:opacity-50"
+                      className="bg-slate-900 hover:bg-[#333] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all disabled:opacity-50"
                     >
                       {activating ? '...' : 'Kirim'}
                     </button>
                   </div>
                   <Link
                     href="/dashboard/settings"
-                    className="inline-block text-xs font-bold text-[#1A1A1A] underline underline-offset-2 hover:text-[#333] pt-2"
+                    className="inline-block text-xs font-bold text-slate-900 underline underline-offset-2 hover:text-[#333] pt-2"
                   >
                     Buka Halaman Lisensi & Staf ↗
                   </Link>

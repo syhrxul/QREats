@@ -323,10 +323,10 @@ export default function KasirHistoryPage() {
       <div
         key={order.id}
         onClick={() => setSelectedOrder(order)}
-        className={`bg-white border rounded-2xl p-5 cursor-pointer hover:shadow-md transition-all duration-300 relative ${
+        className={`bg-white border rounded-xl p-5 cursor-pointer hover:shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 transition-all duration-300 relative ${
           newOrderIds.has(order.id)
-            ? 'border-amber-400 shadow-amber-100 shadow-lg ring-2 ring-amber-300/50'
-            : 'border-[#1A1A1A]/8'
+            ? 'border-amber-400 shadow-amber-100 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 ring-2 ring-amber-300/50'
+            : 'border-slate-900/8'
         }`}
       >
         {/* Badge Status */}
@@ -336,7 +336,7 @@ export default function KasirHistoryPage() {
               ✓ SIAP SAJI
             </span>
           ) : (
-            <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-[#1A1A1A]/5 text-[#1A1A1A]/60 border border-[#1A1A1A]/10">
+            <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-slate-900/5 text-slate-900/60 border border-slate-900/10">
               SEDANG DIBUAT
             </span>
           )}
@@ -357,30 +357,30 @@ export default function KasirHistoryPage() {
                 BARU
               </span>
             )}
-            <span className="font-bold text-[#1A1A1A] text-lg">{order.table_number}</span>
+            <span className="font-bold text-slate-900 text-lg">{order.table_number}</span>
             {order.customer_name && (
-              <span className="text-sm font-semibold text-[#1A1A1A]/60">
+              <span className="text-sm font-semibold text-slate-900/60">
                 ({order.customer_name})
               </span>
             )}
           </div>
-          <p className="text-xs text-[#1A1A1A]/40" suppressHydrationWarning>
+          <p className="text-xs text-slate-900/40" suppressHydrationWarning>
             Jam: {formatTime(order.created_at)} · ID: #{order.id.slice(0, 8)}
           </p>
         </div>
 
         {/* Summary of items */}
-        <div className="text-sm text-[#1A1A1A]/70 mb-3 flex items-center gap-1">
+        <div className="text-sm text-slate-900/70 mb-3 flex items-center gap-1">
           <span className="font-bold">{order.order_items?.length} Menu:</span>
           <span className="truncate">
             {order.order_items?.map((item) => `${item.quantity}x ${item.menu_name}`).join(', ')}
           </span>
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-[#1A1A1A]/5">
+        <div className="flex items-center justify-between pt-3 border-t border-slate-900/5">
           <div>
-            <p className="text-[10px] text-[#1A1A1A]/40 uppercase font-bold tracking-wider">Total Tagihan</p>
-            <p className="text-lg font-black text-[#1A1A1A]" suppressHydrationWarning>
+            <p className="text-[10px] text-slate-900/40 uppercase font-bold tracking-wider">Total Tagihan</p>
+            <p className="text-lg font-bold text-slate-900" suppressHydrationWarning>
               {formatRupiah(order.total_price)}
             </p>
           </div>
@@ -391,7 +391,7 @@ export default function KasirHistoryPage() {
                 📸 Ada Bukti Transfer
               </span>
             )}
-            <span className="text-xs text-[#1A1A1A]/40 font-semibold flex items-center gap-1">
+            <span className="text-xs text-slate-900/40 font-semibold flex items-center gap-1">
               Lihat Rincian
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -404,12 +404,12 @@ export default function KasirHistoryPage() {
   };
 
   return (
-    <div className="bg-[#F5F2EB]">
+    <div className="bg-slate-50">
       {/* Header Info */}
-      <div className="border-b border-[#1A1A1A]/10 px-6 py-4 flex items-center justify-between bg-white">
+      <div className="border-b border-slate-900/10 px-6 py-4 flex items-center justify-between bg-white">
         <div>
-          <h2 className="text-lg font-black text-[#1A1A1A]">Riwayat Transaksi {shopName && `· ${shopName}`}</h2>
-          <p className="text-xs text-[#1A1A1A]/40 mt-0.5">Semua riwayat pesanan pelanggan berdasarkan hari</p>
+          <h2 className="text-lg font-bold text-slate-900">Riwayat Transaksi {shopName && `· ${shopName}`}</h2>
+          <p className="text-xs text-slate-900/40 mt-0.5">Semua riwayat pesanan pelanggan berdasarkan hari</p>
         </div>
       </div>
 
@@ -417,11 +417,11 @@ export default function KasirHistoryPage() {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-white/60 rounded-2xl animate-pulse" />
+              <div key={i} className="h-32 bg-white/60 rounded-xl animate-pulse" />
             ))}
           </div>
         ) : orders.length === 0 ? (
-          <div className="text-center py-20 bg-white border border-[#1A1A1A]/8 rounded-3xl p-8 text-[#1A1A1A]/30">
+          <div className="text-center py-20 bg-white border border-slate-900/8 rounded-xl p-8 text-slate-900/30">
             <p className="text-5xl mb-4">📜</p>
             <p className="text-base font-bold">Belum ada riwayat transaksi</p>
             <p className="text-xs mt-1">Semua transaksi yang masuk akan tercatat di sini.</p>
@@ -431,10 +431,10 @@ export default function KasirHistoryPage() {
             {sortedDateKeys.map((dateKey) => (
               <div key={dateKey} className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-black text-[#1A1A1A]/40 uppercase tracking-widest pl-1" suppressHydrationWarning>
+                  <span className="text-[10px] font-bold text-slate-900/40 uppercase tracking-widest pl-1" suppressHydrationWarning>
                     {getFriendlyDateLabel(dateKey)}
                   </span>
-                  <div className="flex-1 h-[1px] bg-[#1A1A1A]/10" />
+                  <div className="flex-1 h-[1px] bg-slate-900/10" />
                 </div>
                 <div className="grid grid-cols-1 gap-3">
                   {groupedHistory[dateKey].map((order) => renderOrderCard(order))}
@@ -451,17 +451,17 @@ export default function KasirHistoryPage() {
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={() => setSelectedOrder(null)} />
 
           <div className="absolute inset-y-0 right-0 max-w-full flex">
-            <div className="w-screen max-w-md bg-[#F9F6EE] shadow-2xl flex flex-col justify-between border-l border-[#1A1A1A]/10">
+            <div className="w-screen max-w-md bg-[#F9F6EE] shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 flex flex-col justify-between border-l border-slate-900/10">
               
               {/* Drawer Header */}
-              <div className="px-6 py-5 bg-white border-b border-[#1A1A1A]/10 flex items-center justify-between">
+              <div className="px-6 py-5 bg-white border-b border-slate-900/10 flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-bold text-[#1A1A1A]">Rincian Pesanan</h2>
-                  <p className="text-xs text-[#1A1A1A]/40 mt-0.5">ID: #{selectedOrder.id}</p>
+                  <h2 className="text-lg font-bold text-slate-900">Rincian Pesanan</h2>
+                  <p className="text-xs text-slate-900/40 mt-0.5">ID: #{selectedOrder.id}</p>
                 </div>
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="w-8 h-8 rounded-full bg-[#1A1A1A]/10 flex items-center justify-center text-[#1A1A1A] hover:bg-[#1A1A1A]/20 transition-colors"
+                  className="w-8 h-8 rounded-full bg-slate-900/10 flex items-center justify-center text-slate-900 hover:bg-slate-900/20 transition-colors"
                 >
                   ✕
                 </button>
@@ -471,21 +471,21 @@ export default function KasirHistoryPage() {
               <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
                 
                 {/* Status & Meja */}
-                <div className="bg-white rounded-2xl p-4 border border-[#1A1A1A]/5 space-y-3">
+                <div className="bg-white rounded-xl p-4 border border-slate-900/5 space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Meja Asal</span>
-                    <span className="text-lg font-black text-[#1A1A1A]">{selectedOrder.table_number}</span>
+                    <span className="text-xs font-bold text-slate-900/40 uppercase tracking-wide">Meja Asal</span>
+                    <span className="text-lg font-bold text-slate-900">{selectedOrder.table_number}</span>
                   </div>
-                  <div className="flex justify-between items-center border-t border-[#1A1A1A]/5 pt-2">
-                    <span className="text-xs font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Status Pembayaran</span>
+                  <div className="flex justify-between items-center border-t border-slate-900/5 pt-2">
+                    <span className="text-xs font-bold text-slate-900/40 uppercase tracking-wide">Status Pembayaran</span>
                     <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
                       selectedOrder.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
                     }`}>
                       {selectedOrder.status === 'paid' ? '✓ Lunas' : '⏳ Pending'}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center border-t border-[#1A1A1A]/5 pt-2">
-                    <span className="text-xs font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Status Kesiapan</span>
+                  <div className="flex justify-between items-center border-t border-slate-900/5 pt-2">
+                    <span className="text-xs font-bold text-slate-900/40 uppercase tracking-wide">Status Kesiapan</span>
                     <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
                       selectedOrder.is_ready ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-500'
                     }`}>
@@ -495,44 +495,44 @@ export default function KasirHistoryPage() {
                 </div>
 
                 {/* Data Pelanggan (Jika Diisi) */}
-                <div className="bg-white rounded-2xl p-4 border border-[#1A1A1A]/5">
-                  <h3 className="text-xs font-bold text-[#1A1A1A]/40 uppercase tracking-wide mb-3">Informasi Pelanggan</h3>
+                <div className="bg-white rounded-xl p-4 border border-slate-900/5">
+                  <h3 className="text-xs font-bold text-slate-900/40 uppercase tracking-wide mb-3">Informasi Pelanggan</h3>
                   <div className="space-y-2.5 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-[#1A1A1A]/50">Nama Pemesan</span>
-                      <span className="font-semibold text-[#1A1A1A]">{selectedOrder.customer_name || '-'}</span>
+                      <span className="text-slate-900/50">Nama Pemesan</span>
+                      <span className="font-semibold text-slate-900">{selectedOrder.customer_name || '-'}</span>
                     </div>
-                    <div className="flex justify-between border-t border-[#1A1A1A]/5 pt-2">
-                      <span className="text-[#1A1A1A]/50">No. Telepon</span>
-                      <span className="font-semibold text-[#1A1A1A]">{selectedOrder.customer_phone || '-'}</span>
+                    <div className="flex justify-between border-t border-slate-900/5 pt-2">
+                      <span className="text-slate-900/50">No. Telepon</span>
+                      <span className="font-semibold text-slate-900">{selectedOrder.customer_phone || '-'}</span>
                     </div>
-                    <div className="flex justify-between border-t border-[#1A1A1A]/5 pt-2">
-                      <span className="text-[#1A1A1A]/50">Email</span>
-                      <span className="font-semibold text-[#1A1A1A] truncate max-w-[200px]">{selectedOrder.customer_email || '-'}</span>
+                    <div className="flex justify-between border-t border-slate-900/5 pt-2">
+                      <span className="text-slate-900/50">Email</span>
+                      <span className="font-semibold text-slate-900 truncate max-w-[200px]">{selectedOrder.customer_email || '-'}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Item List Menu */}
-                <div className="bg-white rounded-2xl p-4 border border-[#1A1A1A]/5">
-                  <h3 className="text-xs font-bold text-[#1A1A1A]/40 uppercase tracking-wide mb-3">Daftar Menu</h3>
+                <div className="bg-white rounded-xl p-4 border border-slate-900/5">
+                  <h3 className="text-xs font-bold text-slate-900/40 uppercase tracking-wide mb-3">Daftar Menu</h3>
                   <div className="space-y-3">
                     {selectedOrder.order_items?.map((item) => (
                       <div key={item.id} className="flex justify-between text-sm">
                         <div>
-                          <p className="font-semibold text-[#1A1A1A]">{item.menu_name}</p>
-                          <p className="text-xs text-[#1A1A1A]/40" suppressHydrationWarning>
+                          <p className="font-semibold text-slate-900">{item.menu_name}</p>
+                          <p className="text-xs text-slate-900/40" suppressHydrationWarning>
                             {formatRupiah(item.price)} × {item.quantity}
                           </p>
                         </div>
-                        <span className="font-bold text-[#1A1A1A] self-center" suppressHydrationWarning>
+                        <span className="font-bold text-slate-900 self-center" suppressHydrationWarning>
                           {formatRupiah(item.price * item.quantity)}
                         </span>
                       </div>
                     ))}
-                    <div className="border-t border-[#1A1A1A]/10 pt-3 flex justify-between items-baseline">
-                      <span className="text-xs font-bold text-[#1A1A1A]/40 uppercase tracking-wide">Total</span>
-                      <span className="text-xl font-black text-[#1A1A1A]" suppressHydrationWarning>
+                    <div className="border-t border-slate-900/10 pt-3 flex justify-between items-baseline">
+                      <span className="text-xs font-bold text-slate-900/40 uppercase tracking-wide">Total</span>
+                      <span className="text-xl font-bold text-slate-900" suppressHydrationWarning>
                         {formatRupiah(selectedOrder.total_price)}
                       </span>
                     </div>
@@ -540,17 +540,17 @@ export default function KasirHistoryPage() {
                 </div>
 
                 {/* Bukti Transfer */}
-                <div className="bg-white rounded-2xl p-4 border border-[#1A1A1A]/5">
-                  <h3 className="text-xs font-bold text-[#1A1A1A]/40 uppercase tracking-wide mb-3">Bukti Pembayaran</h3>
+                <div className="bg-white rounded-xl p-4 border border-slate-900/5">
+                  <h3 className="text-xs font-bold text-slate-900/40 uppercase tracking-wide mb-3">Bukti Pembayaran</h3>
                   {selectedOrder.receipt_path ? (
                     <div className="space-y-3">
-                      <div className="border border-[#1A1A1A]/10 rounded-xl overflow-hidden bg-[#F5F2EB] flex justify-center p-2">
+                      <div className="border border-slate-900/10 rounded-xl overflow-hidden bg-slate-50 flex justify-center p-2">
                         <button
                           onClick={() => handleLoadReceiptUrl(selectedOrder.receipt_path!)}
                           className="w-full relative group"
                         >
                           <p className="text-xs font-semibold text-amber-600 mb-1.5">Klik untuk Membuka Bukti Bayar 🔍</p>
-                          <span className="text-xs text-[#1A1A1A]/40 block truncate">{selectedOrder.receipt_path}</span>
+                          <span className="text-xs text-slate-900/40 block truncate">{selectedOrder.receipt_path}</span>
                         </button>
                       </div>
                     </div>
@@ -564,7 +564,7 @@ export default function KasirHistoryPage() {
               </div>
 
               {/* Drawer Footer Actions */}
-              <div className="px-6 py-5 bg-white border-t border-[#1A1A1A]/10 flex flex-col gap-2.5">
+              <div className="px-6 py-5 bg-white border-t border-slate-900/10 flex flex-col gap-2.5">
                 {userRole !== 'superadmin' ? (
                   <div className="flex gap-2">
                     {/* Tombol Tandai Sudah Jadi */}
@@ -574,7 +574,7 @@ export default function KasirHistoryPage() {
                       className={`flex-1 py-3 text-xs font-bold rounded-xl transition-all ${
                         selectedOrder.is_ready
                           ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                          : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                          : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900'
                       }`}
                     >
                       {updatingReadyId === selectedOrder.id
@@ -589,7 +589,7 @@ export default function KasirHistoryPage() {
                       <button
                         onClick={() => handleConfirmPaid(selectedOrder.id)}
                         disabled={confirmingId === selectedOrder.id}
-                        className="flex-1 py-3 bg-[#1A1A1A] hover:bg-[#333] active:scale-95 text-white text-xs font-bold rounded-xl transition-all disabled:opacity-50 text-center"
+                        className="flex-1 py-3 bg-slate-900 hover:bg-[#333] active:scale-95 text-white text-xs font-bold rounded-xl transition-all disabled:opacity-50 text-center"
                       >
                         {confirmingId === selectedOrder.id ? 'Memproses...' : '✓ Konfirmasi Lunas'}
                       </button>
@@ -603,7 +603,7 @@ export default function KasirHistoryPage() {
 
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="w-full py-3 border border-[#1A1A1A]/15 hover:bg-[#1A1A1A]/5 text-[#1A1A1A] text-xs font-bold rounded-xl transition-colors text-center"
+                  className="w-full py-3 border border-slate-900/15 hover:bg-slate-900/5 text-slate-900 text-xs font-bold rounded-xl transition-colors text-center"
                 >
                   Tutup Rincian
                 </button>
@@ -618,15 +618,15 @@ export default function KasirHistoryPage() {
       {receiptUrl && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setReceiptUrl(null)} />
-          <div className="relative bg-[#F9F6EE] rounded-3xl overflow-hidden max-w-sm w-full shadow-2xl border border-[#1A1A1A]/10">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#1A1A1A]/10 bg-white">
+          <div className="relative bg-[#F9F6EE] rounded-xl overflow-hidden max-w-sm w-full shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 border border-slate-900/10">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-900/10 bg-white">
               <div>
-                <h3 className="font-bold text-[#1A1A1A] text-sm">Preview Struk</h3>
-                <p className="text-[10px] text-[#1A1A1A]/50 mt-0.5">{selectedOrder?.table_number}</p>
+                <h3 className="font-bold text-slate-900 text-sm">Preview Struk</h3>
+                <p className="text-[10px] text-slate-900/50 mt-0.5">{selectedOrder?.table_number}</p>
               </div>
               <button
                 onClick={() => setReceiptUrl(null)}
-                className="w-8 h-8 rounded-full bg-[#1A1A1A]/10 flex items-center justify-center text-[#1A1A1A] hover:bg-[#1A1A1A]/20 transition-colors text-sm"
+                className="w-8 h-8 rounded-full bg-slate-900/10 flex items-center justify-center text-slate-900 hover:bg-slate-900/20 transition-colors text-sm"
               >
                 ✕
               </button>
@@ -637,14 +637,14 @@ export default function KasirHistoryPage() {
               <img
                 src={receiptUrl}
                 alt="Bukti Transfer"
-                className="w-full h-auto object-contain max-h-[60vh] rounded-xl border border-[#1A1A1A]/5"
+                className="w-full h-auto object-contain max-h-[60vh] rounded-xl border border-slate-900/5"
               />
             </div>
             
-            <div className="p-4 bg-[#F5F2EB] flex justify-end">
+            <div className="p-4 bg-slate-50 flex justify-end">
               <button
                 onClick={() => setReceiptUrl(null)}
-                className="px-4 py-2 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl hover:bg-[#333] transition-colors"
+                className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-[#333] transition-colors"
               >
                 Tutup Preview
               </button>

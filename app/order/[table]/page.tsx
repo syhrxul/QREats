@@ -287,35 +287,35 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
   // ─── Render Logics ────────────────────────────────────────────────────────
   if (tokenLoading) {
     return (
-      <div className="min-h-screen bg-[#F5F2EB] flex flex-col items-center justify-center p-4">
-        <div className="w-10 h-10 border-4 border-[#1A1A1A]/20 border-t-[#1A1A1A] rounded-full animate-spin"></div>
-        <p className="mt-4 font-medium text-[#1A1A1A]">Memuat Data Meja...</p>
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+        <div className="w-10 h-10 border-4 border-slate-900/20 border-t-[#1A1A1A] rounded-full animate-spin"></div>
+        <p className="mt-4 font-medium text-slate-900">Memuat Data Meja...</p>
       </div>
     );
   }
 
   if (tokenError) {
     return (
-      <div className="min-h-screen bg-[#F5F2EB] flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mb-6 shadow-sm">
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mb-6 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900">
           <AlertCircle className="w-10 h-10 text-rose-600" />
         </div>
-        <h1 className="text-2xl font-bold text-[#1A1A1A] mb-3">Meja Tidak Valid</h1>
-        <p className="text-[#1A1A1A]/70 mb-8 max-w-sm">QR Code yang Anda scan tidak valid, sudah kadaluarsa, atau langganan restoran ini sudah tidak aktif.</p>
-        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-[#1A1A1A] text-white font-medium rounded-xl shadow-md hover:bg-black transition">Coba Scan Ulang</button>
+        <h1 className="text-2xl font-bold text-slate-900 mb-3">Meja Tidak Valid</h1>
+        <p className="text-slate-900/70 mb-8 max-w-sm">QR Code yang Anda scan tidak valid, sudah kadaluarsa, atau langganan restoran ini sudah tidak aktif.</p>
+        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-slate-900 text-white font-medium rounded-xl shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 hover:bg-black transition">Coba Scan Ulang</button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F2EB] pb-32 font-sans selection:bg-[#1A1A1A] selection:text-white">
+    <div className="min-h-screen bg-slate-50 pb-32 font-sans selection:bg-slate-900 selection:text-white">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       
       {/* Header */}
-      <div className="bg-[#1A1A1A] text-[#F5F2EB] sticky top-0 z-40 rounded-b-3xl shadow-lg">
+      <div className="bg-slate-900 text-[#F5F2EB] sticky top-0 z-40 rounded-b-3xl shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900">
         <div className="p-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/5">
+            <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/5">
               <Coffee className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -328,13 +328,13 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
         <div className="flex px-2 pb-2">
           <button
             onClick={() => setActiveTab('menu')}
-            className={`flex-1 py-3 text-sm font-bold text-center rounded-2xl transition-all duration-300 ${activeTab === 'menu' ? 'bg-[#F5F2EB] text-[#1A1A1A] shadow-sm' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
+            className={`flex-1 py-3 text-sm font-bold text-center rounded-xl transition-all duration-300 ${activeTab === 'menu' ? 'bg-slate-50 text-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
           >
             Pesan Menu
           </button>
           <button
             onClick={() => setActiveTab('history')}
-            className={`flex-1 py-3 text-sm font-bold text-center rounded-2xl transition-all duration-300 ${activeTab === 'history' ? 'bg-[#F5F2EB] text-[#1A1A1A] shadow-sm' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
+            className={`flex-1 py-3 text-sm font-bold text-center rounded-xl transition-all duration-300 ${activeTab === 'history' ? 'bg-slate-50 text-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
           >
             Pesanan Saya
           </button>
@@ -351,7 +351,7 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
                   <button
                     key={idx}
                     onClick={() => setActiveCategory(cat)}
-                    className={`snap-start whitespace-nowrap px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 ${activeCategory === cat ? 'bg-[#1A1A1A] text-white shadow-md' : 'bg-white text-[#1A1A1A]/70 border border-[#1A1A1A]/10 hover:bg-gray-50'}`}
+                    className={`snap-start whitespace-nowrap px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 ${activeCategory === cat ? 'bg-slate-900 text-white shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900' : 'bg-white text-slate-900/70 border border-slate-900/10 hover:bg-gray-50'}`}
                   >
                     {cat}
                   </button>
@@ -363,7 +363,7 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
             <div className="px-4">
               {loadingMenus ? (
                 <div className="grid grid-cols-2 gap-4">
-                  {[1, 2, 3, 4].map(i => <div key={i} className="h-40 bg-black/5 rounded-2xl animate-pulse" />)}
+                  {[1, 2, 3, 4].map(i => <div key={i} className="h-40 bg-black/5 rounded-xl animate-pulse" />)}
                 </div>
               ) : (
                 <MenuGrid
@@ -381,18 +381,18 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
         {activeTab === 'history' && (
           <div className="px-4 pb-10 space-y-4">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-extrabold text-[#1A1A1A]">Pesanan Terakhir</h2>
-              <button onClick={fetchRecentOrders} className="p-2 bg-white rounded-full shadow-sm text-[#1A1A1A] hover:bg-gray-50 transition active:scale-95">
+              <h2 className="text-xl font-extrabold text-slate-900">Pesanan Terakhir</h2>
+              <button onClick={fetchRecentOrders} className="p-2 bg-white rounded-full shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 text-slate-900 hover:bg-gray-50 transition active:scale-95">
                 <RefreshCw className={`w-4 h-4 ${loadingRecent ? 'animate-spin' : ''}`} />
               </button>
             </div>
 
             {recentOrders.length === 0 && !loadingRecent ? (
-              <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-[#1A1A1A]/5">
-                <div className="w-16 h-16 bg-[#F5F2EB] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Clock className="w-8 h-8 text-[#1A1A1A]/30" />
+              <div className="text-center py-20 bg-white rounded-xl shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 border border-slate-900/5">
+                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Clock className="w-8 h-8 text-slate-900/30" />
                 </div>
-                <p className="text-[#1A1A1A]/50 font-medium">Belum ada pesanan terbaru hari ini.</p>
+                <p className="text-slate-900/50 font-medium">Belum ada pesanan terbaru hari ini.</p>
               </div>
             ) : (
               recentOrders.map((order) => {
@@ -400,14 +400,14 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
                 const isRejected = order.status === 'rejected';
 
                 return (
-                  <div key={order.id} className="bg-white p-5 rounded-3xl shadow-sm border border-[#1A1A1A]/5 hover:shadow-md transition-shadow">
+                  <div key={order.id} className="bg-white p-5 rounded-xl shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 border border-slate-900/5 hover:shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 transition-shadow">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <p className="text-xs font-bold text-[#1A1A1A]/40 uppercase tracking-widest mb-1">Order ID</p>
-                        <p className="text-sm font-mono font-bold text-[#1A1A1A] bg-[#F5F2EB] px-2 py-1 rounded-lg inline-block">{order.id.slice(0,8).toUpperCase()}</p>
+                        <p className="text-xs font-bold text-slate-900/40 uppercase tracking-widest mb-1">Order ID</p>
+                        <p className="text-sm font-mono font-bold text-slate-900 bg-slate-50 px-2 py-1 rounded-lg inline-block">{order.id.slice(0,8).toUpperCase()}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-[#1A1A1A]/50 font-medium mb-1.5">
+                        <p className="text-xs text-slate-900/50 font-medium mb-1.5">
                           {new Date(order.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                         </p>
                         {isPaid ? (
@@ -426,21 +426,21 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
                       </div>
                     </div>
 
-                    <div className="space-y-2 mb-4 bg-[#F5F2EB]/50 p-4 rounded-2xl">
+                    <div className="space-y-2 mb-4 bg-slate-50/50 p-4 rounded-xl">
                       {order.order_items?.map((item, idx) => (
                         <div key={idx} className="flex justify-between text-sm">
-                          <span className="font-medium text-[#1A1A1A]"><span className="text-[#1A1A1A]/50 font-bold mr-1">{item.quantity}x</span> {item.menu_name}</span>
+                          <span className="font-medium text-slate-900"><span className="text-slate-900/50 font-bold mr-1">{item.quantity}x</span> {item.menu_name}</span>
                         </div>
                       ))}
                     </div>
 
-                    <div className="flex justify-between items-center pt-4 border-t border-[#1A1A1A]/5">
-                      <span className="text-sm font-bold text-[#1A1A1A]/50 uppercase tracking-wide">Total</span>
-                      <span className="text-lg font-black text-[#1A1A1A]">{formatRupiah(order.total_price)}</span>
+                    <div className="flex justify-between items-center pt-4 border-t border-slate-900/5">
+                      <span className="text-sm font-bold text-slate-900/50 uppercase tracking-wide">Total</span>
+                      <span className="text-lg font-bold text-slate-900">{formatRupiah(order.total_price)}</span>
                     </div>
 
                     {!isPaid && !isRejected && order.receipt_path === null && (
-                       <div className="mt-4 p-4 bg-amber-50/50 rounded-2xl border border-amber-100/50">
+                       <div className="mt-4 p-4 bg-amber-50/50 rounded-xl border border-amber-100/50">
                          {historyUploadStatus[order.id] === 'uploading' ? (
                            <div className="text-center py-2">
                              <div className="w-5 h-5 border-2 border-amber-500/20 border-t-amber-500 rounded-full animate-spin mx-auto mb-2"></div>
@@ -458,7 +458,7 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
                                    setHistoryUploadFiles(prev => ({ ...prev, [order.id]: e.target.files![0] }));
                                  }
                                }} />
-                               <div className="w-full py-2.5 px-4 bg-white text-[#1A1A1A] text-xs font-bold rounded-xl border border-[#1A1A1A]/10 text-center hover:bg-gray-50 transition active:scale-95 shadow-sm flex items-center justify-center gap-2">
+                               <div className="w-full py-2.5 px-4 bg-white text-slate-900 text-xs font-bold rounded-xl border border-slate-900/10 text-center hover:bg-gray-50 transition active:scale-95 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 flex items-center justify-center gap-2">
                                   <Upload className="w-4 h-4" />
                                   {historyUploadFiles[order.id] ? 'Ganti File Bukti' : 'Pilih Bukti Transfer'}
                                </div>
@@ -466,7 +466,7 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
                              {historyUploadFiles[order.id] && (
                                <button
                                  onClick={() => handleHistoryUpload(order.id)}
-                                 className="w-full py-2.5 px-4 bg-[#1A1A1A] text-white text-xs font-bold rounded-xl shadow-md hover:bg-black transition active:scale-95"
+                                 className="w-full py-2.5 px-4 bg-slate-900 text-white text-xs font-bold rounded-xl shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 hover:bg-black transition active:scale-95"
                                >
                                  Upload Sekarang
                                </button>
@@ -488,7 +488,7 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
           <div className="max-w-md mx-auto pointer-events-auto relative">
             <button
               onClick={() => setIsCartOpen(true)}
-              className="w-full bg-[#1A1A1A] text-white px-5 py-4 rounded-2xl shadow-xl flex items-center justify-between hover:bg-black transition-all active:scale-[0.98] group overflow-hidden relative"
+              className="w-full bg-slate-900 text-white px-5 py-4 rounded-xl shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 flex items-center justify-between hover:bg-black transition-all active:scale-[0.98] group overflow-hidden relative"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div className="flex items-center gap-3 relative z-10">
@@ -497,7 +497,7 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
                 </div>
                 <div className="text-left">
                   <p className="text-[10px] font-medium text-white/60 uppercase tracking-widest mb-0.5">Total Pesanan</p>
-                  <p className="font-black text-sm">{formatRupiah(totalPrice)}</p>
+                  <p className="font-bold text-sm">{formatRupiah(totalPrice)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm font-bold relative z-10 bg-white/10 px-4 py-2 rounded-xl border border-white/10 group-hover:bg-white/20 transition-colors">
@@ -554,7 +554,7 @@ export default function OrderPage({ params }: { params: Promise<{ table: string 
       {/* Tombol Kritik & Saran */}
       <button
         onClick={() => setIsFeedbackOpen(true)}
-        className="fixed bottom-28 right-4 z-40 bg-white border border-[#1A1A1A]/10 text-[#1A1A1A] p-3.5 rounded-full shadow-xl hover:bg-gray-50 active:scale-95 transition-all"
+        className="fixed bottom-28 right-4 z-40 bg-white border border-slate-900/10 text-slate-900 p-3.5 rounded-full shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 hover:bg-gray-50 active:scale-95 transition-all"
         title="Kritik & Saran"
       >
         <MessageSquare className="w-6 h-6" />

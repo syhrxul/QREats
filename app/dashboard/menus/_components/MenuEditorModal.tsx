@@ -29,12 +29,12 @@ export function MenuEditorModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-3xl w-full max-w-md shadow-2xl max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white/80 backdrop-blur-md px-6 py-4 border-b border-[#1A1A1A]/5 flex items-center justify-between z-10">
-          <h3 className="text-xl font-black text-[#1A1A1A]">
+      <div className="relative bg-white rounded-xl w-full max-w-md shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] border-2 border-slate-900 max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white/80 backdrop-blur-md px-6 py-4 border-b border-slate-900/5 flex items-center justify-between z-10">
+          <h3 className="text-xl font-bold text-slate-900">
             {modalMode === 'add' ? 'Tambah Menu' : 'Edit Menu'}
           </h3>
-          <button onClick={onClose} className="w-8 h-8 rounded-full bg-[#1A1A1A]/5 flex items-center justify-center text-[#1A1A1A] hover:bg-[#1A1A1A]/10 transition-colors">
+          <button onClick={onClose} className="w-8 h-8 rounded-full bg-slate-900/5 flex items-center justify-center text-slate-900 hover:bg-slate-900/10 transition-colors">
             ✕
           </button>
         </div>
@@ -43,13 +43,13 @@ export function MenuEditorModal({
           <div className="flex flex-col items-center">
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="w-32 h-32 rounded-3xl bg-[#F5F2EB] border-2 border-dashed border-[#1A1A1A]/20 flex flex-col items-center justify-center text-[#1A1A1A]/40 hover:bg-[#1A1A1A]/5 hover:border-[#1A1A1A]/40 transition-all cursor-pointer overflow-hidden relative group"
+              className="w-32 h-32 rounded-xl bg-slate-50 border-2 border-dashed border-slate-900/20 flex flex-col items-center justify-center text-slate-900/40 hover:bg-slate-900/5 hover:border-slate-900/40 transition-all cursor-pointer overflow-hidden relative group"
             >
               {imageFile ? (
                 <img src={URL.createObjectURL(imageFile)} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               ) : (
                 <>
-                  <Camera className="w-8 h-8 mb-2 text-[#1A1A1A]/30 group-hover:text-[#1A1A1A]/50 transition-colors" />
+                  <Camera className="w-8 h-8 mb-2 text-slate-900/30 group-hover:text-slate-900/50 transition-colors" />
                   <span className="text-[10px] font-bold uppercase tracking-wider">Foto Menu</span>
                 </>
               )}
@@ -67,39 +67,39 @@ export function MenuEditorModal({
 
           <div className="space-y-4">
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1A1A1A]/40 mb-1.5">Nama Menu *</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-900/40 mb-1.5">Nama Menu *</label>
               <input
                 type="text"
                 placeholder="Contoh: Nasi Goreng Spesial"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full bg-[#F5F2EB] border-transparent rounded-xl px-4 py-3 text-sm font-medium focus:border-[#1A1A1A]/20 focus:ring-0 outline-none transition-all"
+                className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm font-medium focus:border-slate-900/20 focus:ring-0 outline-none transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1A1A1A]/40 mb-1.5">Harga (Rp) *</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-900/40 mb-1.5">Harga (Rp) *</label>
               <input
                 type="number"
                 placeholder="Contoh: 25000"
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
-                className="w-full bg-[#F5F2EB] border-transparent rounded-xl px-4 py-3 text-sm font-medium focus:border-[#1A1A1A]/20 focus:ring-0 outline-none transition-all"
+                className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm font-medium focus:border-slate-900/20 focus:ring-0 outline-none transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1A1A1A]/40 mb-1.5">Kategori</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-900/40 mb-1.5">Kategori</label>
               <div className="flex gap-2 mb-2">
                 <button
                   type="button"
                   onClick={() => { setIsNewCategory(false); setForm({ ...form, category: categories[0] || 'Makanan' }); }}
-                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${!isNewCategory ? 'bg-[#1A1A1A] text-white' : 'bg-[#F5F2EB] text-[#1A1A1A]/50 hover:bg-[#1A1A1A]/10'}`}
+                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${!isNewCategory ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-900/50 hover:bg-slate-900/10'}`}
                 >Pilih Kategori</button>
                 <button
                   type="button"
                   onClick={() => { setIsNewCategory(true); setForm({ ...form, category: '' }); }}
-                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${isNewCategory ? 'bg-[#1A1A1A] text-white' : 'bg-[#F5F2EB] text-[#1A1A1A]/50 hover:bg-[#1A1A1A]/10'}`}
+                  className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${isNewCategory ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-900/50 hover:bg-slate-900/10'}`}
                 >Kategori Baru</button>
               </div>
 
@@ -107,7 +107,7 @@ export function MenuEditorModal({
                 <select
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  className="w-full bg-[#F5F2EB] border-transparent rounded-xl px-4 py-3 text-sm font-medium focus:border-[#1A1A1A]/20 focus:ring-0 outline-none transition-all appearance-none"
+                  className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm font-medium focus:border-slate-900/20 focus:ring-0 outline-none transition-all appearance-none"
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>{cat}</option>
@@ -119,25 +119,25 @@ export function MenuEditorModal({
                   placeholder="Ketik kategori baru..."
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  className="w-full bg-[#F5F2EB] border-transparent rounded-xl px-4 py-3 text-sm font-medium focus:border-[#1A1A1A]/20 focus:ring-0 outline-none transition-all"
+                  className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm font-medium focus:border-slate-900/20 focus:ring-0 outline-none transition-all"
                 />
               )}
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-[#1A1A1A]/40 mb-1.5">Deskripsi Singkat</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-900/40 mb-1.5">Deskripsi Singkat</label>
               <textarea
                 placeholder="Deskripsikan menu ini..."
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="w-full bg-[#F5F2EB] border-transparent rounded-xl px-4 py-3 text-sm font-medium focus:border-[#1A1A1A]/20 focus:ring-0 outline-none transition-all min-h-[80px]"
+                className="w-full bg-slate-50 border-transparent rounded-xl px-4 py-3 text-sm font-medium focus:border-slate-900/20 focus:ring-0 outline-none transition-all min-h-[80px]"
               />
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-[#F5F2EB] rounded-xl">
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
               <div>
-                <p className="text-sm font-bold text-[#1A1A1A]">Tersedia</p>
-                <p className="text-[10px] text-[#1A1A1A]/50 uppercase tracking-wider font-bold">Status Stok Menu</p>
+                <p className="text-sm font-bold text-slate-900">Tersedia</p>
+                <p className="text-[10px] text-slate-900/50 uppercase tracking-wider font-bold">Status Stok Menu</p>
               </div>
               <button
                 type="button"
@@ -157,7 +157,7 @@ export function MenuEditorModal({
             <button
               onClick={handleSave}
               disabled={saving}
-              className="w-full py-3.5 bg-[#1A1A1A] text-white font-medium text-sm rounded-xl hover:bg-[#333] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full py-3.5 bg-slate-900 text-white font-medium text-sm rounded-xl hover:bg-[#333] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {saving ? 'Menyimpan...' : modalMode === 'add' ? 'Tambah Menu' : 'Simpan Perubahan'}
             </button>
