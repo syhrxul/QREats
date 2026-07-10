@@ -42,3 +42,9 @@
   - Penyesuaian ratusan *import paths* lintas direktori dan pembuatan modul *middleware*.
   - Pembuatan kamus translasi `messages/id.json` (Bahasa Indonesia - *default*) dan `messages/en.json` (Bahasa Inggris).
 - **Hasil:** Aplikasi sekarang mendukung pergantian bahasa otomatis tanpa mengubah logika domain secara drastis. Struktur siap untuk translasi massal secara bertahap pada *sprint* berikutnya.
+## 20. Bug Fix & i18n Audit
+- **Pembaruan:** Memperbaiki *bug crash* OneSignal yang muncul di domain selain localhost/produksi.
+- **Eksekusi:** 
+  - Mengubah logika validasi domain di `OneSignalInit.tsx` dan `dashboard/kasir/page.tsx`. Inisialisasi SDK sekarang melakukan *silent return* jika domain tidak diizinkan.
+  - Melakukan *Workspace-Wide Audit* pada folder `app/[locale]/` untuk memverifikasi keutuhan arsitektur i18n paska-restrukturisasi.
+- **Hasil:** Aplikasi tidak lagi mengalami error saat diakses di domain Vercel sementara. Sistem *build* (Next.js) terkonfirmasi berjalan tanpa hambatan (0 *errors*).

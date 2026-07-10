@@ -98,14 +98,12 @@ export default function KasirDashboardPage() {
   async function handleEnableNotifications() {
     if (typeof window === 'undefined') return;
 
-    const isSecure =
-      window.location.protocol === 'https:' ||
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1';
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+    const isAllowedDomain = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === 'qr-eats-umber.vercel.app';
 
     try {
       const OS = (window as any).OneSignal;
-      if (isSecure && OS && OS.Notifications) {
+      if (isAllowedDomain && OS && OS.Notifications) {
         // Minta izin via OneSignal SDK agar device terdaftar di push server OneSignal
         await OS.Notifications.requestPermission();
       } else {

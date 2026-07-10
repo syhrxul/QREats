@@ -16,14 +16,10 @@ export default function OneSignalInit() {
         onLoad={() => {
           (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
           (window as any).OneSignalDeferred.push(async function(OneSignal: any) {
-            const isSecure =
-              typeof window !== 'undefined' &&
-              (window.location.protocol === 'https:' ||
-               window.location.hostname === 'localhost' ||
-               window.location.hostname === '127.0.0.1');
+            const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+            const isAllowedDomain = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === 'qr-eats-umber.vercel.app';
 
-            if (!isSecure) {
-              console.warn('OneSignal dinonaktifkan: origin tidak aman (gunakan HTTPS atau localhost).');
+            if (!isAllowedDomain) {
               return;
             }
 
