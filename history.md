@@ -48,3 +48,6 @@
   - Mengubah logika validasi domain di `OneSignalInit.tsx` dan `dashboard/kasir/page.tsx`. Inisialisasi SDK sekarang melakukan *silent return* jika domain tidak diizinkan.
   - Melakukan *Workspace-Wide Audit* pada folder `app/[locale]/` untuk memverifikasi keutuhan arsitektur i18n paska-restrukturisasi.
 - **Hasil:** Aplikasi tidak lagi mengalami error saat diakses di domain Vercel sementara. Sistem *build* (Next.js) terkonfirmasi berjalan tanpa hambatan (0 *errors*).
+## 21. Absolute Short-Circuit for OneSignal
+- **Pembaruan:** Menerapkan proteksi mutlak pada inisialisasi OneSignal.
+- **Eksekusi:** Mengubah struktur `OneSignalInit.tsx` dengan menambahkan `useState` dan `useEffect` untuk melakukan validasi domain di sisi klien. Jika domain tidak cocok, komponen merender `null` (short-circuit), mencegah pemuatan `Script` tag dan interaksi DOM tak diizinkan sama sekali.
